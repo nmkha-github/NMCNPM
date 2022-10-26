@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import ExampleComponent1 from "../../modules/example/component/ExampleComponent1/ExampleComponent1";
+import RoomItem from "../../modules/home/components/RoomItem/RoomItem";
 
 const HomePage = () => {
   const dataName = false;
@@ -8,7 +8,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <ExampleComponent1 />
+      <RoomItem data={{ id: "100", name: "abc" }} />
     </div>
   );
 };
