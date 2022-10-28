@@ -7,11 +7,6 @@ export default function LoginForm() {
         <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="w-full max-w-md space-y-8">
             <div>
-              <img
-                className="mx-auto h-12 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt="Your Company"
-              />
             </div>
             <div className="bg-white shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
             <form className="mt-8 space-y-6" action="#" method="POST">
@@ -33,11 +28,6 @@ export default function LoginForm() {
                   </label>
                 </div>
   
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Forgot your password?
-                  </a>
-                </div>
               </div>
               <div>
                 <button
@@ -49,6 +39,14 @@ export default function LoginForm() {
                 </button>
               </div>
             </form>
+            <div id="seperator_login_register"></div>
+            <button
+                  id="createNewAccountButton"
+                  type="button"
+                  className="group relative flex w-full justify-center rounded-3xl border border-transparent py-2 px-3 text-xl font-bold font-normal text-white bg-indigo-700"
+                >
+                  Create New Account
+                </button>
           </div>
         </div>
         </div>

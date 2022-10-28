@@ -5,3 +5,10 @@
 #submitButton{
     background-color: #0a66c2
 }
+#seperator_login_register{
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+    display: flex;
+    margin: 20px 16px;
+    text-align: center;
+}
