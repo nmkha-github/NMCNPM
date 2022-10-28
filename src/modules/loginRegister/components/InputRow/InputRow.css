@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind forms;
+input:focus{
+    border-color: #0a66c2;
+    --tw-ring-color:#0a66c2;
+}
