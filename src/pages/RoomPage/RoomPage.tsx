@@ -1,5 +1,10 @@
+import LeftSideBar from "../../modules/room/components/LeftSideBar/LeftSideBar";
+
 const RoomPage = () => {
-  return <></>;
+  return (<div>
+    "abc"
+    <LeftSideBar/>
+  </div>);
 };
 
 export default RoomPage;
