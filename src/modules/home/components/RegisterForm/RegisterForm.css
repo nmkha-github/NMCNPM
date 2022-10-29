@@ -3,10 +3,7 @@
 @tailwind utilities;
 @tailwind forms;
 #submitButton{
-    background-color: #0a66c2;
-    border-radius: 1.5rem;
-    font-size: 1.25rem;
-    line-height: 1.75rem;
+    background-color: #0a66c2
 }
 #seperator_login_register{
     align-items: center;
