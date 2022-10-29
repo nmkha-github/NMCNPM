@@ -12,3 +12,7 @@
     margin: 20px 16px;
     text-align: center;
 }
+#createNewAccountButton{
+    border-color: #0a66c2;
+    color: #0a66c2;
+}

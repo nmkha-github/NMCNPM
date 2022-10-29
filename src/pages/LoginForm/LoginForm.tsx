@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { LockClosedIcon } from '@heroicons/react/20/solid'
 import './LoginForm.css'
 import InputRow from "../../modules/loginRegister/components/InputRow/InputRow";
 export default function LoginForm() {
@@ -8,7 +7,7 @@ export default function LoginForm() {
           <div className="w-full max-w-md space-y-8">
             <div>
             </div>
-            <div className="bg-white shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+            <div className="bg-white md:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
             <form className="mt-8 space-y-6" action="#" method="POST">
               <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
                 Sign in
@@ -33,20 +32,22 @@ export default function LoginForm() {
                 <button
                   id="submitButton"
                   type="submit"
-                  className="group relative flex w-full justify-center rounded-3xl border border-transparent py-2 px-4 text-xl font-bold font-normal text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="flex w-full justify-center rounded-3xl border border-transparent py-2 px-4 text-xl font-bold font-normal text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Sign in
                 </button>
               </div>
             </form>
             <div id="seperator_login_register"></div>
-            <button
+            <div className="flex items-center justify-center">
+            <a
+                  href="/register"
                   id="createNewAccountButton"
-                  type="button"
-                  className="group relative flex w-full justify-center rounded-3xl border border-transparent py-2 px-3 text-xl font-bold font-normal text-white bg-indigo-700"
+                  className="btn flex w-3/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal"
                 >
                   Create New Account
-                </button>
+                </a>
+            </div>
           </div>
         </div>
         </div>
