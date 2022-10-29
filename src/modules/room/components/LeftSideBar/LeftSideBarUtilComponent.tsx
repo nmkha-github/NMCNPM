@@ -1,8 +1,14 @@
 import { makeStyles } from "@mui/styles";
+import React, { ReactNode } from "react"
+interface MenuItemProps {
+    label: string;
+    icon: ReactNode;
+    isSelected: boolean;
+    onClick: ()=>void;
+}
 
 const useStyle = makeStyles({
     cssStyle1: {
-        width: "100%",
         padding: "0 12px"
     },
     cssStyle2: {
@@ -11,7 +17,7 @@ const useStyle = makeStyles({
         alignItems: "center",
         padding: "12px 8px",
         gap: 10,
-        borderRadius: "50%",
+        borderRadius: "4px",
         fontFamily: 'Inter',
         fontStyle: "normal",
         fontWeight: 500,
@@ -21,20 +27,14 @@ const useStyle = makeStyles({
         backgroundColor:"rgba(227, 242, 253, 0.5)",
         color:"#1E88E5"
     },
-    cssStyle4: {
-
-    },
-    cssStyle5: {
-        
-    }
 });
 
-const MenuItem = ({label, Icon, hasNew, isSelected, onClick}) => {
+const MenuItem = ({label, icon, isSelected, onClick}:MenuItemProps) => {
     const classes = useStyle();
 
-    return (<div className = {classes.cssStyle1} onClick={onClick}>
+    return (<div className = {classes.cssStyle1} onClick={()=>onClick()}>
         <div className = {(isSelected?classes.cssStyle3:"")+" "+classes.cssStyle2}>
-            <Icon className={hasNew ? classes.cssStyle4 : classes.cssStyle5}/>
+            {icon}
             {label}
         </div>
     </div>);
