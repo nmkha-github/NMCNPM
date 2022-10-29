@@ -2,7 +2,7 @@ import LeftSideBar from "../../modules/room/components/LeftSideBar/LeftSideBar";
 
 const RoomPage = () => {
   return (<div>
-    "abc"
+    <h2>1233</h2>
     <LeftSideBar/>
   </div>);
 };
