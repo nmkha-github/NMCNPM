@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./LoginForm.css";
-import InputRow from "./InputRow";
+import InputRow from "../InputRow/InputRow";
 import { Button, Typography } from "@mui/material";
 const LoginForm = () => {
   const [account, setAccount] = useState("");
