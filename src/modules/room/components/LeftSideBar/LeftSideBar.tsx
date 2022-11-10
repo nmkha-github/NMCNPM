@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import MenuItem from "./LeftSideBarUtilComponent";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FeedIcon from "@mui/icons-material/Feed";
 import HomeRepairServiceOutlinedIcon from "@mui/icons-material/HomeRepairServiceOutlined";
@@ -11,7 +10,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { makeStyles } from "@mui/styles";
-import { Box } from "@mui/material";
+import { Box, Link, MenuItem, MenuList, Typography } from "@mui/material";
 
 const useStyle = makeStyles({
   cssStyle1: {
@@ -33,21 +32,21 @@ const useStyle = makeStyles({
     gap: "4px",
     borderBottom: "1px solid #E7E8EF",
   },
-  cssStyle3: {
-    margin: 0,
-    fontSize: "16px",
-    fontWeight: 600,
-    lineHeight: "150%",
-    letterSpacing: "0.15px",
-    color: "#202227",
-  },
-  cssStyle4: {
-    fontSize: "12px",
-    fontWeight: 400,
-    lineHeight: "130%",
-    letterSpacing: "0.4px",
-    color: "#4E525F",
-  },
+  // cssStyle3: {
+  //   margin: 0,
+  //   fontSize: "16px",
+  //   fontWeight: 600,
+  //   lineHeight: "150%",
+  //   letterSpacing: "0.15px",
+  //   color: "#202227",
+  // },
+  // cssStyle4: {
+  //   fontSize: "12px",
+  //   fontWeight: 400,
+  //   lineHeight: "130%",
+  //   letterSpacing: "0.4px",
+  //   color: "#4E525F",
+  // },
   cssStyle5: {
     padding: "16px 20px 8px",
     fontSize: "14px",
@@ -65,29 +64,66 @@ const useStyle = makeStyles({
     right: 0,
     borderTop: "1px solid #E7E8EF",
   },
+  cssStyle7: {
+    padding: "0 12px",
+  },
+  cssStyle8: {
+    width: "100%",
+    padding: "12px 8px",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: "8px",
+    fontFamily: "Inter",
+    fontStyle: "normal",
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: "144%",
+    letterSpacing: "0.1px",
+    color: "#373A43",
+  },
+  cssStyle9: {
+    backgroundColor: "rgba(227, 242, 253, 0.5)",
+    color: "#1E88E5",
+  },
 });
 
 const LeftSideBar = () => {
   const [selection, setSelection] = useState(-1);
+  const classes = useStyle();
+
+  const handleSelection = (index: number) => {
+    setSelection(selection === index ? -1 : index);
+  };
+
   const items = [
-    { label: "Bản tin", icon: <FeedOutlinedIcon />, filledIcon: <FeedIcon /> },
+    {
+      label: "Bản tin",
+      icon: <FeedOutlinedIcon />,
+      filledIcon: <FeedIcon />,
+      href: "#",
+    },
     {
       label: "Nơi làm việc",
       icon: <HomeRepairServiceOutlinedIcon />,
       filledIcon: <HomeRepairServiceIcon />,
+      href: "#",
     },
     {
       label: "Thống kê",
       icon: <AssessmentOutlinedIcon />,
       filledIcon: <AssessmentIcon />,
+      href: "#",
     },
     {
       label: "Thành viên",
       icon: <PeopleAltOutlinedIcon />,
       filledIcon: <PeopleAltIcon />,
+      href: "#",
     },
   ];
-  const classes = useStyle();
+
   const roomName = "Lớp tập huấn sử dụng";
   const roomID = "SUPERA";
 
@@ -95,35 +131,60 @@ const LeftSideBar = () => {
     <Box className={classes.cssStyle1}>
       <Box>
         <Box className={classes.cssStyle2}>
-          <h3 className={classes.cssStyle3}>{roomName ? roomName : "N/A"}</h3>
-          <Box className={classes.cssStyle4}>
+          <Typography variant="h6">{roomName ? roomName : "N/A"}</Typography>
+
+          <Typography variant="subtitle2">
             {"Mã phòng: " + (roomID ? roomID : "N/A")}
-          </Box>
+          </Typography>
         </Box>
 
-        <Box className={classes.cssStyle5}>{"Danh mục"}</Box>
-        {items.map((item, index) => {
-          return (
-            <MenuItem
-              label={item.label}
-              icon={item.icon}
-              filledIcon={item.filledIcon}
-              isSelected={selection === index}
-              onClick={() => setSelection(index === selection ? -1 : index)}
-            />
-          );
-        })}
+        <Typography className={classes.cssStyle5}>Danh mục</Typography>
+        <MenuList>
+          {items.map((item, index) => {
+            return (
+              <MenuItem
+                className={classes.cssStyle7}
+                onClick={() => handleSelection(index)}
+                component={Link}
+                href={item.href}
+              >
+                <Box
+                  className={
+                    classes.cssStyle8 +
+                    " " +
+                    (index === selection ? classes.cssStyle9 : "")
+                  }
+                >
+                  {index === selection ? item.filledIcon : item.icon}
+                  <Typography variant="body1">{item.label}</Typography>
+                </Box>
+              </MenuItem>
+            );
+          })}
+        </MenuList>
 
         <Box className={classes.cssStyle6}>
           <MenuItem
-            label="Cài đặt"
-            icon={<SettingsOutlinedIcon />}
-            filledIcon={<SettingsIcon />}
-            isSelected={selection === items.length}
-            onClick={() =>
-              setSelection(selection === items.length ? -1 : items.length)
-            }
-          />
+            className={classes.cssStyle7}
+            onClick={() => handleSelection(items.length)}
+            component={Link}
+            href="#"
+          >
+            <Box
+              className={
+                classes.cssStyle8 +
+                " " +
+                (items.length === selection ? classes.cssStyle9 : "")
+              }
+            >
+              {items.length === selection ? (
+                <SettingsIcon />
+              ) : (
+                <SettingsOutlinedIcon />
+              )}
+              <Typography variant="body1">Cài đặt</Typography>
+            </Box>
+          </MenuItem>
         </Box>
       </Box>
     </Box>
