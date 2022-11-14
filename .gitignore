@@ -5,6 +5,7 @@
 .package.json
 
 # dependencies
+/.vscode
 /node_modules
 /.pnp
 .pnp.js
