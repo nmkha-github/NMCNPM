@@ -124,17 +124,16 @@ const LeftSideBar = () => {
     },
   ];
 
-  const roomName = "Lớp tập huấn sử dụng";
-  const roomID = "SUPERA";
+  const room = { name: "Lớp tập huấn sử dụng", id: "SUPERA" };
 
   return (
     <Box className={classes.cssStyle1}>
       <Box>
         <Box className={classes.cssStyle2}>
-          <Typography variant="h6">{roomName ? roomName : "N/A"}</Typography>
+          <Typography variant="h6">{room.name ? room.name : "N/A"}</Typography>
 
           <Typography variant="subtitle2">
-            {"Mã phòng: " + (roomID ? roomID : "N/A")}
+            {"Mã phòng: " + (room.id ? room.id : "N/A")}
           </Typography>
         </Box>
 
