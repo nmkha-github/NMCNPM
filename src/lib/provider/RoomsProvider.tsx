@@ -1,9 +1,12 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import useAppSnackbar from "../../../lib/hook/useAppSnackBar";
-import RoomData from "../interface/room-data";
+import useAppSnackbar from "../hook/useAppSnackBar";
+import RoomData from "../../modules/home/interface/room-data";
 
 interface RoomsContextProps {
   rooms: RoomData[];
+
+  currentRoom?: RoomData;
+  setCurrentRoom: (room: RoomData) => void;
 
   getRooms: (payload: { limit?: number; skip?: number }) => void;
   loadingRooms: boolean;
@@ -15,6 +18,9 @@ interface RoomsContextProps {
 
 const RoomsContext = createContext<RoomsContextProps>({
   rooms: [],
+
+  currentRoom: undefined,
+  setCurrentRoom: () => {},
 
   getRooms: () => {},
   loadingRooms: false,
@@ -30,6 +36,7 @@ interface TestContextProviderProps {
 
 const RoomsProvider = ({ children }: TestContextProviderProps) => {
   const [rooms, setRooms] = useState<RoomData[]>([]);
+  const [currentRoom, setCurrentRoom] = useState<RoomData>();
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [loadingMoreRooms, setLoadingMoreRooms] = useState(false);
   const [updatingRoom, setUpdatingRoom] = useState(false);
@@ -88,6 +95,9 @@ const RoomsProvider = ({ children }: TestContextProviderProps) => {
     <RoomsContext.Provider
       value={{
         rooms,
+
+        currentRoom,
+        setCurrentRoom,
 
         getRooms,
         loadingRooms,
