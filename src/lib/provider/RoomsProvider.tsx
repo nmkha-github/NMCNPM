@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
+import RoomData from "../../modules/room/interface/room-data";
 import useAppSnackbar from "../hook/useAppSnackBar";
-import RoomData from "../../modules/home/interface/room-data";
 
 interface RoomsContextProps {
   rooms: RoomData[];
@@ -56,6 +56,7 @@ const RoomsProvider = ({ children }: TestContextProviderProps) => {
                 id: String(rooms.length + index + 1),
                 name: `Phòng ${rooms.length + index + 1}`,
                 description: `Description ${rooms.length + index + 1}`,
+                avatar: "",
               };
             }),
         ]);
