@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import WorkPage from "./pages/WorkPage/WorkPage";
 import RoomPage from "./pages/RoomPage/RoomPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
-
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -16,6 +16,7 @@ root.render(
         <Route path="work" element={<WorkPage />} />
         <Route path="room" element={<RoomPage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage/>}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
