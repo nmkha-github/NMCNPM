@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import RoomItem from "../../modules/home/components/RoomItem/RoomItem";
-
 const HomePage = () => {
   const dataName = false;
 
@@ -8,7 +7,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <RoomItem data={{ id: "100", name: "abc" }} />
+      <RoomItem data="hello" />
     </div>
   );
 };
