@@ -4,7 +4,7 @@ import AppSnackbarProvider from './lib/provider/AppSnackBarProvider';
 import RoomsProvider from './lib/provider/RoomsProvider';
 import AppRoutes from './AppRoutes';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AppSnackbarProvider>

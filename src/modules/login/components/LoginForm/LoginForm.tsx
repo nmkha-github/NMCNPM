@@ -5,6 +5,8 @@ import { Button, Typography } from "@mui/material";
 const LoginForm = () => {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameError,setUsernameError]=useState("");
+  const [passwordError,setPasswordError]=useState("");
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
@@ -18,6 +20,8 @@ const LoginForm = () => {
               id="username"
               type="text"
               placeholder="Username"
+              haveError={usernameError==="" ? false : true}
+              errorText={usernameError}
               onChange={(event) => {
                 setAccount(event.target.value);
               }}
@@ -27,6 +31,8 @@ const LoginForm = () => {
               id="password"
               type="password"
               placeholder="Password"
+              haveError={passwordError==="" ? false : true}
+              errorText={passwordError}
               onChange={(event) => {
                 setPassword(event.target.value);
               }}
@@ -52,6 +58,18 @@ const LoginForm = () => {
                 id="submitButton"
                 className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => {
+                  if(account===""){
+                    setUsernameError("Username can't be empty.");
+                  }
+                  else{
+                    setUsernameError("");
+                  }
+                  if(password===""){
+                    setPasswordError("Password can't be empty.");
+                  }
+                  else{
+                    setPasswordError("");
+                  }
                   console.log(account);
                   console.log(password);
                 }}
