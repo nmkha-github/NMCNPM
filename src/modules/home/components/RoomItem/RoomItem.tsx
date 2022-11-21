@@ -1,9 +1,12 @@
 import { Box } from "@mui/material";
 import React from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+
+type RoomData = any;
 
 const RoomItem = ({ roomData }: { roomData: RoomData }) => {
-  let history = useHistory();
+  let navigate = useNavigate();
   return (
     <Box style={{
         backgroundColor: "rgba(240, 240, 240, 0.8)",
@@ -16,7 +19,7 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
         borderColor: "rgba(51, 51, 255, 1)",
         borderWidth: "thin",
         }}
-        onDoubleClick={()=>{history.push("/room/" + roomData.id + "/newsfeed");}}
+        onDoubleClick={()=>{navigate("/room/" + roomData.id + "/newsfeed");}}
     >
       <Box style = {{
         width: "100%",
@@ -32,11 +35,11 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
 
       <Box style = {{
           color: "black",
-          padding: "4% 3% 0 4%",
+          padding: "2% 3% 0 3%",
           float: "left",
           }}>
             <Box style ={{
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: "bold",
               overflow: "hidden",
               cursor: "pointer",
@@ -53,14 +56,14 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
       </Box>
       <Box>
           <BiDotsVerticalRounded style={{
-            width: "8%", 
-            height: "8%",
+            width: "17%", 
+            height: "17%",
             borderRadius: "5% 5% 0 0",
             float: "right",
             cursor: "pointer",
             padding: "4%",
             color: "black"
-            }} id = "demo"/>
+            }}/>
       </Box>
     </Box>
   );
