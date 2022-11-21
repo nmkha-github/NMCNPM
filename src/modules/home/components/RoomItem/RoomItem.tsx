@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import React from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 
-const RoomItem = ({ data }: { data: any }) => {
+const RoomItem = ({ roomData }: { roomData: RoomData }) => {
   return (
     <Box style={{
         backgroundColor: "rgba(240, 240, 240, 0.8)",
