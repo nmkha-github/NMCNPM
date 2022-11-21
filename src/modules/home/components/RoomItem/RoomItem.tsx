@@ -3,6 +3,7 @@ import React from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 
 const RoomItem = ({ roomData }: { roomData: RoomData }) => {
+  let history = useHistory();
   return (
     <Box style={{
         backgroundColor: "rgba(240, 240, 240, 0.8)",
@@ -15,13 +16,14 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
         borderColor: "rgba(51, 51, 255, 1)",
         borderWidth: "thin",
         }}
+        onDoubleClick={()=>{history.push("/room/" + roomData.id + "/newsfeed");}}
     >
       <Box style = {{
         width: "100%",
         height: 184,
         display: "block",
         }}>
-          <img src={data.avatar} alt="" style={{
+          <img src={roomData.avatar} alt="" style={{
               width: "100%", 
               height: "100%",
               borderRadius: "5% 5% 0 0",
@@ -39,14 +41,14 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
               overflow: "hidden",
               cursor: "pointer",
               }}>
-              {data.name}
+              {roomData.name}
             </Box>
 
             <Box style={{
               fontSize: 14,
               paddingTop: "3%"
               }}>
-              Mã phòng : {data.id}
+              Mã phòng : {roomData.id}
             </Box>
       </Box>
       <Box>
