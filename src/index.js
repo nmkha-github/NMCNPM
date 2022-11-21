@@ -1,20 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from './pages/HomePage/HomePage';
-import WorkPage from './pages/WorkPage/WorkPage';
-import RoomPage from './pages/RoomPage/RoomPage';
+import AppSnackbarProvider from './lib/provider/AppSnackBarProvider';
+import RoomsProvider from './lib/provider/RoomsProvider';
+import AppRoutes from './AppRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />}/>
-        <Route path="home" element={<HomePage />} />
-        <Route path="work" element={<WorkPage />} />
-        <Route path="room" element={<RoomPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AppSnackbarProvider>
+      <RoomsProvider>
+        <AppRoutes/>
+      </RoomsProvider>
+    </AppSnackbarProvider>
   </React.StrictMode>
 );
