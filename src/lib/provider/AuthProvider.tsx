@@ -39,7 +39,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
     } else {
       console.log(location.pathname);
       if (needAuth) {
-        navigate("/login");
+        //navigate("/login");
       }
     }
   });
