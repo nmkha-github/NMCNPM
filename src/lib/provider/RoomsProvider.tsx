@@ -30,11 +30,11 @@ const RoomsContext = createContext<RoomsContextProps>({
   updatingRoom: false,
 });
 
-interface TestContextProviderProps {
+interface RoomsContextProviderProps {
   children: React.ReactNode;
 }
 
-const RoomsProvider = ({ children }: TestContextProviderProps) => {
+const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const [rooms, setRooms] = useState<RoomData[]>([]);
   const [currentRoom, setCurrentRoom] = useState<RoomData>();
   const [loadingRooms, setLoadingRooms] = useState(false);
