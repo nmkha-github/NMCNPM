@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./LoginForm.css";
 import InputRow from "../InputRow/InputRow";
 import { Button, Typography } from "@mui/material";
+import EmailHelper from "../../../../lib/util/email-helper";
 const LoginForm = () => {
-  const [account, setAccount] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [usernameError,setUsernameError]=useState("");
+  const [emailError,setEmailError]=useState("");
   const [passwordError,setPasswordError]=useState("");
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -16,14 +17,14 @@ const LoginForm = () => {
               Sign in
             </h2>
             <InputRow
-              name="username"
-              id="username"
+              name="email"
+              id="email"
               type="text"
-              placeholder="Username"
-              haveError={usernameError==="" ? false : true}
-              errorText={usernameError}
+              placeholder="Email"
+              haveError={emailError==="" ? false : true}
+              errorText={emailError}
               onChange={(event) => {
-                setAccount(event.target.value);
+                setEmail(event.target.value);
               }}
             />
             <InputRow
@@ -58,11 +59,14 @@ const LoginForm = () => {
                 id="submitButton"
                 className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => {
-                  if(account===""){
-                    setUsernameError("Username can't be empty.");
+                  if(email===""){
+                    setEmailError("Email can't be empty.");
+                  }
+                  else if(EmailHelper.checkEmailValidate(email)==1){
+                    setEmailError("Invalid email format");
                   }
                   else{
-                    setUsernameError("");
+                    setEmailError("");
                   }
                   if(password===""){
                     setPasswordError("Password can't be empty.");
@@ -70,7 +74,7 @@ const LoginForm = () => {
                   else{
                     setPasswordError("");
                   }
-                  console.log(account);
+                  console.log(email);
                   console.log(password);
                 }}
               >
@@ -87,10 +91,10 @@ const LoginForm = () => {
           <div className="flex items-center justify-center">
             <a
               href="/register"
-              id="createNewAccountButton"
+              id="createNewEmailButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
-              Create New Account
+              Create New Email
             </a>
           </div>
         </div>

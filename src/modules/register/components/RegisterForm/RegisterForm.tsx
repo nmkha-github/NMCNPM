@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./RegisterForm.css";
 import InputRow from "../../../login/components/InputRow/InputRow";
 import { Button, Typography } from "@mui/material";
+import EmailHelper from "../../../../lib/util/email-helper";
 const RegisterForm = () => {
-  const [account, setAccount] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword,setConfirmPassword]=useState("");
-  const [usernameError,setUsernameError]=useState("");
+  const [EmailError,setEmailError]=useState("");
   const [passwordError,setPasswordError]=useState("");
   const [confirmPasswordError,setConfirmPasswordError]=useState("");
   return (
@@ -18,14 +19,14 @@ const RegisterForm = () => {
               Sign up
             </h2>
             <InputRow
-              name="username"
-              id="username"
+              name="email"
+              id="email"
               type="text"
-              placeholder="Username"
-              haveError={usernameError==="" ? false : true}
-              errorText={usernameError}
+              placeholder="Email"
+              haveError={EmailError==="" ? false : true}
+              errorText={EmailError}
               onChange={(event) => {
-                setAccount(event.target.value);
+                setEmail(event.target.value);
               }}
             />
             <InputRow
@@ -55,11 +56,14 @@ const RegisterForm = () => {
                 id="submitButton"
                 className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => {
-                  if(account===""){
-                    setUsernameError("Username can't be empty.");
+                  if(email===""){
+                    setEmailError("Email can't be empty.");
+                  }
+                  else if(EmailHelper.checkEmailValidate(email)==1){
+                    setEmailError("Invalid email format");
                   }
                   else{
-                    setUsernameError("");
+                    setEmailError("");
                   }
                   if(password===""){
                     setPasswordError("Password can't be empty.");
@@ -79,7 +83,7 @@ const RegisterForm = () => {
                   else{
                     setConfirmPasswordError("");
                   }
-                  console.log(account);
+                  console.log(email);
                   console.log(password);
                 }}
               >
