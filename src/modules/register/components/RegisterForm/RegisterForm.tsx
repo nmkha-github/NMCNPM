@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from "react";
-import "./LoginForm.css";
-import InputRow from "../InputRow/InputRow";
+import "./RegisterForm.css";
+import InputRow from "../../../login/components/InputRow/InputRow";
 import { Button, Typography } from "@mui/material";
 import EmailHelper from "../../../../lib/util/email-helper";
-const LoginForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailError,setEmailError]=useState("");
+  const [confirmpassword,setConfirmPassword]=useState("");
+  const [EmailError,setEmailError]=useState("");
   const [passwordError,setPasswordError]=useState("");
+  const [confirmPasswordError,setConfirmPasswordError]=useState("");
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="bg-white lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
           <div className="mt-8 space-y-6">
             <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
-              Sign in
+              Sign up
             </h2>
             <InputRow
               name="email"
               id="email"
               type="text"
               placeholder="Email"
-              haveError={emailError==="" ? false : true}
-              errorText={emailError}
+              haveError={EmailError==="" ? false : true}
+              errorText={EmailError}
               onChange={(event) => {
                 setEmail(event.target.value);
               }}
@@ -38,22 +40,17 @@ const LoginForm = () => {
                 setPassword(event.target.value);
               }}
             />
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Remember me
-                </label>
-              </div>
-            </div>
+            <InputRow
+              name="confirmpassword"
+              id="confirmpassword"
+              type="password"
+              placeholder="Confirm password"
+              haveError={confirmPasswordError==="" ? false : true}
+              errorText={confirmPasswordError}
+              onChange={(event) => {
+                setConfirmPassword(event.target.value);
+              }}
+            />
             <div>
               <Button
                 id="submitButton"
@@ -74,11 +71,23 @@ const LoginForm = () => {
                   else{
                     setPasswordError("");
                   }
+                  if(confirmpassword===""){
+                    setConfirmPasswordError("Confirm password can't be empty.");
+                  }
+                  else{
+                    setConfirmPasswordError("");
+                  }
+                  if(password!==confirmpassword){
+                    setConfirmPasswordError("Please make sure your password match.");
+                  }
+                  else{
+                    setConfirmPasswordError("");
+                  }
                   console.log(email);
                   console.log(password);
                 }}
               >
-                Sign in
+                Sign up
               </Button>
             </div>
           </div>
@@ -90,11 +99,11 @@ const LoginForm = () => {
           </div>
           <div className="flex items-center justify-center">
             <a
-              href="/register"
-              id="createNewEmailButton"
+              href="/login"
+              id="loginButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
-              Create New Email
+              Login
             </a>
           </div>
         </div>
@@ -103,4 +112,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
