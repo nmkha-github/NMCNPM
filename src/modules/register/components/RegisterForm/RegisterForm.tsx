@@ -1,29 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./RegisterForm.css";
 import InputRow from "../../../login/components/InputRow/InputRow";
 import { Button, Typography } from "@mui/material";
 import EmailHelper from "../../../../lib/util/email-helper";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../lib/provider/AuthProvider";
+
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmpassword,setConfirmPassword]=useState("");
-  const [EmailError,setEmailError]=useState("");
-  const [passwordError,setPasswordError]=useState("");
-  const [confirmPasswordError,setConfirmPasswordError]=useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
+  const [EmailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [registering, setRegistering] = useState(false);
+
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
+
+  const checkRegisterValid = useCallback(() => {
+    if (email === "") {
+      return false;
+    } else if (!EmailHelper.checkEmailValidate(email)) {
+      return false;
+    }
+    if (password === "") {
+      return false;
+    }
+    if (confirmpassword === "") {
+      return false;
+    }
+    if (password !== confirmpassword) {
+      return false;
+    }
+
+    return true;
+  }, [confirmpassword, email, password]);
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="bg-white lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
           <div className="mt-8 space-y-6">
             <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
-              Sign up
+              Đăng ký
             </h2>
             <InputRow
               name="email"
               id="email"
               type="text"
-              placeholder="Email"
-              haveError={EmailError==="" ? false : true}
+              placeholder="Nhập email để tạo tài khoản..."
+              haveError={EmailError === "" ? false : true}
               errorText={EmailError}
               onChange={(event) => {
                 setEmail(event.target.value);
@@ -32,9 +61,9 @@ const RegisterForm = () => {
             <InputRow
               name="password"
               id="password"
-              type="password"
+              type="Nhập mật khẩu..."
               placeholder="Password"
-              haveError={passwordError==="" ? false : true}
+              haveError={passwordError === "" ? false : true}
               errorText={passwordError}
               onChange={(event) => {
                 setPassword(event.target.value);
@@ -44,58 +73,63 @@ const RegisterForm = () => {
               name="confirmpassword"
               id="confirmpassword"
               type="password"
-              placeholder="Confirm password"
-              haveError={confirmPasswordError==="" ? false : true}
+              placeholder="Xác nhận mật khẩu..."
+              haveError={confirmPasswordError === "" ? false : true}
               errorText={confirmPasswordError}
               onChange={(event) => {
                 setConfirmPassword(event.target.value);
               }}
             />
-            <div>
-              <Button
-                id="submitButton"
-                className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                onClick={() => {
-                  if(email===""){
+
+            <Button
+              id="submitButton"
+              fullWidth
+              disabled={!checkRegisterValid() || registering}
+              variant="contained"
+              color="primary"
+              onClick={async (event) => {
+                if (!checkRegisterValid()) {
+                  if (email === "") {
                     setEmailError("Email can't be empty.");
-                  }
-                  else if(EmailHelper.checkEmailValidate(email)==1){
+                  } else if (!EmailHelper.checkEmailValidate(email)) {
                     setEmailError("Invalid email format");
                   }
-                  else{
-                    setEmailError("");
-                  }
-                  if(password===""){
+                  if (password === "") {
                     setPasswordError("Password can't be empty.");
                   }
-                  else{
-                    setPasswordError("");
-                  }
-                  if(confirmpassword===""){
+                  if (confirmpassword === "") {
                     setConfirmPasswordError("Confirm password can't be empty.");
                   }
-                  else{
-                    setConfirmPasswordError("");
+                  if (password !== confirmpassword) {
+                    setConfirmPasswordError(
+                      "Please make sure your password match."
+                    );
                   }
-                  if(password!==confirmpassword){
-                    setConfirmPasswordError("Please make sure your password match.");
-                  }
-                  else{
-                    setConfirmPasswordError("");
-                  }
-                  console.log(email);
-                  console.log(password);
-                }}
-              >
-                Sign up
-              </Button>
-            </div>
+                  return;
+                }
+
+                setRegistering(true);
+                try {
+                  await register({ email: email, password: password });
+
+                  showSnackbarSuccess("Tạo tài khoản thành công");
+
+                  navigate("/login");
+                } catch (error) {
+                  showSnackbarError(error);
+                } finally {
+                  setRegistering(false);
+                }
+              }}
+            >
+              Đăng ký
+            </Button>
           </div>
           <div
             id="seperator_login_register"
             className="flex my-4 items-center justify-center"
           >
-            <span className="mx-3">or</span>
+            <span className="mx-3">hoặc</span>
           </div>
           <div className="flex items-center justify-center">
             <a
@@ -103,7 +137,7 @@ const RegisterForm = () => {
               id="loginButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
-              Login
+              Quay lại đăng nhập
             </a>
           </div>
         </div>
