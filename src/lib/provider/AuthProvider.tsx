@@ -73,9 +73,13 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         await createUserWithEmailAndPassword(auth, email, password);
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
-          showSnackbarError("Email đã tồn tại");
+          throw "Email đã tồn tại";
+        } else if (
+          String(error).includes("Password should be at least 6 characters")
+        ) {
+          throw "Mật khẩu phải có ít nhất 6 kí tự";
         } else {
-          showSnackbarError(error);
+          throw error;
         }
       }
     },
@@ -88,9 +92,9 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         await signInWithEmailAndPassword(auth, email, password);
       } catch (error) {
         if (String(error).includes("user-not-found")) {
-          showSnackbarError("Tài khoản không tồn tại");
+          throw "Tài khoản không tồn tại";
         } else {
-          showSnackbarError(error);
+          throw error;
         }
       }
     },
@@ -105,23 +109,23 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
     }
   }, [auth, showSnackbarError]);
 
-  const authCheck = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      navigate("/home");
-      setUserId(user.uid);
-      setCheckingAuth(false);
-    } else {
-      if (needAuth) {
-        navigate("/login");
-      }
-    }
-  });
-
   useEffect(() => {
-    authCheck();
+    const authCheck = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+        setCheckingAuth(false);
+        if (!needAuth) {
+          navigate("/home");
+        }
+      } else {
+        if (needAuth) {
+          navigate("/login");
+        }
+      }
+    });
 
-    return authCheck();
-  }, [auth]);
+    return authCheck;
+  }, []);
 
   if (checkingAuth && needAuth)
     return (

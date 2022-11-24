@@ -142,6 +142,7 @@ const LeftSideBar = () => {
           {items.map((item, index) => {
             return (
               <MenuItem
+                key={`left-side-bar-${index}`}
                 className={classes.cssStyle7}
                 onClick={() => handleSelection(index)}
                 component={Link}
