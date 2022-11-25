@@ -68,7 +68,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const [joiningRoom, setJoiningRoom] = useState(false);
   const [deletingRoom, setDeletingRoom] = useState(false);
 
-  const { showSnackbarError } = useAppSnackbar();
+  const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
 
   const LIMIT_LOAD_ROOMS_PER_TIME = 10;
   const getRooms = useCallback(
@@ -166,6 +166,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         };
 
         setRooms([newRoom, ...rooms]);
+        showSnackbarSuccess("Tham gia phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);
       } finally {
