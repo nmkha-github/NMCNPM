@@ -26,7 +26,7 @@ const AppRoutes = () => {
       <Route path="room/:roomId/statistic" element={<StatisticPage />} />
       <Route path="room/:roomId/members" element={<MembersPage />} />
       <Route path="room/:roomId/work" element={<WorkPage />} />
-      <Route path="room/:roomId/setting-room" element={<SettingRoomPage />} />
+      <Route path="room/:roomId/setting-room" element={<SettingRoomPage name="NMCNPM" />} />
     </Routes>
   );
 };
