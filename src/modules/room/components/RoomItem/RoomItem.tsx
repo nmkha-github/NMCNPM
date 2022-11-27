@@ -2,11 +2,13 @@ import { Box } from "@mui/material";
 import React from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
-
-type RoomData = any;
+import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import RoomData from "../../interface/room-data";
 
 const RoomItem = ({ roomData }: { roomData: RoomData }) => {
+  const { setCurrentRoom } = useRooms();
   const navigate = useNavigate();
+
   return (
     <Box
       style={{
@@ -22,6 +24,7 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
       }}
       onDoubleClick={() => {
         navigate("/room/" + roomData.id + "/newsfeed");
+        setCurrentRoom(roomData);
       }}
     >
       <Box

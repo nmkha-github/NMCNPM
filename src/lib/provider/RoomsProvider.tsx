@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
+import ROOM_AVATAR_DEFAULT from "../../modules/room/constants/room-avatar-default";
 import RoomData from "../../modules/room/interface/room-data";
 import useAppSnackbar from "../hook/useAppSnackBar";
 
@@ -90,6 +91,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
               name: `Phòng ${rooms.length + index + 1}`,
               description: `Description ${rooms.length + index + 1}`,
               avatar: "",
+              created_at: "",
             };
           });
 
@@ -161,8 +163,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: id,
           name: `Phòng ${rooms.length}`,
           description: `Description of ${rooms.length + 1}`,
-          avatar:
-            "https://img.freepik.com/free-vector/hand-painted-watercolor-pastel-sky-background_23-2148902771.jpg?w=2000",
+          avatar: ROOM_AVATAR_DEFAULT,
+          created_at: "",
         };
 
         setRooms([newRoom, ...rooms]);
