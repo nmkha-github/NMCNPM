@@ -1,5 +1,5 @@
 import React,{ useState,useEffect } from "react";
-import { Box, Typography,Button,TextField } from "@mui/material";
+import { Box, Typography,Button,TextField,ButtonBase } from "@mui/material";
 import "./SettingRoomPage.css";
 import { Container,Switch } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
@@ -16,11 +16,13 @@ const SettingRoomPage = () => {
     const [roomEditData,setRoomEditData]
     =useState<RoomData>({id:"",name:"",avatar:"",created_at:""});
     useEffect(()=>{
-    setCurrentRoom({id: "abc", name: "room name",avatar:"hello",created_at:"ok"});
-    if(currentRoom!=undefined){
-    setRoomEditData(currentRoom);
-    };
+      setCurrentRoom({id: "abc", name: "room name",avatar:"hello",created_at:"ok",auto_accepted:true,locked:false,disabled_newsfeed:true,exit_locked:false});
     }, []);
+    useEffect(()=>{
+      if(currentRoom!=undefined){
+      setRoomEditData(currentRoom);
+      }
+    }, [currentRoom]);
   return <Box>
     <button 
     onClick={backToWorkspace}
@@ -55,7 +57,15 @@ const SettingRoomPage = () => {
         <h3>Khóa phòng ban</h3>
         </Box>
         </Box>
-        <Switch />
+        <Switch
+        checked={roomEditData==null ? false : roomEditData.locked} 
+        onChange={(event)=>{
+          var updated_value={locked:event.target.checked};
+          setRoomEditData(roomEditData=>({
+            ...roomEditData,
+            ...updated_value
+          }));
+        }} />
       </Box>
       <Box className="setting_row">
         <Box className="setting_name">
@@ -64,7 +74,15 @@ const SettingRoomPage = () => {
           <h3>Phê duyệt nhân viên</h3>
           </Box>
         </Box>
-        <Switch className="switch_icon" />
+        <Switch
+        checked={roomEditData==null ? false : roomEditData.auto_accepted} 
+        onChange={(event)=>{
+          var updated_value={auto_accepted:event.target.checked};
+          setRoomEditData(roomEditData=>({
+            ...roomEditData,
+            ...updated_value
+          }));
+        }} />
       </Box>
       <h5>Tránh tình trạng những nhân viên không có quyền vào phòng tham gia vào mà không có sự cho phép của quản lý</h5>
       <Box className="setting_row">
@@ -74,7 +92,15 @@ const SettingRoomPage = () => {
         <h3>Tắt hoạt động bảng tin</h3>
         </Box>
         </Box>
-        <Switch size="medium"/>
+        <Switch size="medium"
+        checked={roomEditData==null ? false : roomEditData.disabled_newsfeed} 
+        onChange={(event)=>{
+          var updated_value={disabled_newsfeed:event.target.checked};
+          setRoomEditData(roomEditData=>({
+            ...roomEditData,
+            ...updated_value
+          }));
+        }}/>
       </Box>
       <h5>Tắt mọi hoạt động đăng bài và bình luận</h5>
       <Box className="setting_row">
@@ -84,14 +110,22 @@ const SettingRoomPage = () => {
         <h3>Chặn nhân viên tự ý rời phòng ban</h3>
         </Box>
         </Box>
-        <Switch size="medium"/>
+        <Switch size="medium"
+        checked={roomEditData==null ? false : roomEditData.exit_locked} 
+        onChange={(event)=>{
+          var updated_value={exit_locked:event.target.checked};
+          setRoomEditData(roomEditData=>({
+            ...roomEditData,
+            ...updated_value
+          }));
+        }}/>
       </Box>
       <h5>Giúp dễ dàng quản lý nhân viên tốt hơn, tránh nhân viên tự ý thoát khỏi phòng</h5>
-      <button id="avatar_change">
-        <img className="image" />
+      <Button variant="outlined" id="avatar_change">
+        <img className="image" src=""/>
         <h1  id="change_image"><FileUploadSharpIcon sx={{ fontSize: 40 }}/>Chọn file để đổi ảnh</h1>
         <input type="file" hidden/>
-      </button>
+      </Button>
     </Container>
     </Box>;
 };

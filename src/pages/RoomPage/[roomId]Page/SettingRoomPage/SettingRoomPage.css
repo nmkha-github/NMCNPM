@@ -38,7 +38,9 @@ h3{
     align-items: center;
     flex-direction: column;
     border-color: black;
+    padding:0px;
     margin-top: 0.625rem;
+    overflow: hidden;
     cursor: pointer;
     border-width: 2px;
     height: 20rem;
