@@ -4,6 +4,7 @@ import { MenuItem } from '@mui/material';
 import { useState } from "react";
 import { BiLogIn, BiEdit, BiTrash } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import RoomData from "../../../room/interface/room-data";
 import RoomItem from "./RoomItem";
@@ -14,16 +15,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 const ITEM_HEIGHT = 48;
   
-export default function RoomItemMenu({roomData}: {roomData: RoomData}) {
+const RoomItemMenu = ({roomData}: {roomData: RoomData}) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
     const {deleteRoom} = useRooms();
+    const deletingRoom = useRooms();
     let navigate = useNavigate();
     return (
       <Box>
@@ -33,7 +29,7 @@ export default function RoomItemMenu({roomData}: {roomData: RoomData}) {
           aria-controls={open ? 'long-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}
           aria-haspopup="true"
-          onClick={handleClick}
+          onClick={(event: React.MouseEvent<HTMLElement>) => {setAnchorEl(event.currentTarget)}}
         >
           <MoreVertIcon />
         </IconButton>
@@ -44,7 +40,7 @@ export default function RoomItemMenu({roomData}: {roomData: RoomData}) {
           }}
           anchorEl={anchorEl}
           open={open}
-          onClose={handleClose}
+          onClose={()=>{setAnchorEl(null);}}
           PaperProps={{
             style: {
               maxHeight: ITEM_HEIGHT * 4.5,
@@ -52,21 +48,26 @@ export default function RoomItemMenu({roomData}: {roomData: RoomData}) {
             },
           }}
         >
-            <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/newsfeed");}}>
+            <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/newsfeed")}}>
                 <ListItemIcon>  <BiLogIn fontSize="large" />   </ListItemIcon>
                 <Typography variant="inherit">Vào phòng</Typography>
             </MenuItem>
         
-            <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/setting-room");}}>
+            <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/setting-room")}}>
                 <ListItemIcon>  <BiEdit fontSize="large" />    </ListItemIcon>
                 <Typography variant="inherit">Chỉnh sửa</Typography>
             </MenuItem>
-        
-            <MenuItem onClick = {()=>deleteRoom({id: roomData.id})}>
-                <ListItemIcon>  <BiTrash fontSize="large" />   </ListItemIcon>
-                <Typography variant="inherit" noWrap>Xóa phòng</Typography>
-            </MenuItem>
+            
+            {deletingRoom
+              ? <CircularProgress/>
+              : <MenuItem onClick={async () => await deleteRoom({id: roomData.id})}>
+                  <ListItemIcon>  <BiTrash fontSize="large" />   </ListItemIcon>
+                  <Typography variant="inherit" noWrap>Xóa phòng</Typography>
+              </MenuItem> 
+            }
         </Menu>
       </Box>
     );
 }
+
+export default RoomItemMenu;
