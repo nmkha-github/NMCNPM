@@ -1,21 +1,15 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Fade,
   Menu,
   MenuItem,
-  TextField,
   Typography,
 } from "@material-ui/core";
 import AddIcon from "@mui/icons-material/Add";
 import * as React from "react";
-import CreateRoomDialog from "./CreateRoomDialog";
-import JoinRoomDialog from "./JoinRoomDialog";
+import CreateRoomDialog from "../CreateRoomDialog/CreateRoomDialog";
+import JoinRoomDialog from "../JoinRoomDialog/JoinRoomDialog";
 
 const AddRoomButton = () => {
   const [openMenu, setOpenMenu] = React.useState(false);

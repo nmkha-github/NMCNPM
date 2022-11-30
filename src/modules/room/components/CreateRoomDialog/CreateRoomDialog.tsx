@@ -14,6 +14,8 @@ import {
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
+import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import ROOM_AVATAR_DEFAULT from "../../constants/room-avatar-default";
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -42,6 +44,7 @@ const CreateRoomDialog = (dialogProps: DialogProps) => {
   const [key, setKey] = useState("");
   const [agree, setAgree] = useState(false);
 
+  const { createRoom, creatingRoom } = useRooms();
   const { logOut } = useAuth();
 
   const classes = useStyle();
@@ -52,6 +55,13 @@ const CreateRoomDialog = (dialogProps: DialogProps) => {
 
       <form
         onSubmit={async (event) => {
+          await createRoom({
+            id: "",
+            avatar: ROOM_AVATAR_DEFAULT,
+            name: "",
+            created_at: "",
+            description: description,
+          });
           event.preventDefault();
         }}
       >
