@@ -9,11 +9,6 @@ import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import RoomData from "../../../../modules/room/interface/room-data";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 
-const backToWorkspace = () => {
-  const newPath = window.location.pathname.split("/").slice(0, 3).join("/");
-  window.location.pathname = newPath;
-};
-
 const SettingRoomPage = () => {
   const navigate = useNavigate();
   const [roomEditData, setRoomEditData] = useState<RoomData>({
@@ -52,7 +47,7 @@ const SettingRoomPage = () => {
     <Box>
       <Button
         onClick={() => {
-          navigate("/room/" + roomEditData.id);
+          navigate("/room/" + roomEditData.id+"/newsfeed");
         }}
         className="back_to_workspace"
       >
