@@ -45,16 +45,25 @@ const SettingRoomPage = () => {
 
   return (
     <Box>
-      <Button
+      <button
         onClick={() => {
-          navigate("/room/" + roomEditData.id+"/newsfeed");
+          navigate("/room/" + roomEditData.id + "/newsfeed");
         }}
         className="back_to_workspace"
       >
         <ArrowBackSharpIcon /> Back to workspace
-      </Button>
+      </button>
 
-      <Container maxWidth="sm">
+      <Container
+        maxWidth="sm"
+        style={{
+          border: "1px solid",
+          marginTop: "1.25rem",
+          marginBottom: "3rem",
+          paddingBottom: "2.25rem",
+          borderRadius: 8,
+        }}
+      >
         <h2>Cài đặt</h2>
         <Box className="setting_row">
           <Box className="setting_name">
@@ -69,7 +78,7 @@ const SettingRoomPage = () => {
           className="room_name"
           type="text"
           onChange={(event) => {
-            setRoomEditData( {
+            setRoomEditData({
               ...roomEditData,
               name: event.target.value,
             });
@@ -88,7 +97,7 @@ const SettingRoomPage = () => {
           <Switch
             checked={roomEditData == null ? false : roomEditData.locked}
             onChange={(event) => {
-              setRoomEditData( {
+              setRoomEditData({
                 ...roomEditData,
                 locked: event.target.checked,
               });
@@ -104,11 +113,9 @@ const SettingRoomPage = () => {
             </Box>
           </Box>
           <Switch
-            checked={
-              roomEditData == null ? false : roomEditData.auto_accepted
-            }
+            checked={roomEditData == null ? false : roomEditData.auto_accepted}
             onChange={(event) => {
-              setRoomEditData( {
+              setRoomEditData({
                 ...roomEditData,
                 auto_accepted: event.target.checked,
               });
@@ -131,12 +138,10 @@ const SettingRoomPage = () => {
           <Switch
             size="medium"
             checked={
-              roomEditData == null
-                ? false
-                : roomEditData.disabled_newsfeed
+              roomEditData == null ? false : roomEditData.disabled_newsfeed
             }
             onChange={(event) => {
-              setRoomEditData( {
+              setRoomEditData({
                 ...roomEditData,
                 disabled_newsfeed: event.target.checked,
               });
@@ -157,7 +162,7 @@ const SettingRoomPage = () => {
             size="medium"
             checked={roomEditData == null ? false : roomEditData.exit_locked}
             onChange={(event) => {
-              setRoomEditData( {
+              setRoomEditData({
                 ...roomEditData,
                 exit_locked: event.target.checked,
               });
@@ -178,6 +183,11 @@ const SettingRoomPage = () => {
           </h1>
           <input type="file" hidden />
         </Button>
+        <Box className="df" style={{justifyContent:"flex-end !important"}} >
+          <Button variant="outlined" style={{margin:"0.625rem"}}>Hủy thay đổi</Button>
+          <Button variant="contained" color="primary" >Lưu lại</Button>
+          
+        </Box>
       </Container>
     </Box>
   );

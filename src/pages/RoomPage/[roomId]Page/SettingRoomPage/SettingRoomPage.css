@@ -6,12 +6,12 @@ h2{
     margin-bottom: 1.25rem;
 }
 .back_to_workspace{
-    display: inline;
     position:absolute;
     margin-top: 0.1rem;
     margin-left: 0.625rem;
-    color:black;
     font-size: 1rem;
+    color: black;
+    display: inline;
 }
 .room_name{
     font-size: 1.25rem;
