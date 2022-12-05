@@ -11,6 +11,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  User,
 } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
@@ -21,7 +22,7 @@ import useAppSnackbar from "../hook/useAppSnackBar";
 interface AuthContextProps {
   checkingAuth: boolean;
 
-  userId: string;
+  userInfo: User | null;
   register: ({
     email,
     password,
@@ -42,7 +43,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   checkingAuth: true,
 
-  userId: "",
+  userInfo: null,
   register: async () => {},
   logIn: async () => {},
   logOut: async () => {},
@@ -56,7 +57,7 @@ initializeApp(FirebaseConfig);
 
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [userId, setUserId] = useState("");
+  const [userInfo, setUserInfo] = useState<User | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,20 +113,25 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   useEffect(() => {
     const authCheck = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid);
         setCheckingAuth(false);
-        if (!needAuth) {
-          navigate("/home");
-        }
-      } else {
-        if (needAuth) {
-          navigate("/login");
-        }
       }
+      setUserInfo(user);
     });
 
     return authCheck;
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      if (!needAuth) {
+        navigate("/home");
+      }
+    } else {
+      if (needAuth) {
+        navigate("/login");
+      }
+    }
+  }, [needAuth, userInfo]);
 
   if (checkingAuth && needAuth)
     return (
@@ -139,7 +145,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       value={{
         checkingAuth,
 
-        userId,
+        userInfo,
         register,
         logIn,
         logOut,
