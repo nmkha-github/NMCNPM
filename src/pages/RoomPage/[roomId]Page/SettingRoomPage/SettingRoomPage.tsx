@@ -183,9 +183,9 @@ const SettingRoomPage = () => {
           </h1>
           <input type="file" hidden />
         </Button>
-        <Box className="df" style={{justifyContent:"flex-end !important"}} >
+        <Box className="df" sx={{display:'flex',justifyContent:'flex-end'}} >
           <Button variant="outlined" style={{margin:"0.625rem"}}>Hủy thay đổi</Button>
-          <Button variant="contained" color="primary" >Lưu lại</Button>
+          <Button variant="contained" color="primary" style={{margin:"0.625rem"}}>Lưu lại</Button>
           
         </Box>
       </Container>
