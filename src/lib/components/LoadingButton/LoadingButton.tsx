@@ -12,8 +12,12 @@ const LoadingButton = ({
   return (
     <Button
       disabled={loading || buttonProps.disabled}
-      style={{ textTransform: "none", padding: "12px 16px 12px 16px" }}
       {...buttonProps}
+      style={{
+        textTransform: "none",
+        padding: "12px 16px 12px 16px",
+        ...buttonProps.style,
+      }}
       startIcon={
         loading ? (
           <CircularProgress size="20px" color="inherit" />
