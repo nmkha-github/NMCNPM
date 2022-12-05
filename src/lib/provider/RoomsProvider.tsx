@@ -14,6 +14,9 @@ interface RoomsContextProps {
   loadingMoreRooms: boolean;
   loadedAllRooms: boolean;
 
+  createRoom: (payload: RoomData) => Promise<void>;
+  creatingRoom: boolean;
+
   updateRoom: (payload: {
     id: string;
     updateData?: {
@@ -45,6 +48,9 @@ const RoomsContext = createContext<RoomsContextProps>({
   loadingMoreRooms: false,
   loadedAllRooms: false,
 
+  createRoom: async () => {},
+  creatingRoom: false,
+
   updateRoom: async () => {},
   updatingRoom: false,
 
@@ -65,6 +71,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [loadingMoreRooms, setLoadingMoreRooms] = useState(false);
   const [loadedAllRooms, setLoadedAllRooms] = useState(false);
+  const [creatingRoom, setCreatingRoom] = useState(false);
   const [updatingRoom, setUpdatingRoom] = useState(false);
   const [joiningRoom, setJoiningRoom] = useState(false);
   const [deletingRoom, setDeletingRoom] = useState(false);
@@ -114,6 +121,21 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         } else {
           setLoadingRooms(false);
         }
+      }
+    },
+    [rooms, showSnackbarError]
+  );
+
+  const createRoom = useCallback(
+    async (newRoom: RoomData) => {
+      setCreatingRoom(true);
+      try {
+        setRooms([newRoom, ...rooms]);
+        showSnackbarSuccess("Tạo phòng ban thành công");
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setCreatingRoom(false);
       }
     },
     [rooms, showSnackbarError]
@@ -204,6 +226,9 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         loadingRooms,
         loadingMoreRooms,
         loadedAllRooms,
+
+        createRoom,
+        creatingRoom,
 
         updateRoom,
         updatingRoom,

@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 import { useAuth } from "../../lib/provider/AuthProvider";
+import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
 
 const HomePage = () => {
@@ -14,6 +15,9 @@ const HomePage = () => {
       <Button variant="contained" onClick={async () => await logOut()}>
         Sign Out
       </Button>
+
+      <AddRoomButton />
+
       <RoomItem
         roomData={{
           id: "SHUBA1",
