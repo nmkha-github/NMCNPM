@@ -114,7 +114,7 @@ const RegisterForm = () => {
 
                   showSnackbarSuccess("Tạo tài khoản thành công");
 
-                  navigate("/login");
+                  navigate("/home");
                 } catch (error) {
                   showSnackbarError(error);
                 } finally {

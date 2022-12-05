@@ -82,7 +82,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const getRooms = useCallback(
     async ({ limit, skip }: { limit?: number; skip?: number }) => {
       const _limit = limit ?? LIMIT_LOAD_ROOMS_PER_TIME;
-      const _skip = skip ?? 0;
+      const _skip = skip ?? rooms.length;
       if (skip && skip > 0) {
         setLoadingMoreRooms(true);
       } else {
