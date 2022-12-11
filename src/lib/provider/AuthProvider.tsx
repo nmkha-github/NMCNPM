@@ -15,9 +15,10 @@ import {
 } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import { initializeApp } from "firebase/app";
-import FirebaseConfig from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../config/firebase-config";
+import USER_AVATAR_DEFAULT from "../constants/user-avatar-default";
 
 interface AuthContextProps {
   checkingAuth: boolean;
@@ -53,8 +54,6 @@ interface AuthContextProviderProps {
   children: React.ReactNode;
 }
 
-initializeApp(FirebaseConfig);
-
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [userInfo, setUserInfo] = useState<User | null>(null);
@@ -71,7 +70,18 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userResponse = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await addDoc(collection(db, "user"), {
+          id: userResponse.user.uid,
+          name: email,
+          email: email,
+          avatar: USER_AVATAR_DEFAULT,
+        });
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
           throw "Email đã tồn tại";
