@@ -42,7 +42,11 @@ interface RoomsContextProps {
   loadingMoreRooms: boolean;
   loadedAllRooms: boolean;
 
-  createRoom: (payload: {}) => Promise<void>;
+  createRoom: (newRoom: {
+    name?: string;
+    description?: string;
+    avatar?: string;
+  }) => Promise<void>;
   creatingRoom: boolean;
 
   updateRoom: (payload: {
@@ -178,7 +182,11 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   );
 
   const createRoom = useCallback(
-    async (newRoom: any) => {
+    async (newRoom: {
+      name?: string;
+      description?: string;
+      avatar?: string;
+    }) => {
       if (!user?.id) return;
 
       setCreatingRoom(true);
@@ -198,7 +206,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           created_at: time,
         });
 
-        setRooms([newRoom, ...rooms]);
+        setRooms([newRoom as RoomData, ...rooms]);
         showSnackbarSuccess("Tạo phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);
