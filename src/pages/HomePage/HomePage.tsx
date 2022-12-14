@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 import { useAuth } from "../../lib/provider/AuthProvider";
+import { useRooms } from "../../lib/provider/RoomsProvider";
+import { useUser } from "../../lib/provider/UserProvider";
 import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
 
@@ -8,7 +10,10 @@ const HomePage = () => {
   const dataName = false;
 
   const { logOut } = useAuth();
-  useEffect(() => {}, []);
+  const { getRooms } = useRooms();
+  useEffect(() => {
+    getRooms({ getStart: 0 });
+  }, []);
 
   return (
     <div>

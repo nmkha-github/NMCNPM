@@ -16,7 +16,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import useAppSnackbar from "../hook/useAppSnackBar";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase-config";
 import USER_AVATAR_DEFAULT from "../constants/user-avatar-default";
 
@@ -70,17 +70,22 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       try {
-        const userResponse = await createUserWithEmailAndPassword(
+        const authReponse = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
 
-        await addDoc(collection(db, "user"), {
-          id: userResponse.user.uid,
+        const response = await addDoc(collection(db, "user"), {
           name: email,
           email: email,
           avatar: USER_AVATAR_DEFAULT,
+          created_at: new Date(),
+        });
+
+        await updateDoc(doc(db, "user", response.id), {
+          id: response.id,
+          auth_id: authReponse.user.uid,
         });
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
@@ -104,6 +109,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       } catch (error) {
         if (String(error).includes("user-not-found")) {
           throw "Tài khoản không tồn tại";
+        } else if (String(error).includes("auth/wrong-password")) {
+          throw "Sai mật khẩu";
         } else {
           throw error;
         }
@@ -141,7 +148,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         navigate("/login");
       }
     }
-  }, [needAuth, userInfo]);
+  }, [navigate, needAuth, userInfo]);
 
   if (checkingAuth && needAuth)
     return (

@@ -1,4 +1,12 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import React, {
   createContext,
   useCallback,
@@ -45,20 +53,23 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
 
   const { showSnackbarError } = useAppSnackbar();
   const { userInfo } = useAuth();
-  const userFromAuth = userInfo?.uid || "";
 
   const getUser = useCallback(async () => {
     try {
       setLoadingUser(true);
-      const userResponse = await getDoc(doc(db, "user", userFromAuth));
 
-      setUser(userResponse.data() as UserData);
+      const usersResponse = await getDocs(
+        query(collection(db, "user"), where("auth_id", "==", userInfo?.uid))
+      );
+      usersResponse.forEach((userResponse) => {
+        setUser(userResponse.data() as UserData);
+      });
     } catch (error) {
       showSnackbarError(error);
     } finally {
       setLoadingUser(false);
     }
-  }, [userInfo]);
+  }, [showSnackbarError, userInfo?.uid]);
 
   const editUser = useCallback(
     async ({
@@ -70,7 +81,13 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
     }) => {
       try {
         setEditingUser(true);
-        await updateDoc(doc(db, "user", id), fields);
+
+        const docsResponse = await getDocs(
+          query(collection(db, "user"), where("id", "==", id))
+        );
+        docsResponse.forEach(async (doc) => {
+          await updateDoc(doc.ref, fields);
+        });
 
         setUser({ ...user, ...fields } as UserData);
       } catch (error) {
@@ -79,16 +96,20 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
         setEditingUser(false);
       }
     },
-    []
+    [user]
   );
 
   useEffect(() => {
+    console.log(userInfo);
     if (userInfo) {
       getUser();
     } else {
       setUser(undefined);
     }
   }, [userInfo]);
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <UserContext.Provider
