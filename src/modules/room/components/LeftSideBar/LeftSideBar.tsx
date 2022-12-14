@@ -104,7 +104,7 @@ const LeftSideBar = () => {
       label: "Thành viên",
       icon: <PeopleAltOutlinedIcon />,
       filledIcon: <PeopleAltIcon />,
-      href: "/members",
+      href: "/member",
     },
   ];
 

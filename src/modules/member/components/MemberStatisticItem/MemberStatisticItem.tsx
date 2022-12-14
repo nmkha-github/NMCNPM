@@ -76,7 +76,7 @@ const MemberStatisticItem = ({ memberData }: MemberStatisticItemProps) => {
       <Box className={classes.item + " " + classes.item2}>
         <MoreVertIcon
           onClick={() =>
-            navigate("/room/" + roomId + "/" + memberData.id + "/member")
+            navigate("/room/" + roomId + "/member/" + memberData.id)
           }
         />
       </Box>
