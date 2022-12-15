@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import "./RegisterForm.css";
 import InputRow from "../../../login/components/InputRow/InputRow";
-import { Button, Typography } from "@mui/material";
 import EmailHelper from "../../../../lib/util/email-helper";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
+import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -81,12 +81,13 @@ const RegisterForm = () => {
               }}
             />
 
-            <Button
-              id="submitButton"
+            <LoadingButton
               fullWidth
               disabled={!checkRegisterValid() || registering}
+              loading={registering}
               variant="contained"
               color="primary"
+              style={{ borderRadius: 16 }}
               onClick={async (event) => {
                 if (!checkRegisterValid()) {
                   if (email === "") {
@@ -114,7 +115,7 @@ const RegisterForm = () => {
 
                   showSnackbarSuccess("Tạo tài khoản thành công");
 
-                  navigate("/login");
+                  navigate("/home");
                 } catch (error) {
                   showSnackbarError(error);
                 } finally {
@@ -123,7 +124,7 @@ const RegisterForm = () => {
               }}
             >
               Đăng ký
-            </Button>
+            </LoadingButton>
           </div>
           <div
             id="seperator_login_register"

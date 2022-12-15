@@ -11,17 +11,19 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  User,
 } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import { initializeApp } from "firebase/app";
-import FirebaseConfig from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase-config";
+import USER_AVATAR_DEFAULT from "../constants/user-avatar-default";
 
 interface AuthContextProps {
   checkingAuth: boolean;
 
-  userId: string;
+  userInfo: User | null;
   register: ({
     email,
     password,
@@ -42,7 +44,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   checkingAuth: true,
 
-  userId: "",
+  userInfo: null,
   register: async () => {},
   logIn: async () => {},
   logOut: async () => {},
@@ -52,11 +54,9 @@ interface AuthContextProviderProps {
   children: React.ReactNode;
 }
 
-initializeApp(FirebaseConfig);
-
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [userId, setUserId] = useState("");
+  const [userInfo, setUserInfo] = useState<User | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,7 +70,23 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const authReponse = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        const response = await addDoc(collection(db, "user"), {
+          name: email,
+          email: email,
+          avatar: USER_AVATAR_DEFAULT,
+          created_at: new Date(),
+        });
+
+        await updateDoc(doc(db, "user", response.id), {
+          id: response.id,
+          auth_id: authReponse.user.uid,
+        });
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
           throw "Email đã tồn tại";
@@ -93,6 +109,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       } catch (error) {
         if (String(error).includes("user-not-found")) {
           throw "Tài khoản không tồn tại";
+        } else if (String(error).includes("auth/wrong-password")) {
+          throw "Sai mật khẩu";
         } else {
           throw error;
         }
@@ -112,20 +130,25 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   useEffect(() => {
     const authCheck = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid);
         setCheckingAuth(false);
-        if (!needAuth) {
-          navigate("/home");
-        }
-      } else {
-        if (needAuth) {
-          navigate("/login");
-        }
       }
+      setUserInfo(user);
     });
 
     return authCheck;
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      if (!needAuth) {
+        navigate("/home");
+      }
+    } else {
+      if (needAuth) {
+        navigate("/login");
+      }
+    }
+  }, [navigate, needAuth, userInfo]);
 
   if (checkingAuth && needAuth)
     return (
@@ -139,7 +162,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       value={{
         checkingAuth,
 
-        userId,
+        userInfo,
         register,
         logIn,
         logOut,
