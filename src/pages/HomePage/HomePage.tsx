@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import React, { useEffect } from "react";
+import Header from "../../lib/components/Header/Header";
 import { useAuth } from "../../lib/provider/AuthProvider";
 import { useRooms } from "../../lib/provider/RoomsProvider";
 import { useUser } from "../../lib/provider/UserProvider";
@@ -17,6 +18,7 @@ const HomePage = () => {
 
   return (
     <div>
+      <Header />
       <Button variant="contained" onClick={async () => await logOut()}>
         Sign Out
       </Button>
