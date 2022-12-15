@@ -100,16 +100,12 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
   );
 
   useEffect(() => {
-    console.log(userInfo);
     if (userInfo) {
       getUser();
     } else {
       setUser(undefined);
     }
   }, [userInfo]);
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <UserContext.Provider
