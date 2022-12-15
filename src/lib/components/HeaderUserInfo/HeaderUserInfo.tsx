@@ -33,20 +33,6 @@ const useStyle = makeStyles((theme) => ({
     verticalAlign: "middle",
     transition: "box-shadow 0.4s ease",
   },
-  menu: {
-    "&::before": {
-      content: '""',
-      display: "block",
-      position: "absolute",
-      top: 0,
-      right: 14,
-      width: 10,
-      height: 10,
-      bgcolor: "#ffffff",
-      transform: "translateY(-50%) rotate(45deg)",
-      zIndex: 0,
-    },
-  },
   accountContainer: {
     display: "flex",
     alignItems: "center",
@@ -61,7 +47,6 @@ const useStyle = makeStyles((theme) => ({
 
 const HeaderUserInfo = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const classes = useStyle();
   const { user } = useUser();
   const { logOut } = useAuth();
@@ -77,9 +62,9 @@ const HeaderUserInfo = () => {
             onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
               setAnchorEl(event.currentTarget)
             }
-            aria-controls={open ? "basic-menu" : undefined}
+            aria-controls={!!anchorEl ? "basic-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={!!anchorEl ? "true" : undefined}
           >
             <Avatar src={user?.avatar} alt="User avatar" />
           </IconButton>
@@ -89,13 +74,12 @@ const HeaderUserInfo = () => {
       <Popover
         id="user-info-menu"
         anchorEl={anchorEl}
-        open={open}
+        open={!!anchorEl}
         onClose={() => setAnchorEl(null)}
         aria-labelledby="user-info-button"
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         TransitionComponent={Fade}
-        className={classes.menu}
       >
         <Box className={classes.accountContainer}>
           <Avatar
