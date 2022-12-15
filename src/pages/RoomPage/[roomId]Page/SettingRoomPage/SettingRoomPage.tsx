@@ -147,7 +147,7 @@ const SettingRoomPage = () => {
               }}
             />
           </Box>
-          
+
           <h5>
             Tránh tình trạng những nhân viên không có quyền vào phòng tham gia
             vào mà không có sự cho phép của quản lý
@@ -212,12 +212,15 @@ const SettingRoomPage = () => {
             className="df"
             sx={{ display: "flex", justifyContent: "flex-end" }}
           >
-            <Button variant="outlined" style={{ margin: "0.625rem" }}
-            onClick={()=>{
-              if(currentRoom!==undefined){
-                setRoomEditData(currentRoom);
-              }
-            }}>
+            <Button
+              variant="outlined"
+              style={{ margin: "0.625rem" }}
+              onClick={() => {
+                if (currentRoom !== undefined) {
+                  setRoomEditData(currentRoom);
+                }
+              }}
+            >
               Hủy thay đổi
             </Button>
             <LoadingButton
@@ -231,13 +234,13 @@ const SettingRoomPage = () => {
                 try {
                   if (roomEditData !== undefined) {
                     await updateRoom({
-                      id: roomId||"",
+                      id: roomId || "",
                       updateData: roomEditData,
                     });
                     showSnackbarSuccess(
                       "Cập nhật tùy chỉnh phòng ban thành công."
                     );
-                    getCurrentRoom(roomId||"");
+                    getCurrentRoom(roomId || "");
                   }
                 } catch (error) {
                   showSnackbarError(error);
