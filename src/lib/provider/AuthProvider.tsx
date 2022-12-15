@@ -135,7 +135,9 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
           navigate("/home");
         }
       } else {
-        navigate("/login");
+        if (needAuth) {
+          navigate("/login");
+        }
       }
       setUserInfo(user);
     });
