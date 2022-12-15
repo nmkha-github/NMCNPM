@@ -36,9 +36,6 @@ const SettingRoomPage = () => {
     }
   }, [currentRoom]);
 
-  useEffect(() => {
-    console.log(roomEditData);
-  }, [roomEditData]);
 
   return (
     <Box>
