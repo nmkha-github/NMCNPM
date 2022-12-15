@@ -9,6 +9,8 @@ interface RoomData{
   manager_id?: number;
   auto_accepted?: boolean;
   disabled_newsfeed?: boolean;
+  locked?: boolean;
+  exit_locked?: boolean;
 }
 
 export default RoomData;
