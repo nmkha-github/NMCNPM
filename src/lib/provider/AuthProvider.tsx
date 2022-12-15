@@ -129,6 +129,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
   useEffect(() => {
     const authCheck = onAuthStateChanged(auth, (user) => {
+      setUserInfo(user);
       if (user) {
         setCheckingAuth(false);
         if (!needAuth) {
@@ -139,7 +140,6 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
           navigate("/login");
         }
       }
-      setUserInfo(user);
     });
 
     return authCheck;

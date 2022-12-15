@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Checkbox,
   Dialog,
   DialogActions,
@@ -12,7 +10,7 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
-import { Timestamp } from "firebase/firestore";
+import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
@@ -74,12 +72,9 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
 
         <TextField
           autoFocus
-          margin="dense"
           label="Tên phòng:"
-          type="text"
           required
           fullWidth
-          variant="standard"
           onChange={(event) => {
             setName(event.target.value);
           }}
@@ -91,7 +86,6 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           multiline
           maxRows={5}
           rows={2}
-          type="text"
           fullWidth
           variant="standard"
           onChange={(event) => {
@@ -130,6 +124,7 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           onClick={() => {
             dialogProps.onClose?.({}, "backdropClick");
           }}
+          style={{ padding: 8 }}
         >
           HỦY
         </Button>
@@ -143,7 +138,10 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
             });
             dialogProps.onClose?.({}, "backdropClick");
           }}
+          variant="contained"
+          color="primary"
           loading={creatingRoom}
+          style={{ padding: 8 }}
           disabled={name === "" || !agree || creatingRoom}
         >
           TẠO
