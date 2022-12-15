@@ -52,13 +52,15 @@ interface RoomsContextProps {
 
   updateRoom: (payload: {
     id: string;
-    updateData?: {
+    updateData: {
       name?: string;
       avatar?: string;
       description?: string;
-      manager_id?: number;
+      manager_id?: string;
       auto_accepted?: boolean;
       disabled_newsfeed?: boolean;
+      locked?: boolean;
+      exit_locked?: boolean;
     };
   }) => Promise<void>;
   updatingRoom: boolean;
@@ -238,13 +240,15 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       updateData,
     }: {
       id: string;
-      updateData?: {
+      updateData: {
         name?: string;
         avatar?: string;
         description?: string;
-        manager_id?: number;
+        manager_id?: string;
         auto_accepted?: boolean;
         disabled_newsfeed?: boolean;
+        locked?: boolean;
+        exit_locked?: boolean;
       };
     }) => {
       setUpdatingRoom(true);

@@ -1,194 +1,150 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, TextField, ButtonBase } from "@mui/material";
+import React, { useCallback, useState } from "react";
+import "./RegisterForm.css";
+import InputRow from "../../../login/components/InputRow/InputRow";
+import EmailHelper from "../../../../lib/util/email-helper";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { useNavigate } from "react-router-dom";
-import "./SettingRoomPage.css";
-import { Container, Switch } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
-import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
-import RoomData from "../../../../modules/room/interface/room-data";
-import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import { useAuth } from "../../../../lib/provider/AuthProvider";
+import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 
-const SettingRoomPage = () => {
+const RegisterForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
+  const [EmailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [registering, setRegistering] = useState(false);
+
+  const { register } = useAuth();
   const navigate = useNavigate();
-  const [roomEditData, setRoomEditData] = useState<RoomData>({
-    id: "",
-    name: "",
-    avatar: "",
-    created_at: "",
-  });
+  const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
 
-  const { currentRoom } = useRooms();
-
-  useEffect(() => {
-    console.log(currentRoom);
-    if (currentRoom != undefined) {
-      setRoomEditData(currentRoom);
+  const checkRegisterValid = useCallback(() => {
+    if (email === "") {
+      return false;
+    } else if (!EmailHelper.checkEmailValidate(email)) {
+      return false;
     }
-  }, [currentRoom]);
+    if (password === "") {
+      return false;
+    }
+    if (confirmpassword === "") {
+      return false;
+    }
+    if (password !== confirmpassword) {
+      return false;
+    }
 
-  useEffect(() => {
-    console.log(roomEditData);
-  }, [roomEditData]);
+    return true;
+  }, [confirmpassword, email, password]);
 
   return (
-    <Box>
-      <button
-        onClick={() => {
-          navigate("/room/" + roomEditData.id + "/newsfeed");
-        }}
-        className="back_to_workspace"
-      >
-        <ArrowBackSharpIcon /> Back to workspace
-      </button>
+    <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div className="bg-white lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+          <div className="mt-8 space-y-6">
+            <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
+              Đăng ký
+            </h2>
+            <InputRow
+              name="email"
+              id="email"
+              type="text"
+              placeholder="Nhập email để tạo tài khoản..."
+              haveError={EmailError === "" ? false : true}
+              errorText={EmailError}
+              onChange={(event) => {
+                setEmail(event.target.value);
+              }}
+            />
+            <InputRow
+              name="password"
+              id="password"
+              type="Nhập mật khẩu..."
+              placeholder="Password"
+              haveError={passwordError === "" ? false : true}
+              errorText={passwordError}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+            />
+            <InputRow
+              name="confirmpassword"
+              id="confirmpassword"
+              type="password"
+              placeholder="Xác nhận mật khẩu..."
+              haveError={confirmPasswordError === "" ? false : true}
+              errorText={confirmPasswordError}
+              onChange={(event) => {
+                setConfirmPassword(event.target.value);
+              }}
+            />
 
-      <Container
-        maxWidth="sm"
-        style={{
-          border: "1px solid",
-          marginTop: "1.25rem",
-          marginBottom: "3rem",
-          paddingBottom: "2.25rem",
-          borderRadius: 8,
-        }}
-      >
-        <h2>Cài đặt</h2>
-        <Box className="setting_row">
-          <Box className="setting_name">
-            <AddIcon fontSize="medium" />
-            <Box className="setting_description">
-              <h3>Tên phòng ban</h3>
-            </Box>
-          </Box>
-        </Box>
+            <LoadingButton
+              fullWidth
+              disabled={!checkRegisterValid() || registering}
+              loading={registering}
+              variant="contained"
+              color="primary"
+              style={{ borderRadius: 16 }}
+              onClick={async (event) => {
+                if (!checkRegisterValid()) {
+                  if (email === "") {
+                    setEmailError("Email can't be empty.");
+                  } else if (!EmailHelper.checkEmailValidate(email)) {
+                    setEmailError("Invalid email format");
+                  }
+                  if (password === "") {
+                    setPasswordError("Password can't be empty.");
+                  }
+                  if (confirmpassword === "") {
+                    setConfirmPasswordError("Confirm password can't be empty.");
+                  }
+                  if (password !== confirmpassword) {
+                    setConfirmPasswordError(
+                      "Please make sure your password match."
+                    );
+                  }
+                  return;
+                }
 
-        <TextField
-          className="room_name"
-          type="text"
-          onChange={(event) => {
-            setRoomEditData({
-              ...roomEditData,
-              name: event.target.value,
-            });
-          }}
-          fullWidth
-          value={roomEditData == null ? "Undefined" : roomEditData.name}
-        />
+                setRegistering(true);
+                try {
+                  await register({ email: email, password: password });
 
-        <Box className="setting_row">
-          <Box className="setting_name">
-            <AddIcon fontSize="medium" />
-            <Box className="setting_description">
-              <h3>Khóa phòng ban</h3>
-            </Box>
-          </Box>
-          <Switch
-            checked={roomEditData == null ? false : roomEditData.locked}
-            onChange={(event) => {
-              setRoomEditData({
-                ...roomEditData,
-                locked: event.target.checked,
-              });
-            }}
-          />
-        </Box>
+                  showSnackbarSuccess("Tạo tài khoản thành công");
 
-        <Box className="setting_row">
-          <Box className="setting_name">
-            <AddIcon fontSize="medium" className="add_icon" />
-            <Box className="setting_description">
-              <h3>Phê duyệt nhân viên</h3>
-            </Box>
-          </Box>
-          <Switch
-            checked={roomEditData == null ? false : roomEditData.auto_accepted}
-            onChange={(event) => {
-              setRoomEditData({
-                ...roomEditData,
-                auto_accepted: event.target.checked,
-              });
-            }}
-          />
-        </Box>
-
-        <h5>
-          Tránh tình trạng những nhân viên không có quyền vào phòng tham gia vào
-          mà không có sự cho phép của quản lý
-        </h5>
-
-        <Box className="setting_row">
-          <Box className="setting_name">
-            <AddIcon fontSize="medium" />
-            <Box className="setting_description">
-              <h3>Tắt hoạt động bảng tin</h3>
-            </Box>
-          </Box>
-          <Switch
-            size="medium"
-            checked={
-              roomEditData == null ? false : roomEditData.disabled_newsfeed
-            }
-            onChange={(event) => {
-              setRoomEditData({
-                ...roomEditData,
-                disabled_newsfeed: event.target.checked,
-              });
-            }}
-          />
-        </Box>
-
-        <h5>Tắt mọi hoạt động đăng bài và bình luận</h5>
-
-        <Box className="setting_row">
-          <Box className="setting_name">
-            <AddIcon fontSize="medium" />
-            <Box className="setting_description">
-              <h3>Chặn nhân viên tự ý rời phòng ban</h3>
-            </Box>
-          </Box>
-          <Switch
-            size="medium"
-            checked={roomEditData == null ? false : roomEditData.exit_locked}
-            onChange={(event) => {
-              setRoomEditData({
-                ...roomEditData,
-                exit_locked: event.target.checked,
-              });
-            }}
-          />
-        </Box>
-
-        <h5>
-          Giúp dễ dàng quản lý nhân viên tốt hơn, tránh nhân viên tự ý thoát
-          khỏi phòng
-        </h5>
-
-        <Button variant="outlined" className="avatar_change">
-          <img className="image" />
-          <h1 className="change_image">
-            <FileUploadSharpIcon sx={{ fontSize: 40 }} />
-            Chọn file để đổi ảnh
-          </h1>
-          <input type="file" hidden />
-        </Button>
-        <Box
-          className="df"
-          sx={{ display: "flex", justifyContent: "flex-end" }}
-        >
-          <Button variant="outlined" style={{ margin: "0.625rem" }}>
-            Hủy thay đổi
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ margin: "0.625rem" }}
+                  navigate("/home");
+                } catch (error) {
+                  showSnackbarError(error);
+                } finally {
+                  setRegistering(false);
+                }
+              }}
+            >
+              Đăng ký
+            </LoadingButton>
+          </div>
+          <div
+            id="seperator_login_register"
+            className="flex my-4 items-center justify-center"
           >
-            Lưu lại
-          </Button>
-        </Box>
-      </Container>
-    </Box>
+            <span className="mx-3">hoặc</span>
+          </div>
+          <div className="flex items-center justify-center">
+            <a
+              href="/login"
+              id="loginButton"
+              className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
+            >
+              Quay lại đăng nhập
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default SettingRoomPage;
+export default RegisterForm;
