@@ -32,7 +32,7 @@ interface RoomsContextProps {
   rooms: RoomData[];
 
   currentRoom?: RoomData;
-  setCurrentRoom: (room: RoomData) => void;
+  loadingCurrentRoom: boolean;
 
   getRooms: (payload: {
     getLimit?: number;
@@ -73,7 +73,7 @@ const RoomsContext = createContext<RoomsContextProps>({
   rooms: [],
 
   currentRoom: undefined,
-  setCurrentRoom: () => {},
+  loadingCurrentRoom: false,
 
   getRooms: async () => {},
   loadingRooms: false,
@@ -101,6 +101,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const [rooms, setRooms] = useState<RoomData[]>([]);
   const [roomDocs, setRoomDocs] = useState<any>();
   const [currentRoom, setCurrentRoom] = useState<RoomData>();
+  const [loadingCurrentRoom, setLoadingCurrentRoom] = useState(false);
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [loadingMoreRooms, setLoadingMoreRooms] = useState(false);
   const [loadedAllRooms, setLoadedAllRooms] = useState(false);
@@ -313,8 +314,15 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   useEffect(() => {
     if (!roomId) return;
     const getCurrentRoom = async () => {
-      const docResponse = await getDoc(doc(db, "room", roomId));
-      setCurrentRoom(docResponse.data() as RoomData);
+      try {
+        setLoadingCurrentRoom(true);
+        const docResponse = await getDoc(doc(db, "room", roomId));
+        setCurrentRoom(docResponse.data() as RoomData);
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setLoadingCurrentRoom(false);
+      }
     };
     getCurrentRoom();
   }, [roomId]);
@@ -325,7 +333,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         rooms,
 
         currentRoom,
-        setCurrentRoom,
+        loadingCurrentRoom,
 
         getRooms,
         loadingRooms,
