@@ -209,6 +209,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         const docResponse = await addDoc(collection(db, "room"), {
           ...newRoom,
           created_at: time,
+          manager_id: user?.id,
         });
         await updateDoc(doc(db, "room", docResponse.id), {
           id: docResponse.id,

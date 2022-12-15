@@ -1,12 +1,12 @@
 import { Timestamp } from "firebase/firestore";
 
-interface RoomData{
+interface RoomData {
   id: string;
   avatar: string;
   name: string;
   created_at: Timestamp | Date | string;
   description?: string;
-  manager_id?: number;
+  manager_id?: string;
   auto_accepted?: boolean;
   disabled_newsfeed?: boolean;
   locked?: boolean;
