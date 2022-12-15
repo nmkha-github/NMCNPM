@@ -21,10 +21,9 @@ const SettingRoomPage = () => {
     avatar: "",
     created_at: "",
   });
-  const [saving, setSaving] = useState(false);
   const { roomId } = useParams();
   const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
-  const { currentRoom, getCurrentRoom, updateRoom, loadingCurrentRoom } =
+  const { currentRoom, getCurrentRoom, updateRoom, loadingCurrentRoom,updatingRoom } =
     useRooms();
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const SettingRoomPage = () => {
   }, []);
   useEffect(() => {
     if (currentRoom !== undefined) {
-      setRoomEditData(currentRoom);
+      setRoomEditData({...currentRoom});
     }
   }, [currentRoom]);
 
@@ -41,7 +40,7 @@ const SettingRoomPage = () => {
     <Box>
       <button
         onClick={() => {
-          navigate("/room/" + roomEditData.id + "/newsfeed");
+          navigate("/room/" + roomId + "/newsfeed");
         }}
         className="back_to_workspace"
       >
@@ -214,7 +213,7 @@ const SettingRoomPage = () => {
               style={{ margin: "0.625rem" }}
               onClick={() => {
                 if (currentRoom !== undefined) {
-                  setRoomEditData(currentRoom);
+                  setRoomEditData({...currentRoom});
                 }
               }}
             >
@@ -223,26 +222,19 @@ const SettingRoomPage = () => {
             <LoadingButton
               variant="contained"
               color="primary"
-              disabled={saving}
-              loading={saving}
+              disabled={updatingRoom}
+              loading={updatingRoom}
               style={{ margin: "0.625rem" }}
               onClick={async () => {
-                setSaving(true);
                 try {
                   if (roomEditData !== undefined) {
                     await updateRoom({
                       id: roomId || "",
                       updateData: roomEditData,
                     });
-                    showSnackbarSuccess(
-                      "Cập nhật tùy chỉnh phòng ban thành công."
-                    );
-                    getCurrentRoom(roomId || "");
                   }
                 } catch (error) {
                   showSnackbarError(error);
-                } finally {
-                  setSaving(false);
                 }
               }}
             >

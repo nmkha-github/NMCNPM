@@ -255,23 +255,28 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       try {
         await updateDoc(doc(db, "room", id), updateData);
 
-        rooms.map((room) => {
-          if (room.id === id) {
-            return {
-              ...room,
-              ...updateData,
-            };
-          }
-
-          return room;
-        });
+        setRooms(
+          rooms.map((room) => {
+            if (room.id === id) {
+              return {
+                ...room,
+                ...updateData,
+              };
+            }
+            return room;
+          })
+        );
+        if (currentRoom !== undefined) {
+          setCurrentRoom({ ...currentRoom, ...updateData });
+        }
+        showSnackbarSuccess("Cập nhật tùy chỉnh phòng ban thành công.");
       } catch (error) {
         showSnackbarError(error);
       } finally {
         setUpdatingRoom(false);
       }
     },
-    [rooms, showSnackbarError]
+    [rooms, showSnackbarError,currentRoom]
   );
 
   const joinRoom = useCallback(
