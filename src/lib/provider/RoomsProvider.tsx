@@ -32,6 +32,7 @@ interface RoomsContextProps {
   rooms: RoomData[];
 
   currentRoom?: RoomData;
+  getCurrentRoom: (id: string) => Promise<void>;
   loadingCurrentRoom: boolean;
 
   getRooms: (payload: {
@@ -73,6 +74,7 @@ const RoomsContext = createContext<RoomsContextProps>({
   rooms: [],
 
   currentRoom: undefined,
+  getCurrentRoom: async () => {},
   loadingCurrentRoom: false,
 
   getRooms: async () => {},
@@ -112,7 +114,6 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
 
   const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
   const { user } = useUser();
-  const { roomId } = useParams();
 
   const LIMIT_LOAD_ROOMS_PER_TIME = 10;
   const getRooms = useCallback(
@@ -181,6 +182,18 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
     },
     [roomDocs, rooms, showSnackbarError, user?.id]
   );
+
+  const getCurrentRoom = useCallback(async (id: string) => {
+    try {
+      setLoadingCurrentRoom(true);
+      const docResponse = await getDoc(doc(db, "room", id));
+      setCurrentRoom(docResponse.data() as RoomData);
+    } catch (error) {
+      showSnackbarError(error);
+    } finally {
+      setLoadingCurrentRoom(false);
+    }
+  }, []);
 
   const createRoom = useCallback(
     async (newRoom: {
@@ -311,28 +324,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
     [rooms, showSnackbarError]
   );
 
-  useEffect(() => {
-    if (!roomId) return;
-    const getCurrentRoom = async () => {
-      try {
-        setLoadingCurrentRoom(true);
-        const docResponse = await getDoc(doc(db, "room", roomId));
-        setCurrentRoom(docResponse.data() as RoomData);
-      } catch (error) {
-        showSnackbarError(error);
-      } finally {
-        setLoadingCurrentRoom(false);
-      }
-    };
-    getCurrentRoom();
-  }, [roomId]);
-
   return (
     <RoomsContext.Provider
       value={{
         rooms,
 
         currentRoom,
+        getCurrentRoom,
         loadingCurrentRoom,
 
         getRooms,

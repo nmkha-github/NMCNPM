@@ -21,6 +21,7 @@ const SettingRoomPage = () => {
   const { currentRoom } = useRooms();
 
   useEffect(() => {
+    console.log(currentRoom);
     if (currentRoom != undefined) {
       setRoomEditData(currentRoom);
     }
