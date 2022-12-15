@@ -131,24 +131,17 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
     const authCheck = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCheckingAuth(false);
+        if (!needAuth) {
+          navigate("/home");
+        }
+      } else {
+        navigate("/login");
       }
       setUserInfo(user);
     });
 
     return authCheck;
   }, []);
-
-  useEffect(() => {
-    if (userInfo) {
-      if (!needAuth) {
-        navigate("/home");
-      }
-    } else {
-      if (needAuth) {
-        navigate("/login");
-      }
-    }
-  }, [navigate, needAuth, userInfo]);
 
   if (checkingAuth && needAuth)
     return (
