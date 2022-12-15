@@ -18,20 +18,7 @@ const SettingRoomPage = () => {
     created_at: "",
   });
 
-  const { currentRoom, setCurrentRoom } = useRooms();
-
-  useEffect(() => {
-    setCurrentRoom({
-      id: "SHUBA1",
-      name: "room name",
-      avatar: "hello",
-      created_at: "ok",
-      auto_accepted: true,
-      locked: false,
-      disabled_newsfeed: true,
-      exit_locked: false,
-    });
-  }, []);
+  const { currentRoom } = useRooms();
 
   useEffect(() => {
     if (currentRoom != undefined) {
@@ -183,10 +170,20 @@ const SettingRoomPage = () => {
           </h1>
           <input type="file" hidden />
         </Button>
-        <Box className="df" sx={{display:'flex',justifyContent:'flex-end'}} >
-          <Button variant="outlined" style={{margin:"0.625rem"}}>Hủy thay đổi</Button>
-          <Button variant="contained" color="primary" style={{margin:"0.625rem"}}>Lưu lại</Button>
-          
+        <Box
+          className="df"
+          sx={{ display: "flex", justifyContent: "flex-end" }}
+        >
+          <Button variant="outlined" style={{ margin: "0.625rem" }}>
+            Hủy thay đổi
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ margin: "0.625rem" }}
+          >
+            Lưu lại
+          </Button>
         </Box>
       </Container>
     </Box>
