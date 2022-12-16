@@ -35,9 +35,7 @@ const SettingRoomPage = () => {
   }, []);
 
   useEffect(() => {
-    if (currentRoom !== undefined) {
-      setRoomEditData({ ...currentRoom });
-    }
+    setRoomEditData({ ...currentRoom });
   }, [currentRoom]);
 
   return (
@@ -212,9 +210,7 @@ const SettingRoomPage = () => {
               variant="outlined"
               style={{ margin: "0.625rem" }}
               onClick={() => {
-                if (currentRoom !== undefined) {
-                  setRoomEditData({ ...currentRoom });
-                }
+                setRoomEditData({ ...currentRoom });
               }}
             >
               Hủy thay đổi
@@ -227,12 +223,10 @@ const SettingRoomPage = () => {
               style={{ margin: "0.625rem" }}
               onClick={async () => {
                 try {
-                  if (roomEditData !== undefined) {
-                    await updateRoom({
-                      id: roomId || "",
-                      updateData: roomEditData,
-                    });
-                  }
+                  await updateRoom({
+                    id: roomId || "",
+                    updateData: roomEditData,
+                  });
                 } catch (error) {
                   showSnackbarError(error);
                 }
