@@ -1,7 +1,7 @@
 import { Box, Button, makeStyles, Tooltip } from "@material-ui/core";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import APP_LOGO from "../../../modules/layout/constants/app-logo";
+import APP_LOGO from "../../constants/app-logo";
 import HeaderUserInfo from "../HeaderUserInfo/HeaderUserInfo";
 
 interface HeaderProps {

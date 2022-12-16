@@ -17,8 +17,8 @@ import Settings from "@mui/icons-material/Settings";
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
 import Logout from "@mui/icons-material/Logout";
 import { useState } from "react";
-import { useUser } from "../../provider/UserProvider";
-import { useAuth } from "../../provider/AuthProvider";
+import { useUser } from "../../../../lib/provider/UserProvider";
+import { useAuth } from "../../../../lib/provider/AuthProvider";
 
 const useStyle = makeStyles((theme) => ({
   button: {
