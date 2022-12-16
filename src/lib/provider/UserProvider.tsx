@@ -16,7 +16,7 @@ import React, {
 } from "react";
 import { db } from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
-import UserData from "../interface/user-data";
+import UserData from "../../modules/user/interface/user-data";
 import { useAuth } from "./AuthProvider";
 
 interface UserContextProps {
