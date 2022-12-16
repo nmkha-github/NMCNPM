@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Box } from "@mui/material";
 import { useState } from "react";
@@ -11,28 +12,30 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
   const [hide, setHide] = useState(false);
   return (
     <Box style={{
-        backgroundColor: "rgba(240, 240, 240, 0.8)",
-        width: "32%",
-        height: 255,
+        backgroundColor: "#c0feff",
+        width: 600,
+        height: 300,
         color: "white",
-        margin: "0.6666%",    
+        margin: "1%",    
         float: "left",
-        borderRadius: "5%",
-        borderColor: "rgba(51, 51, 255, 1)",
-        borderWidth: "thin",
+        borderRadius: "3%",
+        borderColor: "#1da6fa",
+        borderWidth: "medium",
         }}
-        onDoubleClick={()=>{navigate("/room/" + roomData.id + "/newsfeed");}}
+        onDoubleClick={()=>{navigate("/room/");}}
     >
 
       <Box style = {{
         width: "100%",
-        height: 184,
+        height: 220,
         display: "block",
+        backgroundColor: "white",
+        borderRadius: "5% 5% 0 0",
         }}>
           <img src={roomData.avatar} alt="" style={{
               width: "100%", 
               height: "100%",
-              borderRadius: "5% 5% 0 0",
+              
               }} />
       </Box>
        
@@ -57,10 +60,11 @@ const RoomItem = ({ roomData }: { roomData: RoomData }) => {
               Mã phòng : {roomData.id}
             </Box>
       </Box>
-
+      
+      
       <Box style={{
         float: "right",
-        paddingTop: "4%"
+        padding: "3%",
       }}>
         <RoomItemMenu roomData={roomData}/>
       </Box>

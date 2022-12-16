@@ -1,17 +1,12 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, IconButton, Typography, ListItemIcon, Menu  } from "@mui/material";
 import { MenuItem } from '@mui/material';
 import { useState } from "react";
 import { BiLogIn, BiEdit, BiTrash } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from '@mui/material';
-import Menu from '@mui/material/Menu';
 import RoomData from "../../../room/interface/room-data";
-import RoomItem from "./RoomItem";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 const ITEM_HEIGHT = 48;
   
@@ -24,17 +19,21 @@ const RoomItemMenu = ({roomData}: {roomData: RoomData}) => {
     return (
       <Box>
         <IconButton
+          type="button"
           aria-label="more"
           id="long-button"
-          aria-controls={open ? 'long-menu' : undefined}
+          aria-controls={open ? 'RoomMenu' : undefined}
           aria-expanded={open ? 'true' : undefined}
           aria-haspopup="true"
           onClick={(event: React.MouseEvent<HTMLElement>) => {setAnchorEl(event.currentTarget)}}
+          style ={{
+            color: 'black',
+          }}
         >
           <MoreVertIcon />
         </IconButton>
         <Menu
-          id="long-menu"
+          id="RoomMenu"
           MenuListProps={{
             'aria-labelledby': 'long-button',
           }}
@@ -50,20 +49,20 @@ const RoomItemMenu = ({roomData}: {roomData: RoomData}) => {
         >
             <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/newsfeed")}}>
                 <ListItemIcon>  <BiLogIn fontSize="large" />   </ListItemIcon>
-                <Typography variant="inherit">Vào phòng</Typography>
+                <Typography variant="inherit" noWrap width='12ch'>Vào phòng</Typography>
             </MenuItem>
         
-            <MenuItem onClick={()=>{navigate("/room/" + roomData.id + "/setting-room")}}>
+            <MenuItem  onClick={()=>{navigate("/room/" + roomData.id + "/setting-room")}}>
                 <ListItemIcon>  <BiEdit fontSize="large" />    </ListItemIcon>
-                <Typography variant="inherit">Chỉnh sửa</Typography>
+                <Typography  variant="inherit" noWrap width='12ch'>Chỉnh sửa</Typography>
             </MenuItem>
             
             {deletingRoom
-              ? <CircularProgress/>
-              : <MenuItem onClick={async () => await deleteRoom({id: roomData.id})}>
+              ? <MenuItem onClick={async () => await deleteRoom({id: roomData.id})}>
                   <ListItemIcon>  <BiTrash fontSize="large" />   </ListItemIcon>
-                  <Typography variant="inherit" noWrap>Xóa phòng</Typography>
-              </MenuItem> 
+                  <Typography variant="inherit" noWrap width='12ch'>Xóa phòng</Typography>
+                </MenuItem> 
+              : <CircularProgress/>
             }
         </Menu>
       </Box>

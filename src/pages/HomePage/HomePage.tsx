@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 import { useAuth } from "../../lib/provider/AuthProvider";
 import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
+import RoomPage from "../RoomPage/RoomPage";
 
 const HomePage = () => {
   const dataName = false;
