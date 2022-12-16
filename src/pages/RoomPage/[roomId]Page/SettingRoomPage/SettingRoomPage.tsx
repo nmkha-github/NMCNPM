@@ -32,10 +32,12 @@ const SettingRoomPage = () => {
 
   useEffect(() => {
     getCurrentRoom(roomId || "");
-  }, []);
+  }, [getCurrentRoom, roomId]);
 
   useEffect(() => {
-    setRoomEditData({ ...currentRoom });
+    if (currentRoom) {
+      setRoomEditData({ ...currentRoom });
+    }
   }, [currentRoom]);
 
   return (
@@ -48,13 +50,15 @@ const SettingRoomPage = () => {
       >
         <ArrowBackSharpIcon /> Back to workspace
       </button>
-      {loadingCurrentRoom ? (
+      {loadingCurrentRoom && (
         <CircularProgress
           style={{ bottom: "50%", right: "50%", position: "absolute" }}
           size="60px"
           color="inherit"
         />
-      ) : (
+      )}
+
+      {!loadingCurrentRoom && (
         <Container
           maxWidth="sm"
           style={{
@@ -85,7 +89,7 @@ const SettingRoomPage = () => {
               });
             }}
             fullWidth
-            value={roomEditData ? roomEditData.name : ""}
+            value={roomEditData.name}
           />
           <Box className="setting_row">
             <Box className="setting_name">
