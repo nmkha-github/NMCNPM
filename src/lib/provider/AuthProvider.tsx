@@ -39,6 +39,7 @@ interface AuthContextProps {
     password: string;
   }) => Promise<void>;
   logOut: () => Promise<void>;
+  loggingOut: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -48,6 +49,7 @@ const AuthContext = createContext<AuthContextProps>({
   register: async () => {},
   logIn: async () => {},
   logOut: async () => {},
+  loggingOut: false,
 });
 
 interface AuthContextProviderProps {
@@ -56,6 +58,7 @@ interface AuthContextProviderProps {
 
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
 
   const navigate = useNavigate();
@@ -121,9 +124,12 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
   const logOut = useCallback(async () => {
     try {
+      setLoggingOut(true);
       await signOut(auth);
     } catch (error) {
       showSnackbarError(error);
+    } finally {
+      setLoggingOut(false);
     }
   }, [auth, showSnackbarError]);
 
@@ -161,6 +167,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         register,
         logIn,
         logOut,
+        loggingOut,
       }}
     >
       {children}
