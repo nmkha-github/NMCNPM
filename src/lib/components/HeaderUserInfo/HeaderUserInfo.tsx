@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  CircularProgress,
   Divider,
   Fade,
   IconButton,
@@ -49,13 +50,13 @@ const HeaderUserInfo = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const classes = useStyle();
   const { user } = useUser();
-  const { logOut } = useAuth();
+  const { logOut, loggingOut } = useAuth();
 
   return (
     <>
       <Tooltip title="Account">
         <Box className={classes.button}>
-          <Typography>User</Typography>
+          <Typography style={{ marginLeft: 12 }}>User</Typography>
           <IconButton
             size="small"
             id="user-info-button"
@@ -114,9 +115,9 @@ const HeaderUserInfo = () => {
           Cài đặt
         </MenuItem>
 
-        <MenuItem onClick={async () => await logOut()}>
+        <MenuItem onClick={async () => await logOut()} disabled={loggingOut}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            {loggingOut ? <CircularProgress /> : <Logout fontSize="small" />}
           </ListItemIcon>
           Đăng xuất
         </MenuItem>

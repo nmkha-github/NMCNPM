@@ -1,4 +1,4 @@
-import { Box, Button, makeStyles, Typography } from "@material-ui/core";
+import { Box, Button, makeStyles } from "@material-ui/core";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderUserInfo from "../HeaderUserInfo/HeaderUserInfo";
@@ -20,6 +20,7 @@ const useStyle = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     padding: "0px 8px",
+    zIndex: 100,
   },
   logo: {},
   nav: {
@@ -33,8 +34,6 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContents: "center",
-    padding: 0,
-    width: 108,
     height: 64,
     flex: "none",
     order: 0,
@@ -51,7 +50,7 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     justifyContents: "center",
     alignItems: "center",
-    padding: "12px 0px",
+    padding: "12px 24px",
     width: "100%",
   },
   selection: {
