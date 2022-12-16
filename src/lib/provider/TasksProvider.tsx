@@ -33,6 +33,7 @@ interface TasksContextProps {
       attach_files?: FileData[];
       comments?: CommentData[];
       status?: string;
+      deadline?: Timestamp | Date | string;
     };
   }) => Promise<void>;
   creatingTask: boolean;
@@ -43,6 +44,7 @@ interface TasksContextProps {
     updateData: {
       status?: string;
       assignee_id?: string;
+      deadline?: Timestamp | Date | string;
       content?: string;
       title?: string;
     };
@@ -145,6 +147,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         title: string;
         assignee_id: string;
         content?: string;
+        deadline?: Timestamp | Date | string;
         attach_files?: FileData[];
         comments?: CommentData[];
         status?: string;
@@ -189,6 +192,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       updateData: {
         status?: string;
         assignee_id?: string;
+        deadline?: Timestamp | Date | string;
         content?: string;
         title?: string;
       };
