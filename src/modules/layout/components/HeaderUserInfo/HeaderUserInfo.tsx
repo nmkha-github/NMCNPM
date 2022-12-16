@@ -19,6 +19,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useState } from "react";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const useStyle = makeStyles((theme) => ({
   button: {
@@ -51,6 +52,7 @@ const HeaderUserInfo = () => {
   const classes = useStyle();
   const { user } = useUser();
   const { logOut, loggingOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -108,7 +110,7 @@ const HeaderUserInfo = () => {
           Trợ giúp
         </MenuItem>
 
-        <MenuItem onClick={() => setAnchorEl(null)}>
+        <MenuItem onClick={() => navigate("setting")}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
