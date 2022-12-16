@@ -18,7 +18,7 @@ import { Box, Typography } from "@mui/material";
 import useAppSnackbar from "../hook/useAppSnackBar";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase-config";
-import USER_AVATAR_DEFAULT from "../constants/user-avatar-default";
+import USER_AVATAR_DEFAULT from "../../modules/user/contants/user-avatar-default";
 
 interface AuthContextProps {
   checkingAuth: boolean;
