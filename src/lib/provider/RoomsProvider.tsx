@@ -147,7 +147,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       if (!user?.id) return;
 
       const _limit = getLimit ?? LIMIT_LOAD_ROOMS_PER_TIME;
-      const _skip = getStart ?? rooms.length;
+      const _skip = typeof getStart === "number" ? getStart : rooms.length;
       if (getStart && getStart > 0) {
         setLoadingMoreRooms(true);
       } else {
@@ -165,17 +165,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
             )
           );
           setRoomIdDocs([...roomIdDocsResponse.docs]);
-          const roomDocsResponse = await getDocs(
-            query(
-              collection(db, "room"),
-              where(
-                "id",
-                "in",
-                roomIdDocsResponse.docs.map((doc) => doc.data().id)
-              )
-            )
-          );
-          newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+          const roomsId = roomIdDocsResponse.docs.map((doc) => doc.data().id);
+          if (roomsId.length) {
+            const roomDocsResponse = await getDocs(
+              query(collection(db, "room"), where("id", "in", roomsId))
+            );
+            newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+          }
         } else {
           const roomIdDocsResponse = await getDocs(
             query(
@@ -186,17 +182,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
             )
           );
           setRoomIdDocs([...roomIdDocs, ...roomIdDocsResponse.docs]);
-          const roomDocsResponse = await getDocs(
-            query(
-              collection(db, "room"),
-              where(
-                "id",
-                "in",
-                roomIdDocsResponse.docs.map((doc) => doc.data().id)
-              )
-            )
-          );
-          newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+          const roomsId = roomIdDocsResponse.docs.map((doc) => doc.data().id);
+          if (roomsId.length) {
+            const roomDocsResponse = await getDocs(
+              query(collection(db, "room"), where("id", "in", roomsId))
+            );
+            newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+          }
         }
 
         if (newRooms.length < _limit) {
@@ -208,7 +200,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (_skip > 0) {
           setRooms([...newRooms, ...rooms]);
         } else {
-          setRooms(newRooms);
+          setRooms([...newRooms]);
         }
       } catch (error) {
         showSnackbarError(error);
@@ -279,6 +271,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: docResponse.id,
         });
         await addDoc(collection(db, "user", user?.id, "room"), {
+          created_at: time,
           id: docResponse.id,
         });
 

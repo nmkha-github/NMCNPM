@@ -61,6 +61,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
       const usersResponse = await getDocs(
         query(collection(db, "user"), where("auth_id", "==", userInfo?.uid))
       );
+
       usersResponse.forEach((userResponse) => {
         setUser(userResponse.data() as UserData);
       });
@@ -96,7 +97,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
         setEditingUser(false);
       }
     },
-    [user]
+    [showSnackbarError, user]
   );
 
   useEffect(() => {
@@ -105,7 +106,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
     } else {
       setUser(undefined);
     }
-  }, [userInfo]);
+  }, [getUser, userInfo]);
 
   return (
     <UserContext.Provider
@@ -117,7 +118,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
         editingUser,
       }}
     >
-      {children}
+      {user && children}
     </UserContext.Provider>
   );
 };
