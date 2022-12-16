@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "0px 8px",
+    padding: "0px 16px",
     zIndex: 100,
   },
   logo: {
@@ -71,7 +71,7 @@ const useStyle = makeStyles((theme) => ({
     },
   },
   textSelection: {
-    color: "#F507FA !important",
+    color: "#1E88E5 !important",
   },
   rightContainer: {
     display: "flex",
