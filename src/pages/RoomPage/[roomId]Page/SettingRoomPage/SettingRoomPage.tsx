@@ -19,6 +19,11 @@ const SettingRoomPage = () => {
     name: "",
     avatar: "",
     created_at: "",
+    description:"",
+    locked:false,
+    auto_accepted:false,
+    disabled_newsfeed:false,
+    exit_locked:false
   });
   const { roomId } = useParams();
   const { showSnackbarError } = useAppSnackbar();
@@ -36,7 +41,7 @@ const SettingRoomPage = () => {
 
   useEffect(() => {
     if (currentRoom) {
-      setRoomEditData({ ...currentRoom });
+      setRoomEditData({ ...roomEditData,...currentRoom });
     }
   }, [currentRoom]);
 
