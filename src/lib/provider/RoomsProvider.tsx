@@ -344,10 +344,11 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       setJoiningRoom(true);
       try {
         const docResponse = await getDoc(doc(db, "room", id));
-        if (!docResponse.data()) {
+
+        const newRoom = docResponse.data() as RoomData;
+        if (!newRoom) {
           throw "Phòng ban không tồn tại";
         }
-        const newRoom = docResponse.data() as RoomData;
         await addDoc(collection(db, "user", user?.id, "room"), {
           id: newRoom.id,
         });
