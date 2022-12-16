@@ -18,7 +18,7 @@ const useStyle = makeStyles({
     width: "232px",
     position: "fixed",
     left: 0,
-    top: 0,
+    top: 64,
     bottom: 0,
     borderRight: "1.5px solid rgba(231, 232, 239, 0.8)",
     fontFamily: "Inter",
@@ -52,6 +52,7 @@ const useStyle = makeStyles({
   },
   cssStyle7: {
     padding: "0 12px",
+    width: "100%",
   },
   cssStyle8: {
     width: "100%",

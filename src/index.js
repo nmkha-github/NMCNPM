@@ -4,6 +4,7 @@ import AppSnackbarProvider from './lib/provider/AppSnackBarProvider';
 import { BrowserRouter } from "react-router-dom";
 import AuthProvider from './lib/provider/AuthProvider';
 import RoomsProvider from './lib/provider/RoomsProvider';
+import Header from './lib/components/Header/Header'
 import UserProvider from './lib/provider/UserProvider';
 import AppRoutes from './AppRoutes';
 
@@ -14,9 +15,11 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <UserProvider>
-            <RoomsProvider>
-              <AppRoutes/>
-            </RoomsProvider>
+            <Header>
+              <RoomsProvider>
+                <AppRoutes/>
+              </RoomsProvider>
+            </Header>
           </UserProvider>
         </AuthProvider>
       </BrowserRouter>

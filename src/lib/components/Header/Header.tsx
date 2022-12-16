@@ -92,99 +92,107 @@ const Header = ({ children }: HeaderProps) => {
 
   return (
     <>
-      <Box className={classes.header}>
-        <Tooltip title="Taskment.com">
-          <img
-            className={classes.logo}
-            src={APP_LOGO}
-            alt="web logo Taskment.com"
-            onClick={() =>
-              !location.pathname.includes("/home") && navigate("/home")
-            }
-          />
-        </Tooltip>
+      {!location.pathname.includes("/login") &&
+        !location.pathname.includes("/register") &&
+        !location.pathname.includes("/forgot-password") && (
+          <Box className={classes.header}>
+            <Tooltip title="Taskment.com">
+              <img
+                className={classes.logo}
+                src={APP_LOGO}
+                alt="web logo Taskment.com"
+                onClick={() =>
+                  !location.pathname.includes("/home") && navigate("/home")
+                }
+              />
+            </Tooltip>
 
-        <Box className={classes.nav}>
-          <Box
-            className={
-              classes.item +
-              " " +
-              (location.pathname.includes("/resource") ? classes.selection : "")
-            }
-          >
-            <Button
-              className={
-                classes.navItem +
-                " " +
-                (location.pathname.includes("/resource")
-                  ? classes.selection
-                  : "")
-              }
-              onClick={() =>
-                !location.pathname.includes("/resource") &&
-                navigate("/resource")
-              }
-            >
-              Tài nguyên
-            </Button>
+            <Box className={classes.nav}>
+              <Box
+                className={
+                  classes.item +
+                  " " +
+                  (location.pathname.includes("/resource")
+                    ? classes.selection
+                    : "")
+                }
+              >
+                <Button
+                  className={
+                    classes.navItem +
+                    " " +
+                    (location.pathname.includes("/resource")
+                      ? classes.textSelection
+                      : "")
+                  }
+                  onClick={() =>
+                    !location.pathname.includes("/resource") &&
+                    navigate("/resource")
+                  }
+                >
+                  Tài nguyên
+                </Button>
+              </Box>
+
+              <Box
+                className={
+                  classes.item +
+                  " " +
+                  (!location.pathname.includes("/resource") &&
+                  !location.pathname.includes("/schedule")
+                    ? classes.selection
+                    : "")
+                }
+              >
+                <Button
+                  className={
+                    classes.navItem +
+                    " " +
+                    (!location.pathname.includes("/resource") &&
+                    !location.pathname.includes("/schedule")
+                      ? classes.textSelection
+                      : "")
+                  }
+                  onClick={() =>
+                    !location.pathname.includes("/room") && navigate("/room")
+                  }
+                >
+                  Phòng ban
+                </Button>
+              </Box>
+
+              <Box
+                className={
+                  classes.item +
+                  " " +
+                  (location.pathname.includes("/schedule")
+                    ? classes.selection
+                    : "")
+                }
+              >
+                <Button
+                  className={
+                    classes.navItem +
+                    " " +
+                    (location.pathname.includes("/schedule")
+                      ? classes.textSelection
+                      : "")
+                  }
+                  onClick={() =>
+                    !location.pathname.includes("/schedule") &&
+                    navigate("/schedule")
+                  }
+                >
+                  Lịch
+                </Button>
+              </Box>
+            </Box>
+
+            <Box className={classes.rightContainer}>
+              <HeaderUserInfo />
+            </Box>
           </Box>
-
-          <Box
-            className={
-              classes.item +
-              " " +
-              (!location.pathname.includes("/resource") &&
-              !location.pathname.includes("/schedule")
-                ? classes.selection
-                : "")
-            }
-          >
-            <Button
-              className={
-                classes.navItem +
-                " " +
-                (!location.pathname.includes("/resource") &&
-                !location.pathname.includes("/schedule")
-                  ? classes.textSelection
-                  : "")
-              }
-              onClick={() =>
-                !location.pathname.includes("/room") && navigate("/room")
-              }
-            >
-              Phòng ban
-            </Button>
-          </Box>
-
-          <Box
-            className={
-              classes.item +
-              " " +
-              (location.pathname.includes("/schedule") ? classes.selection : "")
-            }
-          >
-            <Button
-              className={
-                classes.navItem +
-                " " +
-                (location.pathname.includes("/schedule")
-                  ? classes.textSelection
-                  : "")
-              }
-              onClick={() =>
-                !location.pathname.includes("/schedule") &&
-                navigate("/resource")
-              }
-            >
-              Lịch
-            </Button>
-          </Box>
-        </Box>
-
-        <Box className={classes.rightContainer}>
-          <HeaderUserInfo />
-        </Box>
-      </Box>
+        )}
 
       <Box className={classes.children}>{children}</Box>
     </>
