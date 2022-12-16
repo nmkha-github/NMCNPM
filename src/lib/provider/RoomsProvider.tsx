@@ -44,9 +44,9 @@ interface RoomsContextProps {
   loadedAllRooms: boolean;
 
   createRoom: (newRoom: {
-    name?: string;
+    name: string;
+    avatar: string;
     description?: string;
-    avatar?: string;
   }) => Promise<void>;
   creatingRoom: boolean;
 
@@ -223,34 +223,40 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
     [roomIdDocs, rooms, showSnackbarError, user?.id]
   );
 
-  const getCurrentRoom = useCallback(async (id: string) => {
-    if (!user?.id) return;
+  const getCurrentRoom = useCallback(
+    async (id: string) => {
+      if (!user?.id) return;
 
-    try {
-      setLoadingCurrentRoom(true);
-      const docResponse = await getDoc(doc(db, "room", id));
+      try {
+        setLoadingCurrentRoom(true);
+        const docResponse = await getDoc(doc(db, "room", id));
 
-      if (!docResponse.data()) {
-        const docsResponse = await getDocs(
-          query(collection(db, "user", user?.id, "room"), where("id", "==", id))
-        );
-        await deleteDoc(
-          doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
-        );
+        if (!docResponse.data()) {
+          const docsResponse = await getDocs(
+            query(
+              collection(db, "user", user?.id, "room"),
+              where("id", "==", id)
+            )
+          );
+          await deleteDoc(
+            doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
+          );
 
-        setRooms(rooms.filter((room) => room.id !== id));
-        showSnackbarError("Phòng ban đã bị xoá");
-        navigate("/room");
-        return;
+          setRooms(rooms.filter((room) => room.id !== id));
+          showSnackbarError("Phòng ban đã bị xoá");
+          navigate("/room");
+          return;
+        }
+
+        setCurrentRoom(docResponse.data() as RoomData);
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setLoadingCurrentRoom(false);
       }
-
-      setCurrentRoom(docResponse.data() as RoomData);
-    } catch (error) {
-      showSnackbarError(error);
-    } finally {
-      setLoadingCurrentRoom(false);
-    }
-  }, []);
+    },
+    [navigate, rooms, showSnackbarError, user?.id]
+  );
 
   const createRoom = useCallback(
     async (newRoom: {
@@ -264,9 +270,10 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       try {
         const time = Timestamp.now();
         const docResponse = await addDoc(collection(db, "room"), {
-          ...newRoom,
           created_at: time,
           manager_id: user?.id,
+          avatar: ROOM_AVATAR_DEFAULT,
+          ...newRoom,
         });
         await updateDoc(doc(db, "room", docResponse.id), {
           id: docResponse.id,
@@ -283,7 +290,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setCreatingRoom(false);
       }
     },
-    [rooms, showSnackbarError, user?.id]
+    [rooms, showSnackbarError, showSnackbarSuccess, user?.id]
   );
 
   const updateRoom = useCallback(
@@ -327,7 +334,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setUpdatingRoom(false);
       }
     },
-    [rooms, showSnackbarError, currentRoom]
+    [rooms, currentRoom, showSnackbarSuccess, showSnackbarError]
   );
 
   const joinRoom = useCallback(
@@ -355,7 +362,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setJoiningRoom(false);
       }
     },
-    [rooms]
+    [rooms, showSnackbarError, showSnackbarSuccess, user?.id]
   );
 
   const deleteRoom = useCallback(
@@ -379,7 +386,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setDeletingRoom(false);
       }
     },
-    [rooms, showSnackbarError]
+    [rooms, showSnackbarError, user?.id]
   );
 
   const leaveRoom = useCallback(
@@ -402,7 +409,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setLeavingRoom(false);
       }
     },
-    [rooms]
+    [rooms, showSnackbarError, user?.id]
   );
 
   return (

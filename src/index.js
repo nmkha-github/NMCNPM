@@ -14,9 +14,16 @@ root.render(
       <BrowserRouter>
         <AuthProvider>
           <UserProvider>
+
+            {/* add provider here */}
             <RoomsProvider>
-              <AppRoutes/>
+            {/* ----------------- */}
+              
+              <AppRoutes />
+
+            {/* add provider here */}
             </RoomsProvider>
+            {/* ----------------- */}
           </UserProvider>
         </AuthProvider>
       </BrowserRouter>
