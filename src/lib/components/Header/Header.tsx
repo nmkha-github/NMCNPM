@@ -1,6 +1,7 @@
-import { Box, Button, makeStyles } from "@material-ui/core";
+import { Box, Button, makeStyles, Tooltip } from "@material-ui/core";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import APP_LOGO from "../../constants/app-logo";
 import HeaderUserInfo from "../HeaderUserInfo/HeaderUserInfo";
 
 interface HeaderProps {
@@ -22,7 +23,11 @@ const useStyle = makeStyles((theme) => ({
     padding: "0px 8px",
     zIndex: 100,
   },
-  logo: {},
+  logo: {
+    padding: "16px 0px",
+    height: "100%",
+    cursor: "pointer",
+  },
   nav: {
     display: "flex",
     flexDirection: "row",
@@ -88,14 +93,16 @@ const Header = ({ children }: HeaderProps) => {
   return (
     <>
       <Box className={classes.header}>
-        <img
-          className={classes.logo}
-          src=""
-          alt="web logo Taskment.com"
-          onClick={() =>
-            !location.pathname.includes("/home") && navigate("/home")
-          }
-        />
+        <Tooltip title="Taskment.com">
+          <img
+            className={classes.logo}
+            src={APP_LOGO}
+            alt="web logo Taskment.com"
+            onClick={() =>
+              !location.pathname.includes("/home") && navigate("/home")
+            }
+          />
+        </Tooltip>
 
         <Box className={classes.nav}>
           <Box
