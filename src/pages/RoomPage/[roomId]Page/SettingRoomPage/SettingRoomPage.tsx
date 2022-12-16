@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, TextField, ButtonBase } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import "./SettingRoomPage.css";
 import { Container, Switch } from "@mui/material";
@@ -11,7 +11,6 @@ import RoomData from "../../../../modules/room/interface/room-data";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { CircularProgress } from "@material-ui/core";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
-import { async } from "@firebase/util";
 
 const SettingRoomPage = () => {
   const navigate = useNavigate();
@@ -22,19 +21,24 @@ const SettingRoomPage = () => {
     created_at: "",
   });
   const { roomId } = useParams();
-  const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
-  const { currentRoom, getCurrentRoom, updateRoom, loadingCurrentRoom,updatingRoom } =
-    useRooms();
+  const { showSnackbarError } = useAppSnackbar();
+  const {
+    currentRoom,
+    getCurrentRoom,
+    updateRoom,
+    loadingCurrentRoom,
+    updatingRoom,
+  } = useRooms();
 
   useEffect(() => {
     getCurrentRoom(roomId || "");
   }, []);
+
   useEffect(() => {
     if (currentRoom !== undefined) {
-      setRoomEditData({...currentRoom});
+      setRoomEditData({ ...currentRoom });
     }
   }, [currentRoom]);
-
 
   return (
     <Box>
@@ -46,7 +50,7 @@ const SettingRoomPage = () => {
       >
         <ArrowBackSharpIcon /> Back to workspace
       </button>
-      {loadingCurrentRoom === true ? (
+      {loadingCurrentRoom ? (
         <CircularProgress
           style={{ bottom: "50%", right: "50%", position: "absolute" }}
           size="60px"
@@ -83,7 +87,7 @@ const SettingRoomPage = () => {
               });
             }}
             fullWidth
-            value={roomEditData == null ? "" : roomEditData.name}
+            value={roomEditData ? roomEditData.name : ""}
           />
           <Box className="setting_row">
             <Box className="setting_name">
@@ -104,7 +108,7 @@ const SettingRoomPage = () => {
               });
             }}
             fullWidth
-            value={roomEditData == null ? "" : roomEditData.description}
+            value={roomEditData ? roomEditData.description : ""}
           />
           <Box className="setting_row">
             <Box className="setting_name">
@@ -114,7 +118,7 @@ const SettingRoomPage = () => {
               </Box>
             </Box>
             <Switch
-              checked={roomEditData == null ? false : roomEditData.locked}
+              checked={roomEditData.locked}
               onChange={(event) => {
                 setRoomEditData({
                   ...roomEditData,
@@ -132,9 +136,7 @@ const SettingRoomPage = () => {
               </Box>
             </Box>
             <Switch
-              checked={
-                roomEditData == null ? false : roomEditData.auto_accepted
-              }
+              checked={roomEditData.auto_accepted}
               onChange={(event) => {
                 setRoomEditData({
                   ...roomEditData,
@@ -158,9 +160,7 @@ const SettingRoomPage = () => {
             </Box>
             <Switch
               size="medium"
-              checked={
-                roomEditData == null ? false : roomEditData.disabled_newsfeed
-              }
+              checked={roomEditData.disabled_newsfeed}
               onChange={(event) => {
                 setRoomEditData({
                   ...roomEditData,
@@ -181,7 +181,7 @@ const SettingRoomPage = () => {
             </Box>
             <Switch
               size="medium"
-              checked={roomEditData == null ? false : roomEditData.exit_locked}
+              checked={roomEditData.exit_locked}
               onChange={(event) => {
                 setRoomEditData({
                   ...roomEditData,
@@ -213,7 +213,7 @@ const SettingRoomPage = () => {
               style={{ margin: "0.625rem" }}
               onClick={() => {
                 if (currentRoom !== undefined) {
-                  setRoomEditData({...currentRoom});
+                  setRoomEditData({ ...currentRoom });
                 }
               }}
             >
