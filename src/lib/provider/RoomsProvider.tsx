@@ -337,10 +337,11 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       setJoiningRoom(true);
       try {
         const docResponse = await getDoc(doc(db, "room", id));
-        if (!docResponse.data()) {
+
+        const newRoom = docResponse.data() as RoomData;
+        if (!newRoom) {
           throw "Phòng ban không tồn tại";
         }
-        const newRoom = docResponse.data() as RoomData;
         await addDoc(collection(db, "user", user?.id, "room"), {
           id: newRoom.id,
         });
@@ -381,25 +382,28 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
     [rooms, showSnackbarError]
   );
 
-  const leaveRoom = useCallback(async ({ id }: { id: string }) => {
-    if (!user?.id) return;
+  const leaveRoom = useCallback(
+    async ({ id }: { id: string }) => {
+      if (!user?.id) return;
 
-    try {
-      setLeavingRoom(true);
-      const docsResponse = await getDocs(
-        query(collection(db, "user", user?.id, "room"), where("id", "==", id))
-      );
-      await deleteDoc(
-        doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
-      );
+      try {
+        setLeavingRoom(true);
+        const docsResponse = await getDocs(
+          query(collection(db, "user", user?.id, "room"), where("id", "==", id))
+        );
+        await deleteDoc(
+          doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
+        );
 
-      setRooms(rooms.filter((room) => room.id !== id));
-    } catch (error) {
-      showSnackbarError(error);
-    } finally {
-      setLeavingRoom(false);
-    }
-  }, []);
+        setRooms(rooms.filter((room) => room.id !== id));
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setLeavingRoom(false);
+      }
+    },
+    [rooms]
+  );
 
   return (
     <RoomsContext.Provider
