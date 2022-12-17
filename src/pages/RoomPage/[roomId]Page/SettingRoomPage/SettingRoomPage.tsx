@@ -11,6 +11,7 @@ import RoomData from "../../../../modules/room/interface/room-data";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { CircularProgress } from "@material-ui/core";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
+import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
 
 const SettingRoomPage = () => {
   const navigate = useNavigate();
@@ -202,15 +203,22 @@ const SettingRoomPage = () => {
             Giúp dễ dàng quản lý nhân viên tốt hơn, tránh nhân viên tự ý thoát
             khỏi phòng
           </h5>
-
+          <UploadFile
+          onSuccess={(file)=>{
+            setRoomEditData({
+              ...roomEditData,
+              avatar:file.url
+            })
+          }}>
           <Button variant="outlined" className="avatar_change">
-            <img className="image" />
+            <img className="image" src={roomEditData.avatar} />
             <h1 className="change_image">
               <FileUploadSharpIcon sx={{ fontSize: 40 }} />
               Chọn file để đổi ảnh
             </h1>
             <input type="file" hidden />
           </Button>
+          </UploadFile>
           <Box
             className="df"
             sx={{ display: "flex", justifyContent: "flex-end" }}
