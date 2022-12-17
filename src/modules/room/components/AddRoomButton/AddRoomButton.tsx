@@ -1,39 +1,39 @@
 import {
   Box,
   Button,
+  ButtonProps,
   Fade,
   Menu,
   MenuItem,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import * as React from "react";
 import CreateRoomDialog from "../CreateRoomDialog/CreateRoomDialog";
 import JoinRoomDialog from "../JoinRoomDialog/JoinRoomDialog";
+import React, { useState } from "react";
 
-const AddRoomButton = () => {
-  const [openMenu, setOpenMenu] = React.useState(false);
-  const [openJoinRoomDialog, setOpenJoinRoomDialog] = React.useState(false);
-  const [openCreateRoomDialog, setOpenCreateRoomDialog] = React.useState(false);
+const AddRoomButton = ({ ...buttonProps }: ButtonProps) => {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [openJoinRoomDialog, setOpenJoinRoomDialog] = useState(false);
+  const [openCreateRoomDialog, setOpenCreateRoomDialog] = useState(false);
 
   return (
     <Box>
       <Button
-        id="positioned-button"
-        aria-controls={openMenu ? "positioned-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={openMenu ? "true" : undefined}
-        onClick={() => setOpenMenu(true)}
+        onClick={(event) => setMenuAnchorEl(event.currentTarget)}
+        style={{ textTransform: "none" }}
+        variant="outlined"
+        size="medium"
+        {...buttonProps}
       >
         <AddIcon />
-        <Typography>Add</Typography>
+        <Typography style={{ textTransform: "none" }}>Add</Typography>
       </Button>
 
       <Menu
-        id="positioned-menu"
-        aria-labelledby="positioned-button"
-        open={openMenu}
-        onClose={() => setOpenMenu(false)}
+        anchorEl={menuAnchorEl}
+        open={!!menuAnchorEl}
+        onClose={() => setMenuAnchorEl(null)}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -45,20 +45,22 @@ const AddRoomButton = () => {
         TransitionComponent={Fade}
       >
         <MenuItem
+          style={{ display: "block", padding: 8 }}
           onClick={() => {
-            setOpenMenu(false);
             setOpenJoinRoomDialog(true);
+            setMenuAnchorEl(null);
           }}
         >
-          Join Room
+          <Typography>Tham gia phòng</Typography>
         </MenuItem>
         <MenuItem
+          style={{ display: "block", padding: 8 }}
           onClick={() => {
-            setOpenMenu(false);
+            setMenuAnchorEl(null);
             setOpenCreateRoomDialog(true);
           }}
         >
-          Create new room
+          <Typography>Tạo phòng</Typography>
         </MenuItem>
       </Menu>
 
