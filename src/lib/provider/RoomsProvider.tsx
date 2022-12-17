@@ -153,7 +153,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at", "desc"),
+              orderBy("joined_at", "desc"),
               limit(_limit)
             )
           );
@@ -169,7 +169,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at", "desc"),
+              orderBy("joined_at", "desc"),
               startAfter(roomIdDocs[_skip - 1]),
               limit(_limit)
             )
@@ -214,9 +214,16 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
 
       try {
         setLoadingCurrentRoom(true);
-        const docResponse = await getDoc(doc(db, "room", id));
+        const checkDocsResponse = await getDocs(
+          query(collection(db, "user", user?.id, "room"), where("id", "==", id))
+        );
+        if (!checkDocsResponse.docs.length) {
+          throw "Bạn không thuộc phòng ban này";
+        }
 
-        if (!docResponse.data()) {
+        const roomDocResponse = await getDoc(doc(db, "room", id));
+
+        if (!roomDocResponse.data()) {
           const docsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
@@ -233,7 +240,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           return;
         }
 
-        setCurrentRoom(docResponse.data() as RoomData);
+        setCurrentRoom(roomDocResponse.data() as RoomData);
       } catch (error) {
         showSnackbarError(error);
       } finally {
@@ -264,12 +271,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: docResponse.id,
         });
         await addDoc(collection(db, "user", user?.id, "room"), {
-          created_at: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at: time.seconds + 0.000000001 * time.nanoseconds,
           id: docResponse.id,
         });
 
         setRooms([
           {
+            joined_at: time,
             created_at: time,
             manager_id: user?.id,
             avatar: ROOM_AVATAR_DEFAULT,
@@ -344,12 +352,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (!newRoom) {
           throw "Phòng ban không tồn tại";
         }
+        const time = Timestamp.now();
         await addDoc(collection(db, "user", user?.id, "room"), {
+          joined_at: time.seconds + 0.000000001 * time.nanoseconds,
           id: newRoom.id,
         });
-        await addDoc(collection(db, "room", id, "member"), { id: user?.id });
 
-        setRooms([newRoom, ...rooms]);
+        setRooms([{ ...newRoom, joined_at: time } as RoomData, ...rooms]);
         showSnackbarSuccess("Tham gia phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);

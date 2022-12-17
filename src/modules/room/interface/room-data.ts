@@ -11,6 +11,7 @@ interface RoomData {
   disabled_newsfeed?: boolean;
   locked?: boolean;
   exit_locked?: boolean;
+  joined_at: Timestamp | Date | string;
 }
 
 export default RoomData;
