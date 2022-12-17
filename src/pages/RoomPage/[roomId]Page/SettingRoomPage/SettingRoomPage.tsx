@@ -28,8 +28,17 @@ const SettingRoomPage = () => {
   });
   const { roomId } = useParams();
   const { showSnackbarError } = useAppSnackbar();
-  const { currentRoom, updateRoom, loadingCurrentRoom, updatingRoom } =
-    useRooms();
+  const {
+    currentRoom,
+    getCurrentRoom,
+    updateRoom,
+    loadingCurrentRoom,
+    updatingRoom,
+  } = useRooms();
+
+  useEffect(() => {
+    getCurrentRoom(roomId || "");
+  }, []);
 
   useEffect(() => {
     if (currentRoom) {
