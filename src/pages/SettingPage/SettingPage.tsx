@@ -23,6 +23,7 @@ import LoadingButton from "../../lib/components/LoadingButton/LoadingButton";
 import useAppSnackbar from "../../lib/hook/useAppSnackBar";
 import UserData from "../../modules/user/interface/user-data";
 import UploadFile from "../../lib/components/UploadFile/UploadFile";
+
 const useStyle = makeStyles((theme) => ({
   container: {
     display: "flex",
@@ -69,6 +70,7 @@ const SettingPage = () => {
   const classes = useStyle();
   const { user, loadingUser, editUser, editingUser } = useUser();
   const { showSnackbarError } = useAppSnackbar();
+
   const [userEditData, setUserEditData] = useState<UserData>({
     auth_id: "",
     id: "",
