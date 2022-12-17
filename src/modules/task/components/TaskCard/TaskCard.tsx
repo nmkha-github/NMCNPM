@@ -18,6 +18,7 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
   const [taskMenuAnchorEl, setTaskMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const open = Boolean(taskMenuAnchorEl);
   const { showSnackbarError } = useAppSnackbar();
   const navigate = useNavigate();
   const { roomId } = useParams();
