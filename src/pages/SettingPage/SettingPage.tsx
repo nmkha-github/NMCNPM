@@ -205,9 +205,10 @@ const SettingPage = () => {
         <UploadFile
           onSuccess={(file) => {
             setUserEditData({ ...userEditData, avatar: file.url });
+            setAnchorEl(null);
           }}
         >
-          <MenuItem onClick={() => setAnchorEl(null)}>Tải ảnh lên</MenuItem>
+          <MenuItem>Tải ảnh lên</MenuItem>
         </UploadFile>
 
         <MenuItem
