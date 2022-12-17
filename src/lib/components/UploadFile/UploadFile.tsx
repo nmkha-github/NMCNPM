@@ -23,69 +23,68 @@ interface UploadFileProps {
 
 const UploadFile = ({ children, onSuccess }: UploadFileProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [file, setFile] = useState<File>();
   const [uploadPercent, setUploadPercent] = useState<number>();
 
   const { showSnackbarError } = useAppSnackbar();
 
-  const onUpload = useCallback(() => {
-    if (!file) return;
+  const onUpload = useCallback(
+    (file: File | undefined) => {
+      if (!file) return;
 
-    const storage = getStorage();
-    const storageRef = ref(storage, `/files/${generateId()}_${file?.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+      const storage = getStorage();
+      const storageRef = ref(storage, `/files/${generateId()}_${file?.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const percent = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        if (snapshot.bytesTransferred !== snapshot.totalBytes) {
-          setUploadPercent(percent);
-        } else {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const percent = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          if (snapshot.bytesTransferred !== snapshot.totalBytes) {
+            setUploadPercent(percent);
+          } else {
+            setUploadPercent(undefined);
+          }
+        },
+        (error) => {
           setUploadPercent(undefined);
+          showSnackbarError(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) =>
+            onSuccess?.({ url: url, name: file?.name })
+          );
         }
-      },
-      (error) => {
-        setUploadPercent(undefined);
-        showSnackbarError(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((url) =>
-          onSuccess?.({ url: url, name: file?.name })
-        );
-      }
-    );
-  }, [file, onSuccess, showSnackbarError]);
-
-  useEffect(() => {
-    onUpload();
-  }, [file, onUpload]);
+      );
+    },
+    [onSuccess, showSnackbarError]
+  );
 
   return (
     <>
-      <input
-        ref={inputRef}
-        type="file"
-        style={{ display: "none" }}
-        onChange={(event) => {
-          setFile(event.target.files?.[0]);
-        }}
-      />
       {typeof uploadPercent === "number" ? (
         <Box>
           <CircularProgress variant="determinate" value={uploadPercent} />
         </Box>
       ) : (
-        <Box
-          onClick={() => {
-            inputRef.current?.click();
-            onUpload();
-          }}
-        >
-          {children}
-        </Box>
+        <>
+          <input
+            ref={inputRef}
+            type="file"
+            style={{ display: "none" }}
+            onChange={(event) => {
+              onUpload(event.target.files?.[0]);
+            }}
+          />
+          <Box
+            onClick={() => {
+              inputRef.current?.click();
+            }}
+          >
+            {children}
+          </Box>
+        </>
       )}
     </>
   );

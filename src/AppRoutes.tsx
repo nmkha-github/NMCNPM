@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
 import HomePage from "./pages/HomePage/HomePage";
+import SettingPage from "./pages/SettingPage/SettingPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import RoomPage from "./pages/RoomPage/RoomPage";
@@ -19,6 +20,7 @@ const AppRoutes = () => {
 
       <Route path="/" element={<HomePage />} />
       <Route path="home" element={<HomePage />} />
+      <Route path="setting" element={<SettingPage />} />
 
       <Route path="room" element={<RoomPage />} />
       <Route path="room/:roomId" element={<NewsfeedPage />} />

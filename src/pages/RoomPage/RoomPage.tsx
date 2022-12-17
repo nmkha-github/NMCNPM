@@ -139,7 +139,7 @@ const RoomPage = () => {
             PaperProps={{ style: {maxHeight: ITEM_HEIGHT * 4.5, width: '8ch' }}}>
             
             <MenuItem>
-              <ImSortAlphaAsc 
+              <ImSortAlphaAsc
                 fontSize="xx-large" 
                 color="#1a6eff"
                 onClick={()=>setSortType("increase")}
@@ -147,7 +147,7 @@ const RoomPage = () => {
             </MenuItem>
 
             <MenuItem>
-              <ImSortAlphaDesc 
+              <ImSortAlphaDesc
                 fontSize="xx-large" 
                 color="#1a6eff"
                 onClick={()=>setSortType("descrease")}
