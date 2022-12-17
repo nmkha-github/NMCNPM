@@ -1,200 +1,182 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-redeclare */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Box,
   Button,
-  ListItemIcon,
   Menu,
   MenuItem,
-  InputBase,
-  Paper,
   TextField,
   Divider,
-  IconButton, 
+  IconButton,
   CircularProgress,
-  Grid } from "@mui/material";
+  Grid,
+  Typography,
+} from "@mui/material";
 
-import { 
-  BiSearchAlt2, 
-  BiFilterAlt, 
-  BiLogIn } from "react-icons/bi";
-
+import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAlphaAsc, ImSortAlphaDesc } from "react-icons/im";
-
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import DirectionsIcon from '@mui/icons-material/Directions';
-
-import CreateRoomDialog from "../../modules/room/components/CreateRoomDialog/CreateRoomDialog";
+import SearchIcon from "@mui/icons-material/Search";
 import RoomData from "../../modules/room/interface/room-data";
 import { useNavigate } from "react-router-dom";
-import { useRooms } from "../../lib/provider/RoomsProvider"
+import { useRooms } from "../../lib/provider/RoomsProvider";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
-const ITEM_HEIGHT = 48;
-
+import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
 
 const RoomPage = () => {
-  const {rooms, getRooms, loadingRooms, loadingMoreRooms, loadedAllRooms} = useRooms()
-  const [openCreateRoomDialog, setOpenCreateRoomDialog] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const [showRooms, setShowRooms] = useState<RoomData[]>([]);
-  const [searchValue, setSearchValue] = useState("")
-  const [sortType, setSortType] = useState("")
-  const open = Boolean(anchorEl);
-  let navigate = useNavigate();
-  useEffect(() => { getRooms({});}, []);
-  useEffect(() => {setShowRooms(rooms); }, [rooms])
+  const [searchValue, setSearchValue] = useState("");
+  const [sortType, setSortType] = useState("");
+
+  const { rooms, getRooms, loadingRooms, loadingMoreRooms, loadedAllRooms } =
+    useRooms();
+
+  useEffect(() => {
+    getRooms({ getStart: 0 });
+  }, []);
+
   useEffect(() => {
     setShowRooms(
-      rooms.filter((room)=>room.name.includes(searchValue))
-          .sort((roomA, roomB) => {
-                  if (sortType === "increase"){
-                    return roomA.name > roomB.name? 1: 0
-                  }
-                  return roomA.name > roomB.name? -1: 0
-              })
+      rooms
+        .filter((room) => room.name.includes(searchValue))
+        .sort((roomA, roomB) => {
+          if (sortType === "") {
+            return 0;
+          }
+          if (sortType === "increase") {
+            return roomA.name > roomB.name ? 1 : 0;
+          }
+          return roomA.name > roomB.name ? -1 : 0;
+        })
     );
-  }, [rooms, sortType, searchValue])
-  return (
-    <Box>
-      <Box 
-      id="roomPage"
-      width="100%"
-      height="30px">
-      </Box>
-      
-      <Paper
-        component="form"
-        sx={{ 
-          p: '2px 4px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          width: '98%', 
-          justifyContent: 'center', 
-          border: '1px solid', 
-          m: '1%' }}
-      >
-        <Button
-          id="button_creat"
-          onClick={() => { setOpenCreateRoomDialog(true); }}
-          sx ={{
-            backgroundColor: '#82dcff',
-            color: 'black',
-            fontWeight: 'bold',
-            width: "7%",
-            fontSize: "17px" }} > + CREAT </Button>
+  }, [rooms, sortType, searchValue]);
 
-        <CreateRoomDialog
-          open={openCreateRoomDialog}
-          onClose={() => setOpenCreateRoomDialog(false)}
-        />
+  return (
+    <Box style={{ padding: "0px 16px" }}>
+      <Box style={{ display: "flex", alignItems: "center" }}>
+        <AddRoomButton size="large" style={{ marginRight: 8 }} />
 
         <TextField
-          margin='dense'
+          margin="dense"
           fullWidth
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Search ..."
-          inputProps={{ 'aria-label': 'Search ...' }}
-          // onchange={(event)=>{
-          //   //setshowrooms(showrooms)
-          //   setshowrooms(showrooms.filter((room: { name: string | string[]; })=> room.name.includes(event.target.value)))
-          // }}
-          onChange={(event)=>{
-            setSearchValue(event.target.value)}
-          }
-          InputProps= {{
-            endAdornment :(
-              <SearchIcon/>
-            )
-          }
-          }
+          placeholder="Tìm kiếm..."
+          size="small"
+          onChange={(event) => {
+            setSearchValue(event.target.value);
+          }}
+          InputProps={{
+            endAdornment: <SearchIcon />,
+          }}
         />
-      
-        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-      
+
+        <Divider sx={{ height: "100%", m: 0.5 }} orientation="vertical" />
+
         <Box>
-          <IconButton 
-            type="button" 
-            id ="filter-button"
-            sx={{ p: '10px' , fontSize: "xx-large"}} 
-            aria-label="filter"
-            aria-controls={open ? 'FilterMenu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-haspopup="true"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {setAnchorEl(event.currentTarget)}}>
-              <BiFilterAlt></BiFilterAlt>
+          <IconButton
+            type="button"
+            id="filter-button"
+            sx={{ p: "10px", fontSize: "xx-large" }}
+            onClick={(event) => {
+              setFilterAnchorEl(event.currentTarget);
+            }}
+          >
+            <BiFilterAlt />
           </IconButton>
 
           <Menu
-            id="FilterMenu"
-            MenuListProps={{'aria-labelledby': 'filter-button'}}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={()=>{setAnchorEl(null);}}
-            PaperProps={{ style: {maxHeight: ITEM_HEIGHT * 4.5, width: '8ch' }}}>
-            
-            <MenuItem>
-              <ImSortAlphaAsc
-                fontSize="xx-large" 
-                color="#1a6eff"
-                onClick={()=>setSortType("increase")}
-                ></ImSortAlphaAsc>  
+            anchorEl={filterAnchorEl}
+            open={!!filterAnchorEl}
+            onClose={() => {
+              setFilterAnchorEl(null);
+            }}
+            style={{ display: "block" }}
+          >
+            <MenuItem style={{ display: "block", padding: 8 }}>
+              <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Sắp xếp theo tên tăng dần</Typography>
+                <ImSortAlphaAsc
+                  fontSize="xx-large"
+                  color="#1a6eff"
+                  onClick={() => {
+                    setSortType("increase");
+                    setFilterAnchorEl(null);
+                  }}
+                />
+              </Box>
             </MenuItem>
 
-            <MenuItem>
-              <ImSortAlphaDesc
-                fontSize="xx-large" 
-                color="#1a6eff"
-                onClick={()=>setSortType("descrease")}
-                ></ImSortAlphaDesc>  
+            <MenuItem style={{ display: "block", padding: 8 }}>
+              <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography>Sắp xếp theo tên giảm dần</Typography>
+                <ImSortAlphaDesc
+                  fontSize="xx-large"
+                  color="#1a6eff"
+                  onClick={() => {
+                    setSortType("descrease");
+                    setFilterAnchorEl(null);
+                  }}
+                />
+              </Box>
             </MenuItem>
-        
           </Menu>
         </Box>
-      
-      </Paper>
+      </Box>
 
-      <Box id="ShowRooms">
-        {loadingRooms && <CircularProgress/>}
-        {!loadingRooms && rooms && rooms.length > 0 && 
+      <Box>
+        {loadingRooms && (
+          <Box
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 16,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {!loadingRooms && rooms && (
           <Box>
-            <Grid container spacing={1} rowSpacing={1} columnSpacing={3} p="2%">
+            <Grid container>
               {showRooms.map((room) => (
-                <Grid xs={4} sm={3} md={4}>
-                  <RoomItem roomData={room}></RoomItem>
+                <Grid xs={4} sm={3} md={3}>
+                  <RoomItem
+                    roomData={room}
+                    style={{ marginTop: 16, marginRight: 16 }}
+                  />
                 </Grid>
               ))}
             </Grid>
 
-            {!loadedAllRooms && !loadingMoreRooms &&
-              <Box id="ButtonLoadMoreRoom"> 
-                <Button onClick={async ()=> await getRooms({})} sx={{
-                  p: '2px 4px', 
-                  display: 'block', 
-                  alignItems: 'center',  
-                  justifyContent: 'center', 
-                  border: '1px solid', 
-                  m: '1%' 
-                }}>
-                  MORE
-                </Button>
-              </Box>
-            } 
+            {!loadedAllRooms && !loadingMoreRooms && (
+              <Button
+                onClick={async () => await getRooms({})}
+                sx={{
+                  p: "2px 4px",
+                  display: "block",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1px solid",
+                  m: "1%",
+                }}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                Xem thêm
+              </Button>
+            )}
 
-            {loadingMoreRooms && <CircularProgress/>}
+            {loadingMoreRooms && <CircularProgress />}
           </Box>
-        }   
+        )}
       </Box>
-
     </Box>
   );
 };
 
 export default RoomPage;
-
-

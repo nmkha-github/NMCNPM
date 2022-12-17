@@ -135,7 +135,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
   const navigate = useNavigate();
   const { user } = useUser();
 
-  const LIMIT_LOAD_ROOMS_PER_TIME = 10;
+  const LIMIT_LOAD_ROOMS_PER_TIME = 8;
   const getRooms = useCallback(
     async ({
       getLimit,
