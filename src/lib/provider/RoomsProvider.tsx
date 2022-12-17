@@ -153,7 +153,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at", "desc"),
+              orderBy("created_at_seconds", "desc"),
+              orderBy("created_at_nanoseconds", "desc"),
               limit(_limit)
             )
           );
@@ -169,7 +170,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at", "desc"),
+              orderBy("created_at_seconds", "desc"),
+              orderBy("created_at_nanoseconds", "desc"),
               startAfter(roomIdDocs[_skip - 1]),
               limit(_limit)
             )
@@ -264,11 +266,21 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: docResponse.id,
         });
         await addDoc(collection(db, "user", user?.id, "room"), {
-          created_at: time,
+          created_at_seconds: time.seconds,
+          created_at_nanoseconds: time.nanoseconds,
           id: docResponse.id,
         });
 
-        setRooms([newRoom as RoomData, ...rooms]);
+        setRooms([
+          {
+            created_at: time,
+            manager_id: user?.id,
+            avatar: ROOM_AVATAR_DEFAULT,
+            id: docResponse.id,
+            ...newRoom,
+          } as RoomData,
+          ...rooms,
+        ]);
         showSnackbarSuccess("Tạo phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);
