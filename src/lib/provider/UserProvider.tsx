@@ -28,7 +28,7 @@ interface UserContextProps {
     fields,
   }: {
     id: string;
-    fields: { name?: string; avatar?: string; created_at?: string };
+    fields: { name?: string; avatar?: string };
   }) => Promise<void>;
   editingUser: boolean;
 }
@@ -78,7 +78,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
       fields,
     }: {
       id: string;
-      fields: { name?: string; avatar?: string; created_at?: string };
+      fields: { name?: string; avatar?: string };
     }) => {
       try {
         setEditingUser(true);

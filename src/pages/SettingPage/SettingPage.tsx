@@ -13,9 +13,10 @@ import {
 } from "@material-ui/core";
 import { useUser } from "../../lib/provider/UserProvider";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingButton from "../../lib/components/LoadingButton/LoadingButton";
-
+import useAppSnackbar from "../../lib/hook/useAppSnackBar";
+import UserData from "../../modules/user/interface/user-data";
 const useStyle = makeStyles((theme) => ({
   container: {
     display: "flex",
@@ -61,9 +62,23 @@ const useStyle = makeStyles((theme) => ({
 const SettingPage = () => {
   const classes = useStyle();
   const { user, loadingUser, editUser, editingUser } = useUser();
-  const [name, setName] = useState(user?.name);
-  const [email, setEmail] = useState(user?.email);
+  const { showSnackbarError } = useAppSnackbar();
+
+  const [userEditData, setUserEditData] = useState<UserData>({
+    auth_id: "",
+    id: "",
+    email: "",
+    avatar: "",
+    name: "",
+    created_at: "",
+  });
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    if (user) {
+      setUserEditData({ ...userEditData, ...user });
+    }
+  }, [user]);
 
   return (
     <Box className={classes.container}>
@@ -112,7 +127,7 @@ const SettingPage = () => {
         autoFocus
         variant="outlined"
         onChange={(event) => {
-          setName(event.target.value);
+          setUserEditData({ ...userEditData, name: event.target.value });
         }}
         style={{ width: 320 }}
         size="small"
@@ -120,28 +135,32 @@ const SettingPage = () => {
 
       <Typography className={classes.textFieldLabel}>Email:</Typography>
       <TextField
-        autoFocus
         variant="outlined"
-        onChange={(event) => {
-          setEmail(event.target.value);
-        }}
+        disabled
         style={{ width: 320 }}
         size="small"
       />
 
       <Typography className={classes.textFieldLabel}>Company:</Typography>
-      <TextField
-        autoFocus
-        variant="outlined"
-        style={{ width: 320 }}
-        size="small"
-      />
+      <TextField variant="outlined" style={{ width: 320 }} size="small" />
 
       <Typography className={classes.textFieldLabel}>Bio:</Typography>
       <TextField autoFocus multiline maxRows={5} variant="outlined" fullWidth />
 
       <LoadingButton
-        onClick={async () => {}}
+        onClick={async () => {
+          try {
+            await editUser({
+              id: user?.id || "",
+              fields: {
+                name: userEditData.name,
+                avatar: userEditData.avatar,
+              },
+            });
+          } catch (error) {
+            showSnackbarError(error);
+          }
+        }}
         variant="contained"
         loading={editingUser || loadingUser}
         style={{
