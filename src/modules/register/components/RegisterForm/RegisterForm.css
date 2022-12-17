@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind forms;
+
 #submitButton{
     background-color: #0a66c2;
     border-radius: 1.5rem;

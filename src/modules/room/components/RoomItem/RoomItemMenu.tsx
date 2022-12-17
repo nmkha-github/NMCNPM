@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Box, IconButton, Typography, ListItemIcon, Menu  } from "@mui/material";
 import { MenuItem } from '@mui/material';
@@ -13,8 +14,7 @@ const ITEM_HEIGHT = 48;
 const RoomItemMenu = ({roomData}: {roomData: RoomData}) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const {deleteRoom} = useRooms();
-    const deletingRoom = useRooms();
+    const {deleteRoom, deletingRoom} = useRooms();
     let navigate = useNavigate();
     return (
       <Box>
@@ -58,11 +58,11 @@ const RoomItemMenu = ({roomData}: {roomData: RoomData}) => {
             </MenuItem>
             
             {deletingRoom
-              ? <MenuItem onClick={async () => await deleteRoom({id: roomData.id})}>
+              ? <CircularProgress/>
+              : <MenuItem onClick={async () => await deleteRoom({id: roomData.id})}>
                   <ListItemIcon>  <BiTrash fontSize="large" />   </ListItemIcon>
                   <Typography variant="inherit" noWrap width='12ch'>Xóa phòng</Typography>
                 </MenuItem> 
-              : <CircularProgress/>
             }
         </Menu>
       </Box>

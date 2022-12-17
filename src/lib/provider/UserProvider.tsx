@@ -118,7 +118,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
         editingUser,
       }}
     >
-      {user && children}
+      {/*user &&*/ children}
     </UserContext.Provider>
   );
 };

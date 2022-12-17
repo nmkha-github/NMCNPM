@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-redeclare */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -42,13 +43,27 @@ const RoomPage = () => {
   const [openCreateRoomDialog, setOpenCreateRoomDialog] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showRooms, setShowRooms] = useState<RoomData[]>([]);
+  const [searchValue, setSearchValue] = useState("")
+  const [sortType, setSortType] = useState("")
   const open = Boolean(anchorEl);
   let navigate = useNavigate();
   useEffect(() => { getRooms({});}, []);
   useEffect(() => {setShowRooms(rooms); }, [rooms])
+  useEffect(() => {
+    setShowRooms(
+      rooms.filter((room)=>room.name.includes(searchValue))
+          .sort((roomA, roomB) => {
+                  if (sortType === "increase"){
+                    return roomA.name > roomB.name? 1: 0
+                  }
+                  return roomA.name > roomB.name? -1: 0
+              })
+    );
+  }, [rooms, sortType, searchValue])
   return (
     <Box>
       <Box 
+      id="roomPage"
       width="100%"
       height="30px">
       </Box>
@@ -65,6 +80,7 @@ const RoomPage = () => {
           m: '1%' }}
       >
         <Button
+          id="button_creat"
           onClick={() => { setOpenCreateRoomDialog(true); }}
           sx ={{
             backgroundColor: '#82dcff',
@@ -79,19 +95,23 @@ const RoomPage = () => {
         />
 
         <TextField
+          margin='dense'
+          fullWidth
           sx={{ ml: 1, flex: 1 }}
           placeholder="Search ..."
           inputProps={{ 'aria-label': 'Search ...' }}
+          // onchange={(event)=>{
+          //   //setshowrooms(showrooms)
+          //   setshowrooms(showrooms.filter((room: { name: string | string[]; })=> room.name.includes(event.target.value)))
+          // }}
           onChange={(event)=>{
-            //setShowRooms(showRooms)
-            setShowRooms(showRooms.filter((room: { name: string | string[]; })=> room.name.includes(event.target.value)))
-          }}
+            setSearchValue(event.target.value)}
+          }
           InputProps= {{
             endAdornment :(
               <SearchIcon/>
             )
           }
-
           }
         />
       
@@ -118,12 +138,20 @@ const RoomPage = () => {
             onClose={()=>{setAnchorEl(null);}}
             PaperProps={{ style: {maxHeight: ITEM_HEIGHT * 4.5, width: '8ch' }}}>
             
-            <MenuItem onClick={()=>{navigate("/room/")}} >
-              <ImSortAlphaAsc fontSize="xx-large" color="#1a6eff"></ImSortAlphaAsc>  
+            <MenuItem>
+              <ImSortAlphaAsc 
+                fontSize="xx-large" 
+                color="#1a6eff"
+                onClick={()=>setSortType("increase")}
+                ></ImSortAlphaAsc>  
             </MenuItem>
 
-            <MenuItem onClick={()=>{navigate("/room/")}} >
-              <ImSortAlphaDesc fontSize="xx-large" color="#1a6eff"></ImSortAlphaDesc>  
+            <MenuItem>
+              <ImSortAlphaDesc 
+                fontSize="xx-large" 
+                color="#1a6eff"
+                onClick={()=>setSortType("descrease")}
+                ></ImSortAlphaDesc>  
             </MenuItem>
         
           </Menu>
@@ -163,9 +191,6 @@ const RoomPage = () => {
         }   
       </Box>
 
-      <Box id="Sort">
-        
-      </Box>
     </Box>
   );
 };

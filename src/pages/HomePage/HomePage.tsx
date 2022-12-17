@@ -6,11 +6,8 @@ import { useRooms } from "../../lib/provider/RoomsProvider";
 import { useUser } from "../../lib/provider/UserProvider";
 import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
-<<<<<<< HEAD
 import RoomPage from "../RoomPage/RoomPage";
-=======
 import UploadFile from "../../lib/components/UploadFile/UploadFile";
->>>>>>> 47d802d104d32aa08701a5567762e85d7287fd19
 
 const HomePage = () => {
   const dataName = false;
