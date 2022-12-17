@@ -31,7 +31,6 @@ const UserHelper = {
   // }
   getUserById:
     async (id:string):Promise<undefined|UserData> => {
-      try {
         let result=undefined;  
         const usersResponse = await getDocs(
           query(collection(db, "user"), where("id", "==", id))
@@ -40,9 +39,6 @@ const UserHelper = {
           result=userResponse.data();
         });
         return result;
-      } catch (error) {
-        throw error;
-      }
     },
 };
 
