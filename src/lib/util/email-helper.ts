@@ -12,4 +12,5 @@ const EmailHelper = {
     return true;
   },
 };
+
 export default EmailHelper;

@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Checkbox,
   Dialog,
   DialogActions,
@@ -12,9 +10,12 @@ import {
   makeStyles,
   TextField,
 } from "@material-ui/core";
+import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
+import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import { useUser } from "../../../../lib/provider/UserProvider";
 import ROOM_AVATAR_DEFAULT from "../../constants/room-avatar-default";
 
 const useStyle = makeStyles((theme) => ({
@@ -36,155 +37,116 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const CreateRoomDialog = (dialogProps: DialogProps) => {
-  const [room, setRoom] = useState("");
-  const [company, setCompany] = useState("");
-  const [topic, setTopic] = useState("");
+const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [key, setKey] = useState("");
+  const [imageURL, setImageURL] = useState("");
   const [agree, setAgree] = useState(false);
 
   const { createRoom, creatingRoom } = useRooms();
   const { logOut } = useAuth();
+  const { user } = useUser();
 
   const classes = useStyle();
+
+  if (!user) return null;
 
   return (
     <Dialog {...dialogProps}>
       <DialogTitle>Tạo phòng mới</DialogTitle>
 
-      <form
-        onSubmit={async (event) => {
-          await createRoom({
-            id: "",
-            avatar: ROOM_AVATAR_DEFAULT,
-            name: "",
-            created_at: "",
-            description: description,
-          });
-          event.preventDefault();
-        }}
-      >
-        <DialogContent>
-          <DialogContentText>
-            Bạn đang đăng nhập bằng tài khoản:
-          </DialogContentText>
+      <DialogContent>
+        <DialogContentText>
+          Bạn đang đăng nhập bằng tài khoản:
+        </DialogContentText>
 
-          <Box className={classes.container}>
-            <img
-              src="https://img6.thuthuatphanmem.vn/uploads/2022/02/13/hinh-anh-lop-hoc-dep-nhat_011959587.jpg"
-              alt="avatar"
-              className={classes.image}
+        <Box className={classes.container}>
+          <img src={user.avatar} alt="avatar" className={classes.image} />
+
+          <Box className={classes.userName}>{user.name}</Box>
+
+          <Button variant="outlined" onClick={async () => await logOut()}>
+            Chuyển tài khoản
+          </Button>
+        </Box>
+
+        <TextField
+          autoFocus
+          label="Tên phòng:"
+          required
+          fullWidth
+          onChange={(event) => {
+            setName(event.target.value);
+          }}
+        />
+
+        <TextField
+          label="Mô tả:"
+          margin="dense"
+          multiline
+          maxRows={5}
+          rows={2}
+          fullWidth
+          variant="standard"
+          onChange={(event) => {
+            setDescription(event.target.value);
+          }}
+        />
+
+        <TextField
+          autoFocus
+          label="URL hình ảnh"
+          type="text"
+          variant="standard"
+          fullWidth
+          inputProps={{ maxLength: 12 }}
+          onChange={(event) => {
+            setImageURL(event.target.value);
+          }}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              required
+              onClick={() => {
+                setAgree(!agree);
+              }}
             />
+          }
+          label="Tôi đồng ý với các điều khoản dịch vụ."
+        />
+      </DialogContent>
 
-            <Box className={classes.userName}>User name</Box>
+      <DialogActions>
+        <Button
+          onClick={() => {
+            dialogProps.onClose?.({}, "backdropClick");
+          }}
+          style={{ padding: 8 }}
+        >
+          HỦY
+        </Button>
 
-            <Button variant="outlined" onClick={async () => await logOut()}>
-              Chuyển tài khoản
-            </Button>
-          </Box>
-
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Tên phòng:"
-            type="text"
-            required
-            fullWidth
-            variant="standard"
-            onChange={(event) => {
-              setRoom(event.target.value);
-            }}
-          />
-
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Tên công ty:"
-            type="text"
-            required
-            fullWidth
-            variant="standard"
-            onChange={(event) => {
-              setCompany(event.target.value);
-            }}
-          />
-
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Chủ đề:"
-            type="text"
-            fullWidth
-            variant="standard"
-            onChange={(event) => {
-              setTopic(event.target.value);
-            }}
-          />
-
-          <TextField
-            label="Mô tả:"
-            margin="dense"
-            multiline
-            maxRows={5}
-            rows={2}
-            type="text"
-            fullWidth
-            variant="standard"
-            onChange={(event) => {
-              setDescription(event.target.value);
-            }}
-          />
-
-          <TextField
-            autoFocus
-            label="Từ khóa"
-            type="text"
-            required
-            helperText="Từ khóa có độ dài không vượt quá 12 kí tự"
-            variant="standard"
-            inputProps={{ maxLength: 12 }}
-            onChange={(event) => {
-              setKey(event.target.value);
-            }}
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                required
-                onClick={() => {
-                  setAgree(!agree);
-                }}
-              />
-            }
-            label="Tôi đồng ý với các điều khoản dịch vụ."
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button
-            onClick={() => {
-              dialogProps.onClose?.({}, "backdropClick");
-            }}
-          >
-            HỦY
-          </Button>
-
-          <Button
-            type="submit"
-            onClick={() => {}}
-            variant={
-              room === "" || company === "" || key === "" || !agree
-                ? "outlined"
-                : "contained"
-            }
-          >
-            TẠO
-          </Button>
-        </DialogActions>
-      </form>
+        <LoadingButton
+          onClick={async () => {
+            await createRoom({
+              avatar: imageURL || ROOM_AVATAR_DEFAULT,
+              name: name,
+              description: description,
+            });
+            dialogProps.onClose?.({}, "backdropClick");
+          }}
+          variant="contained"
+          color="primary"
+          loading={creatingRoom}
+          style={{ padding: 8 }}
+          disabled={name === "" || !agree || creatingRoom}
+        >
+          TẠO
+        </LoadingButton>
+      </DialogActions>
     </Dialog>
   );
 };

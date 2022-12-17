@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FeedIcon from "@mui/icons-material/Feed";
 import HomeRepairServiceOutlinedIcon from "@mui/icons-material/HomeRepairServiceOutlined";
@@ -10,14 +10,15 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { makeStyles } from "@mui/styles";
-import { Box, Link, MenuItem, MenuList, Typography } from "@mui/material";
+import { Box, MenuItem, MenuList, Typography } from "@mui/material";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const useStyle = makeStyles({
   cssStyle1: {
     width: "232px",
     position: "fixed",
     left: 0,
-    top: 0,
+    top: 64,
     bottom: 0,
     borderRight: "1.5px solid rgba(231, 232, 239, 0.8)",
     fontFamily: "Inter",
@@ -32,21 +33,6 @@ const useStyle = makeStyles({
     gap: "4px",
     borderBottom: "1px solid #E7E8EF",
   },
-  // cssStyle3: {
-  //   margin: 0,
-  //   fontSize: "16px",
-  //   fontWeight: 600,
-  //   lineHeight: "150%",
-  //   letterSpacing: "0.15px",
-  //   color: "#202227",
-  // },
-  // cssStyle4: {
-  //   fontSize: "12px",
-  //   fontWeight: 400,
-  //   lineHeight: "130%",
-  //   letterSpacing: "0.4px",
-  //   color: "#4E525F",
-  // },
   cssStyle5: {
     padding: "16px 20px 8px",
     fontSize: "14px",
@@ -66,6 +52,7 @@ const useStyle = makeStyles({
   },
   cssStyle7: {
     padding: "0 12px",
+    width: "100%",
   },
   cssStyle8: {
     width: "100%",
@@ -90,37 +77,35 @@ const useStyle = makeStyles({
 });
 
 const LeftSideBar = () => {
-  const [selection, setSelection] = useState(-1);
   const classes = useStyle();
-
-  const handleSelection = (index: number) => {
-    setSelection(selection === index ? -1 : index);
-  };
+  let navigate = useNavigate();
+  let { roomId } = useParams();
+  let location = useLocation();
 
   const items = [
     {
       label: "Bản tin",
       icon: <FeedOutlinedIcon />,
       filledIcon: <FeedIcon />,
-      href: "#",
+      href: "/newsfeed",
     },
     {
       label: "Nơi làm việc",
       icon: <HomeRepairServiceOutlinedIcon />,
       filledIcon: <HomeRepairServiceIcon />,
-      href: "#",
+      href: "/work",
     },
     {
       label: "Thống kê",
       icon: <AssessmentOutlinedIcon />,
       filledIcon: <AssessmentIcon />,
-      href: "#",
+      href: "/statistic",
     },
     {
       label: "Thành viên",
       icon: <PeopleAltOutlinedIcon />,
       filledIcon: <PeopleAltIcon />,
-      href: "#",
+      href: "/member",
     },
   ];
 
@@ -144,18 +129,20 @@ const LeftSideBar = () => {
               <MenuItem
                 key={`left-side-bar-${index}`}
                 className={classes.cssStyle7}
-                onClick={() => handleSelection(index)}
-                component={Link}
-                href={item.href}
+                onClick={() => navigate("/room/" + roomId + item.href)}
               >
                 <Box
                   className={
                     classes.cssStyle8 +
                     " " +
-                    (index === selection ? classes.cssStyle9 : "")
+                    (location.pathname.includes(item.href)
+                      ? classes.cssStyle9
+                      : "")
                   }
                 >
-                  {index === selection ? item.filledIcon : item.icon}
+                  {location.pathname.includes(item.href)
+                    ? item.filledIcon
+                    : item.icon}
                   <Typography variant="body1">{item.label}</Typography>
                 </Box>
               </MenuItem>
@@ -166,18 +153,18 @@ const LeftSideBar = () => {
         <Box className={classes.cssStyle6}>
           <MenuItem
             className={classes.cssStyle7}
-            onClick={() => handleSelection(items.length)}
-            component={Link}
-            href="#"
+            onClick={() => navigate("/room/" + roomId + "/setting-room")}
           >
             <Box
               className={
                 classes.cssStyle8 +
                 " " +
-                (items.length === selection ? classes.cssStyle9 : "")
+                (location.pathname.includes("/setting-room")
+                  ? classes.cssStyle9
+                  : "")
               }
             >
-              {items.length === selection ? (
+              {location.pathname.includes("/setting-room") ? (
                 <SettingsIcon />
               ) : (
                 <SettingsOutlinedIcon />

@@ -15,9 +15,10 @@ import {
 } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import { initializeApp } from "firebase/app";
-import FirebaseConfig from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase-config";
+import USER_AVATAR_DEFAULT from "../../modules/user/contants/user-avatar-default";
 
 interface AuthContextProps {
   checkingAuth: boolean;
@@ -38,6 +39,7 @@ interface AuthContextProps {
     password: string;
   }) => Promise<void>;
   logOut: () => Promise<void>;
+  loggingOut: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -47,16 +49,16 @@ const AuthContext = createContext<AuthContextProps>({
   register: async () => {},
   logIn: async () => {},
   logOut: async () => {},
+  loggingOut: false,
 });
 
 interface AuthContextProviderProps {
   children: React.ReactNode;
 }
 
-initializeApp(FirebaseConfig);
-
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
 
   const navigate = useNavigate();
@@ -71,7 +73,23 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const authReponse = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        const response = await addDoc(collection(db, "user"), {
+          name: email,
+          email: email,
+          avatar: USER_AVATAR_DEFAULT,
+          created_at: new Date(),
+        });
+
+        await updateDoc(doc(db, "user", response.id), {
+          id: response.id,
+          auth_id: authReponse.user.uid,
+        });
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
           throw "Email đã tồn tại";
@@ -94,6 +112,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       } catch (error) {
         if (String(error).includes("user-not-found")) {
           throw "Tài khoản không tồn tại";
+        } else if (String(error).includes("auth/wrong-password")) {
+          throw "Sai mật khẩu";
         } else {
           throw error;
         }
@@ -104,34 +124,32 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
   const logOut = useCallback(async () => {
     try {
+      setLoggingOut(true);
       await signOut(auth);
     } catch (error) {
       showSnackbarError(error);
+    } finally {
+      setLoggingOut(false);
     }
   }, [auth, showSnackbarError]);
 
   useEffect(() => {
     const authCheck = onAuthStateChanged(auth, (user) => {
+      setUserInfo(user);
       if (user) {
         setCheckingAuth(false);
+        if (!needAuth) {
+          navigate("/home");
+        }
+      } else {
+        if (needAuth) {
+          navigate("/login");
+        }
       }
-      setUserInfo(user);
     });
 
     return authCheck;
   }, []);
-
-  useEffect(() => {
-    if (userInfo) {
-      if (!needAuth) {
-        navigate("/home");
-      }
-    } else {
-      if (needAuth) {
-        navigate("/login");
-      }
-    }
-  }, [needAuth, userInfo]);
 
   if (checkingAuth && needAuth)
     return (
@@ -149,6 +167,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         register,
         logIn,
         logOut,
+        loggingOut,
       }}
     >
       {children}

@@ -17,6 +17,8 @@ import React, { useState } from "react";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import SendIcon from "@mui/icons-material/Send";
+import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
+import { useUser } from "../../../../lib/provider/UserProvider";
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -44,13 +46,13 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const JoinRoomDialog = (dialogProps: DialogProps) => {
-  const [collapse, setCollapse] = useState(false);
+const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
+  const [collapse, setCollapse] = useState(true);
   const [id, setId] = useState("");
-  const [msg, setMsg] = useState("");
 
   const { joinRoom, joiningRoom } = useRooms();
   const { logOut } = useAuth();
+  const { user } = useUser();
 
   const classes = useStyle();
 
@@ -59,102 +61,85 @@ const JoinRoomDialog = (dialogProps: DialogProps) => {
       <Dialog {...dialogProps}>
         <DialogTitle>Tham gia phòng</DialogTitle>
 
-        <form
-          onSubmit={async (event) => {
-            await joinRoom({ id: id });
-            event.preventDefault();
-          }}
-        >
-          <DialogContent>
-            <DialogContentText>
-              Bạn đang đăng nhập bằng tài khoản:
-            </DialogContentText>
+        <DialogContent>
+          <DialogContentText>
+            Bạn đang đăng nhập bằng tài khoản:
+          </DialogContentText>
 
-            <Box className={classes.container}>
-              <img
-                src="https://img6.thuthuatphanmem.vn/uploads/2022/02/13/hinh-anh-lop-hoc-dep-nhat_011959587.jpg"
-                alt="avatar"
-                className={classes.image}
-              />
-              <Box className={classes.userName}>User name</Box>
+          <Box className={classes.container}>
+            <img src={user?.avatar} alt="avatar" className={classes.image} />
+            <Box className={classes.userName}>{user?.name}</Box>
 
-              <Button variant="outlined" onClick={async () => await logOut()}>
-                Chuyển tài khoản
-              </Button>
-            </Box>
+            <Button variant="outlined" onClick={async () => await logOut()}>
+              Chuyển tài khoản
+            </Button>
+          </Box>
 
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Mã phòng:"
-              type="text"
-              required
-              helperText="Mã phòng gồm 6-8 kí tự 0-9, a-z, A-Z"
-              variant="standard"
-              onChange={(event) => {
-                setId(event.target.value);
-              }}
-            />
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Mã phòng:"
+            type="text"
+            required
+            fullWidth
+            helperText="Mã phòng gồm 20 kí tự 0-9, a-z, A-Z"
+            variant="standard"
+            onChange={(event) => {
+              setId(event.target.value);
+            }}
+          />
 
-            <TextField
-              label="Lời nhắn:"
-              multiline
-              maxRows={5}
-              rows={2}
-              type="text"
-              fullWidth
-              variant="standard"
-              onChange={(event) => {
-                setMsg(event.target.value);
-              }}
-            />
+          <Typography
+            onClick={() => setCollapse(!collapse)}
+            className={classes.helpTitle}
+          >
+            Hướng dẫn
+          </Typography>
 
-            <Typography
-              onClick={() => setCollapse(!collapse)}
-              className={classes.helpTitle}
-            >
-              Hướng dẫn
+          <Collapse in={collapse}>
+            <Typography className={classes.helpText}>
+              Nếu chưa có mã phòng, hãy liên hệ trưởng phòng của bạn
             </Typography>
 
-            <Collapse in={collapse}>
-              <Typography className={classes.helpText}>
-                Nếu chưa có mã phòng, hãy liên hệ trưởng phòng của bạn
-              </Typography>
+            <Typography className={classes.helpText}>
+              Hãy dùng tài khoản hợp lệ để tham gia vào phòng
+            </Typography>
 
-              <Typography className={classes.helpText}>
-                Hãy dùng tài khoản hợp lệ để tham gia vào phòng
-              </Typography>
+            <Typography className={classes.helpText}>
+              Sau khi bạn điền đầy đủ thông tin và nhấn nút <b>Tham gia</b>, bạn
+              sẽ được đưa vào danh sách chờ và sẽ được vào phòng sau khi trưởng
+              phòng kiểm duyệt và đồng ý.
+            </Typography>
+          </Collapse>
+        </DialogContent>
 
-              <Typography className={classes.helpText}>
-                Hãy để lại lời nhắn để người duyệt có thể dễ dàng nhận ra bạn
-              </Typography>
+        <DialogActions>
+          <Button
+            style={{ padding: "8px 12px" }}
+            variant="outlined"
+            onClick={() => {
+              dialogProps.onClose?.({}, "backdropClick");
+            }}
+          >
+            <Typography>HỦY</Typography>
+          </Button>
 
-              <Typography className={classes.helpText}>
-                Sau khi bạn điền đầy đủ thông tin và nhấn nút <b>Tham gia</b>,
-                bạn sẽ được đưa vào danh sách chờ và sẽ được vào phòng sau khi
-                trưởng phòng kiểm duyệt và đồng ý.
-              </Typography>
-            </Collapse>
-          </DialogContent>
-
-          <DialogActions>
-            <Button
-              onClick={() => {
-                dialogProps.onClose?.({}, "backdropClick");
-              }}
-            >
-              <Typography>HỦY</Typography>
-            </Button>
-
-            <Button
-              type="submit"
-              variant={id === "" || joiningRoom ? "outlined" : "contained"}
-            >
-              <Typography>THAM GIA</Typography>
-              {joiningRoom ? <CircularProgress /> : <SendIcon />}
-            </Button>
-          </DialogActions>
-        </form>
+          <LoadingButton
+            loading={joiningRoom}
+            disabled={id === "" || joiningRoom}
+            size="small"
+            variant="contained"
+            color="primary"
+            style={{ padding: "8px 12px" }}
+            onClick={async () => {
+              await joinRoom({ id: id });
+              dialogProps.onClose?.({}, "backdropClick");
+            }}
+          >
+            <Typography>THAM GIA</Typography>&nbsp;&nbsp;
+            <SendIcon style={{ width: 20, height: 20 }} />
+          </LoadingButton>
+        </DialogActions>
       </Dialog>
     </Box>
   );
