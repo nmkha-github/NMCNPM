@@ -3,6 +3,11 @@ import {
   Badge,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Fade,
   makeStyles,
@@ -17,6 +22,7 @@ import { useEffect, useState } from "react";
 import LoadingButton from "../../lib/components/LoadingButton/LoadingButton";
 import useAppSnackbar from "../../lib/hook/useAppSnackBar";
 import UserData from "../../modules/user/interface/user-data";
+import UploadFile from "../../lib/components/UploadFile/UploadFile";
 const useStyle = makeStyles((theme) => ({
   container: {
     display: "flex",
@@ -63,7 +69,6 @@ const SettingPage = () => {
   const classes = useStyle();
   const { user, loadingUser, editUser, editingUser } = useUser();
   const { showSnackbarError } = useAppSnackbar();
-
   const [userEditData, setUserEditData] = useState<UserData>({
     auth_id: "",
     id: "",
@@ -73,6 +78,9 @@ const SettingPage = () => {
     created_at: "",
   });
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorDialogEl, setAnchorDialogEl] = useState<null | HTMLElement>(
+    null
+  );
 
   useEffect(() => {
     if (user) {
@@ -115,7 +123,7 @@ const SettingPage = () => {
           }
         >
           <Avatar
-            src={user?.avatar}
+            src={userEditData.avatar}
             alt="User's avatar"
             className={classes.avatar}
           />
@@ -131,6 +139,8 @@ const SettingPage = () => {
         }}
         style={{ width: 320 }}
         size="small"
+        value={userEditData.name}
+        helperText="Tên của bạn xuất hiện trên trang cá nhân"
       />
 
       <Typography className={classes.textFieldLabel}>Email:</Typography>
@@ -139,13 +149,20 @@ const SettingPage = () => {
         disabled
         style={{ width: 320 }}
         size="small"
+        value={userEditData.email}
       />
 
       <Typography className={classes.textFieldLabel}>Company:</Typography>
       <TextField variant="outlined" style={{ width: 320 }} size="small" />
 
       <Typography className={classes.textFieldLabel}>Bio:</Typography>
-      <TextField autoFocus multiline maxRows={5} variant="outlined" fullWidth />
+      <TextField
+        multiline
+        maxRows={5}
+        variant="outlined"
+        fullWidth
+        helperText="Bio hiển thị trên trang cá nhân giúp mọi người hiểu bạn hơn"
+      />
 
       <LoadingButton
         onClick={async () => {
@@ -183,10 +200,58 @@ const SettingPage = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         TransitionComponent={Fade}
       >
-        <MenuItem onClick={() => setAnchorEl(null)}>Tải ảnh lên</MenuItem>
+        <UploadFile
+          onSuccess={(file) => {
+            setUserEditData({ ...userEditData, avatar: file.url });
+          }}
+        >
+          <MenuItem onClick={() => setAnchorEl(null)}>Tải ảnh lên</MenuItem>
+        </UploadFile>
 
-        <MenuItem onClick={() => setAnchorEl(null)}>Xóa ảnh</MenuItem>
+        <MenuItem
+          id="delete-button"
+          onClick={(event: React.MouseEvent<HTMLElement>) =>
+            setAnchorDialogEl(event.currentTarget)
+          }
+          aria-controls={!!anchorDialogEl ? "confirm-dialog" : undefined}
+          aria-haspopup="true"
+          aria-expanded={!!anchorDialogEl ? "true" : undefined}
+        >
+          Xóa ảnh
+        </MenuItem>
       </Popover>
+
+      <Dialog
+        open={!!anchorDialogEl}
+        id="confirm-dialog"
+        onClose={() => setAnchorDialogEl(null)}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">
+          Đồng ý xóa ảnh đại diện?
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            Sau khi xóa, ảnh đại diện sẽ là ảnh mặc định, với các kí tự là viết
+            tắt tên của bạn
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setAnchorDialogEl(null)}>Hủy</Button>
+          <Button
+            onClick={() => {
+              setUserEditData({ ...userEditData, avatar: "" });
+              setAnchorDialogEl(null);
+            }}
+            autoFocus
+          >
+            Đồng ý
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
