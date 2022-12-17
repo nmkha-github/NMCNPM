@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FeedIcon from "@mui/icons-material/Feed";
 import HomeRepairServiceOutlinedIcon from "@mui/icons-material/HomeRepairServiceOutlined";
@@ -10,9 +10,18 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { makeStyles } from "@mui/styles";
-import { Box, MenuItem, MenuList, Typography } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../../../lib/provider/UserProvider";
+import CopyToClipboardBox from "../../../../lib/components/CopyToClipboardBox/CopyToClipboardBox";
+import { useRooms } from "../../../../lib/provider/RoomsProvider";
 
 const useStyle = makeStyles({
   cssStyle1: {
@@ -30,14 +39,12 @@ const useStyle = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    padding: "16px 20px 8px",
     gap: "4px",
-    borderBottom: "1px solid #E7E8EF",
   },
   cssStyle5: {
     padding: "16px 20px 8px",
     fontSize: "14px",
-    fontWeight: 400,
+    fontWeight: 700,
     lineHeight: "130%",
     letterSpacing: "0.4px",
     color: "#373A43",
@@ -80,63 +87,76 @@ const useStyle = makeStyles({
 const LeftSideBar = () => {
   const classes = useStyle();
   const { user } = useUser();
-  const manager_id = "a" + user?.id || ""; // for test
   const navigate = useNavigate();
-  const { roomId } = useParams();
+  const { currentRoom, loadingCurrentRoom } = useRooms();
   const location = useLocation();
 
-  const items = [
-    {
-      label: "Bản tin",
-      icon: <FeedOutlinedIcon />,
-      filledIcon: <FeedIcon />,
-      href: `/room/${roomId}/newsfeed`,
-    },
-    {
-      label: "Nơi làm việc",
-      icon: <HomeRepairServiceOutlinedIcon />,
-      filledIcon: <HomeRepairServiceIcon />,
-      href: `/room/${roomId}/work`,
-    },
-    ...(user?.id === manager_id
-      ? [
-          {
-            label: "Thống kê",
-            icon: <AssessmentOutlinedIcon />,
-            filledIcon: <AssessmentIcon />,
-            href: `/room/${roomId}/statistic`,
-          },
-          {
-            label: "Thành viên",
-            icon: <PeopleAltOutlinedIcon />,
-            filledIcon: <PeopleAltIcon />,
-            href: `/room/${roomId}/member`,
-          },
-        ]
-      : [
-          {
-            label: "Thống kê",
-            icon: <AssessmentOutlinedIcon />,
-            filledIcon: <AssessmentIcon />,
-            href: `/room/${roomId}/member/${user?.id || ""}`,
-          },
-        ]),
-  ];
-
-  const room = { name: "Lớp tập huấn sử dụng", id: "SUPERA" };
+  const items = useMemo(
+    () => [
+      {
+        label: "Bản tin",
+        icon: <FeedOutlinedIcon />,
+        filledIcon: <FeedIcon />,
+        href: `/room/${currentRoom.id}/newsfeed`,
+      },
+      {
+        label: "Nơi làm việc",
+        icon: <HomeRepairServiceOutlinedIcon />,
+        filledIcon: <HomeRepairServiceIcon />,
+        href: `/room/${currentRoom.id}/work`,
+      },
+      ...(user?.id === currentRoom.manager_id
+        ? [
+            {
+              label: "Thống kê",
+              icon: <AssessmentOutlinedIcon />,
+              filledIcon: <AssessmentIcon />,
+              href: `/room/${currentRoom.id}/statistic`,
+            },
+            {
+              label: "Thành viên",
+              icon: <PeopleAltOutlinedIcon />,
+              filledIcon: <PeopleAltIcon />,
+              href: `/room/${currentRoom.id}/member`,
+            },
+          ]
+        : [
+            {
+              label: "Thống kê",
+              icon: <AssessmentOutlinedIcon />,
+              filledIcon: <AssessmentIcon />,
+              href: `/room/${currentRoom.id}/member/${user?.id || ""}`,
+            },
+          ]),
+    ],
+    [currentRoom, user?.id]
+  );
 
   return (
     <Box className={classes.cssStyle1}>
       <Box>
-        <Box className={classes.cssStyle2}>
-          <Typography variant="h6">{room.name ? room.name : "N/A"}</Typography>
+        {loadingCurrentRoom ? (
+          <CircularProgress />
+        ) : (
+          <Box style={{ padding: "8px 16px" }}>
+            <Box className={classes.cssStyle2}>
+              <Typography variant="h6">
+                {currentRoom.name ? currentRoom.name : "N/A"}
+              </Typography>
 
-          <Typography variant="subtitle2">
-            {"Mã phòng: " + (room.id ? room.id : "N/A")}
-          </Typography>
-        </Box>
+              <Typography variant="subtitle2">
+                {"Mã phòng: " + (currentRoom.id ? currentRoom.id : "N/A")}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box style={{ height: 16 }} />
+
+            <CopyToClipboardBox text={currentRoom.id} />
+          </Box>
+        )}
 
         <Typography className={classes.cssStyle5}>Danh mục</Typography>
+        <Divider />
         <MenuList>
           {items.map((item, index) => {
             return (
@@ -168,7 +188,9 @@ const LeftSideBar = () => {
         <Box className={classes.cssStyle6}>
           <MenuItem
             className={classes.cssStyle7}
-            onClick={() => navigate("/room/" + roomId + "/setting-room")}
+            onClick={() =>
+              navigate("/room/" + currentRoom.id + "/setting-room")
+            }
             style={{ display: "block", padding: 8 }}
           >
             <Box
