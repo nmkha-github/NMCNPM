@@ -153,8 +153,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at_seconds", "desc"),
-              orderBy("created_at_nanoseconds", "desc"),
+              orderBy("created_at", "desc"),
               limit(_limit)
             )
           );
@@ -170,8 +169,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           const roomIdDocsResponse = await getDocs(
             query(
               collection(db, "user", user?.id, "room"),
-              orderBy("created_at_seconds", "desc"),
-              orderBy("created_at_nanoseconds", "desc"),
+              orderBy("created_at", "desc"),
               startAfter(roomIdDocs[_skip - 1]),
               limit(_limit)
             )
@@ -266,8 +264,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: docResponse.id,
         });
         await addDoc(collection(db, "user", user?.id, "room"), {
-          created_at_seconds: time.seconds,
-          created_at_nanoseconds: time.nanoseconds,
+          created_at: time.seconds + 0.000000001 * time.nanoseconds,
           id: docResponse.id,
         });
 
