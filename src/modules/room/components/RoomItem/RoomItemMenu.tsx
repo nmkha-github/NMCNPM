@@ -70,7 +70,10 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
         ) : (
           <MenuItem
             style={{ display: "flex", padding: 8 }}
-            onClick={async () => await deleteRoom({ id: roomData.id })}
+            onClick={async () => {
+              await deleteRoom({ id: roomData.id });
+              setAnchorEl(null);
+            }}
           >
             <ListItemIcon>
               {" "}
