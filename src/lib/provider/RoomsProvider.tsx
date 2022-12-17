@@ -218,7 +218,10 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           query(collection(db, "user", user?.id, "room"), where("id", "==", id))
         );
         if (!checkDocsResponse.docs.length) {
-          throw "Bạn không thuộc phòng ban này";
+          showSnackbarError("Bạn không thuộc phòng ban này");
+          navigate("/room");
+          setLoadingCurrentRoom(false);
+          return;
         }
 
         const roomDocResponse = await getDoc(doc(db, "room", id));
