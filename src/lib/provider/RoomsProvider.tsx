@@ -3,7 +3,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  FieldPath,
   getDoc,
   getDocs,
   limit,
@@ -14,13 +13,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ROOM_AVATAR_DEFAULT from "../../modules/room/constants/room-avatar-default";
 import RoomData from "../../modules/room/interface/room-data";

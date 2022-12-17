@@ -28,17 +28,8 @@ const SettingRoomPage = () => {
   });
   const { roomId } = useParams();
   const { showSnackbarError } = useAppSnackbar();
-  const {
-    currentRoom,
-    getCurrentRoom,
-    updateRoom,
-    loadingCurrentRoom,
-    updatingRoom,
-  } = useRooms();
-
-  useEffect(() => {
-    getCurrentRoom(roomId || "");
-  }, [getCurrentRoom, roomId]);
+  const { currentRoom, updateRoom, loadingCurrentRoom, updatingRoom } =
+    useRooms();
 
   useEffect(() => {
     if (currentRoom) {
@@ -204,20 +195,21 @@ const SettingRoomPage = () => {
             khỏi phòng
           </h5>
           <UploadFile
-          onSuccess={(file)=>{
-            setRoomEditData({
-              ...roomEditData,
-              avatar:file.url
-            })
-          }}>
-          <Button variant="outlined" className="avatar_change">
-            <img className="image" src={roomEditData.avatar} />
-            <h1 className="change_image">
-              <FileUploadSharpIcon sx={{ fontSize: 40 }} />
-              Chọn file để đổi ảnh
-            </h1>
-            <input type="file" hidden />
-          </Button>
+            onSuccess={(file) => {
+              setRoomEditData({
+                ...roomEditData,
+                avatar: file.url,
+              });
+            }}
+          >
+            <Button variant="outlined" className="avatar_change">
+              <img className="image" src={roomEditData.avatar} />
+              <h1 className="change_image">
+                <FileUploadSharpIcon sx={{ fontSize: 40 }} />
+                Chọn file để đổi ảnh
+              </h1>
+              <input type="file" hidden />
+            </Button>
           </UploadFile>
           <Box
             className="df"
