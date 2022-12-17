@@ -46,9 +46,9 @@ const RoomPage = () => {
             return 0;
           }
           if (sortType === "increase") {
-            return roomA.name > roomB.name ? 1 : 0;
+            return roomA.name > roomB.name ? 1 : -1;
           }
-          return roomA.name > roomB.name ? -1 : 0;
+          return roomA.name > roomB.name ? -1 : 1;
         })
     );
   }, [rooms, sortType, searchValue]);
