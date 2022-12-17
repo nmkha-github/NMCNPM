@@ -12,6 +12,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { makeStyles } from "@mui/styles";
 import { Box, MenuItem, MenuList, Typography } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useUser } from "../../../../lib/provider/UserProvider";
 
 const useStyle = makeStyles({
   cssStyle1: {
@@ -78,35 +79,48 @@ const useStyle = makeStyles({
 
 const LeftSideBar = () => {
   const classes = useStyle();
-  let navigate = useNavigate();
-  let { roomId } = useParams();
-  let location = useLocation();
+  const { user } = useUser();
+  const manager_id = "a" + user?.id || ""; // for test
+  const navigate = useNavigate();
+  const { roomId } = useParams();
+  const location = useLocation();
 
   const items = [
     {
       label: "Bản tin",
       icon: <FeedOutlinedIcon />,
       filledIcon: <FeedIcon />,
-      href: "/newsfeed",
+      href: `/room/${roomId}/newsfeed`,
     },
     {
       label: "Nơi làm việc",
       icon: <HomeRepairServiceOutlinedIcon />,
       filledIcon: <HomeRepairServiceIcon />,
-      href: "/work",
+      href: `/room/${roomId}/work`,
     },
-    {
-      label: "Thống kê",
-      icon: <AssessmentOutlinedIcon />,
-      filledIcon: <AssessmentIcon />,
-      href: "/statistic",
-    },
-    {
-      label: "Thành viên",
-      icon: <PeopleAltOutlinedIcon />,
-      filledIcon: <PeopleAltIcon />,
-      href: "/member",
-    },
+    ...(user?.id === manager_id
+      ? [
+          {
+            label: "Thống kê",
+            icon: <AssessmentOutlinedIcon />,
+            filledIcon: <AssessmentIcon />,
+            href: `/room/${roomId}/statistic`,
+          },
+          {
+            label: "Thành viên",
+            icon: <PeopleAltOutlinedIcon />,
+            filledIcon: <PeopleAltIcon />,
+            href: `/room/${roomId}/member`,
+          },
+        ]
+      : [
+          {
+            label: "Thống kê",
+            icon: <AssessmentOutlinedIcon />,
+            filledIcon: <AssessmentIcon />,
+            href: `/room/${roomId}/member/${user?.id || ""}`,
+          },
+        ]),
   ];
 
   const room = { name: "Lớp tập huấn sử dụng", id: "SUPERA" };
@@ -129,7 +143,8 @@ const LeftSideBar = () => {
               <MenuItem
                 key={`left-side-bar-${index}`}
                 className={classes.cssStyle7}
-                onClick={() => navigate("/room/" + roomId + item.href)}
+                onClick={() => navigate(item.href)}
+                style={{ display: "block", padding: 8 }}
               >
                 <Box
                   className={
@@ -154,6 +169,7 @@ const LeftSideBar = () => {
           <MenuItem
             className={classes.cssStyle7}
             onClick={() => navigate("/room/" + roomId + "/setting-room")}
+            style={{ display: "block", padding: 8 }}
           >
             <Box
               className={
