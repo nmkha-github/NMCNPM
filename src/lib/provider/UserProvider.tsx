@@ -18,6 +18,7 @@ import { db } from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
 import UserData from "../../modules/user/interface/user-data";
 import { useAuth } from "./AuthProvider";
+import { useLocation } from "react-router-dom";
 
 interface UserContextProps {
   user?: UserData;
@@ -28,7 +29,7 @@ interface UserContextProps {
     fields,
   }: {
     id: string;
-    fields: { name?: string; avatar?: string; created_at?: string };
+    fields: { name?: string; avatar?: string };
   }) => Promise<void>;
   editingUser: boolean;
 }
@@ -53,6 +54,10 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
 
   const { showSnackbarError } = useAppSnackbar();
   const { userInfo } = useAuth();
+  const location = useLocation();
+  const needAuth = !["/login", "/register", "/forgot-password"].includes(
+    location.pathname
+  );
 
   const getUser = useCallback(async () => {
     try {
@@ -70,7 +75,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
     } finally {
       setLoadingUser(false);
     }
-  }, [showSnackbarError, userInfo?.uid]);
+  }, [showSnackbarError, userInfo]);
 
   const editUser = useCallback(
     async ({
@@ -78,7 +83,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
       fields,
     }: {
       id: string;
-      fields: { name?: string; avatar?: string; created_at?: string };
+      fields: { name?: string; avatar?: string };
     }) => {
       try {
         setEditingUser(true);
@@ -106,7 +111,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
     } else {
       setUser(undefined);
     }
-  }, [getUser, userInfo]);
+  }, [userInfo]);
 
   return (
     <UserContext.Provider
@@ -118,7 +123,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
         editingUser,
       }}
     >
-      {user && children}
+      {(!needAuth || user) && children}
     </UserContext.Provider>
   );
 };
