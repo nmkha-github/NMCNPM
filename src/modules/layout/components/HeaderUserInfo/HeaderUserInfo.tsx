@@ -96,28 +96,41 @@ const HeaderUserInfo = () => {
 
         <Divider />
 
-        <MenuItem onClick={() => setAnchorEl(null)}>
+        <MenuItem
+          onClick={() => setAnchorEl(null)}
+          style={{ display: "block", padding: 8 }}
+        >
           <ListItemIcon>
             <PortraitIcon fontSize="small" />
           </ListItemIcon>
           Hồ sơ của bạn
         </MenuItem>
 
-        <MenuItem onClick={() => setAnchorEl(null)}>
+        <MenuItem
+          onClick={() => setAnchorEl(null)}
+          style={{ display: "block", padding: 8 }}
+        >
           <ListItemIcon>
             <ContactSupportIcon fontSize="small" />
           </ListItemIcon>
           Trợ giúp
         </MenuItem>
 
-        <MenuItem onClick={() => navigate("setting")}>
+        <MenuItem
+          onClick={() => navigate("setting")}
+          style={{ display: "block", padding: 8 }}
+        >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           Cài đặt
         </MenuItem>
 
-        <MenuItem onClick={async () => await logOut()} disabled={loggingOut}>
+        <MenuItem
+          onClick={async () => await logOut()}
+          disabled={loggingOut}
+          style={{ display: "block", padding: 8 }}
+        >
           <ListItemIcon>
             {loggingOut ? <CircularProgress /> : <Logout fontSize="small" />}
           </ListItemIcon>
