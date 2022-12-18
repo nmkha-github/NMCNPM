@@ -76,6 +76,7 @@ const RoomsContext = createContext<RoomsContextProps>({
     name: "",
     avatar: "",
     created_at: "",
+    manager_id: "",
   },
   getCurrentRoom: async () => {},
   loadingCurrentRoom: false,
@@ -113,6 +114,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
     name: "",
     avatar: "",
     created_at: "",
+    manager_id: "",
   });
   const [loadingCurrentRoom, setLoadingCurrentRoom] = useState(false);
   const [loadingRooms, setLoadingRooms] = useState(false);
@@ -137,7 +139,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       getLimit?: number;
       getStart?: number;
     }) => {
-      if (!user?.id) return;
+      if (!user) return;
 
       const _limit = getLimit ?? LIMIT_LOAD_ROOMS_PER_TIME;
       const _skip = typeof getStart === "number" ? getStart : rooms.length;
@@ -152,8 +154,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (_skip === 0) {
           const roomIdDocsResponse = await getDocs(
             query(
-              collection(db, "user", user?.id, "room"),
-              orderBy("joined_at", "desc"),
+              collection(db, "user", user.id, "room"),
+              orderBy("joined_at_value", "desc"),
               limit(_limit)
             )
           );
@@ -168,8 +170,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         } else {
           const roomIdDocsResponse = await getDocs(
             query(
-              collection(db, "user", user?.id, "room"),
-              orderBy("joined_at", "desc"),
+              collection(db, "user", user.id, "room"),
+              orderBy("joined_at_value", "desc"),
               startAfter(roomIdDocs[_skip - 1]),
               limit(_limit)
             )
@@ -205,17 +207,17 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         }
       }
     },
-    [roomIdDocs, rooms, showSnackbarError, user?.id]
+    [roomIdDocs, rooms, showSnackbarError, user]
   );
 
   const getCurrentRoom = useCallback(
     async (id: string) => {
-      if (!user?.id) return;
+      if (!user) return;
 
       try {
         setLoadingCurrentRoom(true);
         const checkDocsResponse = await getDocs(
-          query(collection(db, "user", user?.id, "room"), where("id", "==", id))
+          query(collection(db, "user", user.id, "room"), where("id", "==", id))
         );
         if (!checkDocsResponse.docs.length) {
           showSnackbarError("Bạn không thuộc phòng ban này");
@@ -229,7 +231,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (!roomDocResponse.data()) {
           const docsResponse = await getDocs(
             query(
-              collection(db, "user", user?.id, "room"),
+              collection(db, "user", user.id, "room"),
               where("id", "==", id)
             )
           );
@@ -250,7 +252,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setLoadingCurrentRoom(false);
       }
     },
-    [navigate, rooms, showSnackbarError, user?.id]
+    [navigate, rooms, showSnackbarError, user]
   );
 
   const createRoom = useCallback(
@@ -259,7 +261,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       description?: string;
       avatar?: string;
     }) => {
-      if (!user?.id) return;
+      if (!user) return;
 
       setCreatingRoom(true);
       try {
@@ -273,16 +275,25 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         await updateDoc(doc(db, "room", docResponse.id), {
           id: docResponse.id,
         });
-        await addDoc(collection(db, "user", user?.id, "room"), {
-          joined_at: time.seconds + 0.000000001 * time.nanoseconds,
+        await addDoc(collection(db, "user", user.id, "room"), {
+          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at: time,
           id: docResponse.id,
+        });
+        await addDoc(collection(db, "room", docResponse.id, "member"), {
+          id: user.id,
+          joined_at: time,
+          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          todo: 0,
+          doing: 0,
+          reviewing: 0,
+          done: 0,
         });
 
         setRooms([
           {
-            joined_at: time,
             created_at: time,
-            manager_id: user?.id,
+            manager_id: user.id,
             avatar: ROOM_AVATAR_DEFAULT,
             id: docResponse.id,
             ...newRoom,
@@ -296,7 +307,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setCreatingRoom(false);
       }
     },
-    [rooms, showSnackbarError, showSnackbarSuccess, user?.id]
+    [rooms, showSnackbarError, showSnackbarSuccess, user]
   );
 
   const updateRoom = useCallback(
@@ -345,7 +356,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
 
   const joinRoom = useCallback(
     async ({ id }: { id: string }) => {
-      if (!user?.id) return;
+      if (!user) return;
 
       setJoiningRoom(true);
       try {
@@ -356,9 +367,19 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           throw "Phòng ban không tồn tại";
         }
         const time = Timestamp.now();
-        await addDoc(collection(db, "user", user?.id, "room"), {
-          joined_at: time.seconds + 0.000000001 * time.nanoseconds,
+        await addDoc(collection(db, "user", user.id, "room"), {
+          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at: time,
           id: newRoom.id,
+        });
+        await addDoc(collection(db, "room", id, "member"), {
+          id: user.id,
+          joined_at: time,
+          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          todo: 0,
+          doing: 0,
+          reviewing: 0,
+          done: 0,
         });
 
         setRooms([{ ...newRoom, joined_at: time } as RoomData, ...rooms]);
@@ -369,21 +390,21 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setJoiningRoom(false);
       }
     },
-    [rooms, showSnackbarError, showSnackbarSuccess, user?.id]
+    [rooms, showSnackbarError, showSnackbarSuccess, user]
   );
 
   const deleteRoom = useCallback(
     async ({ id }: { id: string }) => {
-      if (!user?.id) return;
+      if (!user) return;
 
       setDeletingRoom(true);
       try {
         await deleteDoc(doc(db, "room", id));
         const docsResponse = await getDocs(
-          query(collection(db, "user", user?.id, "room"), where("id", "==", id))
+          query(collection(db, "user", user.id, "room"), where("id", "==", id))
         );
         await deleteDoc(
-          doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
+          doc(db, "user", user.id, "room", docsResponse.docs[0].id)
         );
 
         setRooms(rooms.filter((room) => room.id !== id));
@@ -393,7 +414,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setDeletingRoom(false);
       }
     },
-    [rooms, showSnackbarError, user?.id]
+    [rooms, showSnackbarError, user]
   );
 
   const leaveRoom = useCallback(
@@ -407,6 +428,16 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         );
         await deleteDoc(
           doc(db, "user", user?.id, "room", docsResponse.docs[0].id)
+        );
+
+        const memberDocsResponse = await getDocs(
+          query(
+            collection(db, "room", id, "member"),
+            where("id", "==", user.id)
+          )
+        );
+        await deleteDoc(
+          doc(db, "room", id, "member", memberDocsResponse.docs[0].id)
         );
 
         setRooms(rooms.filter((room) => room.id !== id));

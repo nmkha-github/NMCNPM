@@ -1,35 +1,47 @@
-import { Box } from "@mui/material";
-import React from "react";
-import MemberStatisticItem from "../../../../modules/member/components/MemberStatisticItem/MemberStatisticItem";
-import MEMBER_AVATAR_DEFAULT from "../../../../modules/member/constants/member-avatar-default";
+import React, { useEffect } from "react";
+import LeftSideBar from "../../../../modules/room/components/LeftSideBar/LeftSideBar";
+import { useStatistic } from "../../../../lib/provider/StatisticProvider";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUser } from "../../../../lib/provider/UserProvider";
+import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import { Box, CircularProgress } from "@mui/material";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 
 const MembersPage = () => {
+  const { roomId } = useParams();
+  const { user } = useUser();
+  const { currentRoom, getCurrentRoom, loadingCurrentRoom } = useRooms();
+  const { members, getMembers, loadingMembers } = useStatistic();
+
+  const { showSnackbarError } = useAppSnackbar();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getCurrentRoom(roomId || "");
+  }, []);
+
+  useEffect(() => {
+    if (user?.id !== currentRoom.manager_id) {
+      showSnackbarError("Bạn không có quyền xem thông tin này");
+      navigate(`/room`);
+      return;
+    }
+    getMembers({ room_id: roomId || "" });
+  }, [currentRoom]);
+
+  useEffect(() => {});
+
   return (
-    <Box>
-      <MemberStatisticItem
-        memberData={{
-          id: "1dafs",
-          name: "phong",
-          avatar: MEMBER_AVATAR_DEFAULT,
-          taskToDoCount: 1,
-          taskDoingCount: 1,
-          taskDoneCount: 1,
-          taskReviewingCount: 1,
-          joinedDate: "",
-        }}
-      />
-      <MemberStatisticItem
-        memberData={{
-          id: "1dafs",
-          name: "phong",
-          avatar: MEMBER_AVATAR_DEFAULT,
-          taskToDoCount: 1,
-          taskDoingCount: 1,
-          taskDoneCount: 1,
-          taskReviewingCount: 1,
-          joinedDate: "",
-        }}
-      />
+    <Box style={{ display: "flex" }}>
+      <LeftSideBar />
+
+      {loadingCurrentRoom ? (
+        <Box style={{ marginTop: 16 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box>{/* UI here */}</Box>
+      )}
     </Box>
   );
 };
