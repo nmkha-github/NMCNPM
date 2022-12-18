@@ -37,14 +37,14 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
     return (
       <Box
         style={{ width: 260, padding: 12, border: "1px solid black" }}
-        sx={{
-          "&:hover": {
-            cursor: "pointer",
-          },
-        }}
-        onClick={() => {
-          navigate(`/room/${roomId}/task/${task.id}`);
-        }}
+        // sx={{
+        //   "&:hover": {
+        //     cursor: "pointer",
+        //   },
+        // }}
+        // onClick={() => {
+        //   navigate(`/room/${roomId}/task/${task.id}`);
+        // }}
       >
         <Box
           style={{
@@ -94,14 +94,14 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
           display: "flex",
           alignItems: "center",
         }}
-        sx={{
-          "&:hover": {
-            cursor: "pointer",
-          },
-        }}
-        onClick={() => {
-          navigate(`/room/${roomId}/task/${task.id}`);
-        }}
+        // sx={{
+        //   "&:hover": {
+        //     cursor: "pointer",
+        //   },
+        // }}
+        // onClick={() => {
+        //   navigate(`/room/${roomId}/task/${task.id}`);
+        // }}
       >
         <Box
           component="img"

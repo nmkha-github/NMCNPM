@@ -10,7 +10,46 @@ import NewsfeedPage from "./pages/RoomPage/[roomId]Page/NewsfeedPage/NewsfeedPag
 import SettingRoomPage from "./pages/RoomPage/[roomId]Page/SettingRoomPage/SettingRoomPage";
 import WorkPage from "./pages/RoomPage/[roomId]Page/WorkPage/WorkPage";
 import MemberPage from "./pages/RoomPage/[roomId]Page/MembersPage/[memberId]Page/MemberPage";
+import TaskListData from "./modules/task/interface/task-list";
+import TaskList from "./modules/task/components/TaskList/TaskList";
 
+const testTaskList: TaskListData={
+  id:"1234",
+  taskList:[
+    {
+      id:"sadasczxczx123",
+      title:"hello1",
+      status:"done",
+      assignee_id:"cOKYlFxtfScaugwh0h34",
+      creator_id: "cOKYlFxtfScaugwh0h34",
+      created_at: "123"
+    },
+    {
+      id:"asdasdqwe1234",
+      title:"hell2o",
+      status:"done",
+      assignee_id:"cOKYlFxtfScaugwh0h34",
+      creator_id: "cOKYlFxtfScaugwh0h34",
+      created_at: "123"
+    },
+    {
+      id:"zxczxczczxc23",
+      title:"hell3o",
+      status:"done",
+      assignee_id:"cOKYlFxtfScaugwh0h34",
+      creator_id: "cOKYlFxtfScaugwh0h34",
+      created_at: "123"
+    },
+    {
+      id:"sadasdasd22",
+      title:"hell4o",
+      status:"done",
+      assignee_id:"cOKYlFxtfScaugwh0h34",
+      creator_id: "cOKYlFxtfScaugwh0h34",
+      created_at: "123"
+    }
+  ]
+}
 const AppRoutes = () => {
   return (
     <Routes>
@@ -30,6 +69,7 @@ const AppRoutes = () => {
       <Route path="room/:roomId/member/:memberId" element={<MemberPage />} />
       <Route path="room/:roomId/work" element={<WorkPage />} />
       <Route path="room/:roomId/setting-room" element={<SettingRoomPage />} />
+      <Route path="testTaskList" element={<TaskList taskList={testTaskList} />} />
     </Routes>
   );
 };
