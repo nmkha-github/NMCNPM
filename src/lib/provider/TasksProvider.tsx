@@ -172,7 +172,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
           id: docResponse.id,
         });
         const newTask = {
-          status: "todo",
+          status: "toDo",
           id: docResponse.id,
           creator_id: user?.id,
           created_at: Timestamp.now(),
@@ -237,12 +237,17 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         const taskBeforeDoc = await getDoc(
           doc(db, "room", room_id, "task", id)
         );
+        console.log("task", taskBeforeDoc.data());
         if (taskBeforeDoc.data()?.assignee_id) {
           const memberHoldTaskDocs = await getDocs(
             query(
               collection(db, "room", room_id, "member"),
               where("id", "==", taskBeforeDoc.data()?.assignee_id)
             )
+          );
+          console.log(
+            "member hold task before",
+            memberHoldTaskDocs.docs[0].data()
           );
           await runTransaction(db, async (transaction) => {
             transaction.update(

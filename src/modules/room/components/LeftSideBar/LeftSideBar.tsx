@@ -26,7 +26,6 @@ import { useRooms } from "../../../../lib/provider/RoomsProvider";
 const useStyle = makeStyles({
   cssStyle1: {
     width: "232px",
-    position: "fixed",
     left: 0,
     top: 64,
     bottom: 0,

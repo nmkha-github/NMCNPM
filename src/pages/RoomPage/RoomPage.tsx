@@ -91,33 +91,30 @@ const RoomPage = () => {
             onClose={() => {
               setFilterAnchorEl(null);
             }}
-            style={{ display: "block" }}
           >
-            <MenuItem style={{ display: "block", padding: 8 }}>
+            <MenuItem
+              style={{ display: "block", padding: 8 }}
+              onClick={() => {
+                setSortType("increase");
+                setFilterAnchorEl(null);
+              }}
+            >
               <Box style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography>Sắp xếp theo tên tăng dần</Typography>
-                <ImSortAlphaAsc
-                  fontSize="xx-large"
-                  color="#1a6eff"
-                  onClick={() => {
-                    setSortType("increase");
-                    setFilterAnchorEl(null);
-                  }}
-                />
+                <ImSortAlphaAsc fontSize="xx-large" color="#1a6eff" />
               </Box>
             </MenuItem>
 
-            <MenuItem style={{ display: "block", padding: 8 }}>
+            <MenuItem
+              style={{ display: "block", padding: 8 }}
+              onClick={() => {
+                setSortType("descrease");
+                setFilterAnchorEl(null);
+              }}
+            >
               <Box style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography>Sắp xếp theo tên giảm dần</Typography>
-                <ImSortAlphaDesc
-                  fontSize="xx-large"
-                  color="#1a6eff"
-                  onClick={() => {
-                    setSortType("descrease");
-                    setFilterAnchorEl(null);
-                  }}
-                />
+                <ImSortAlphaDesc fontSize="xx-large" color="#1a6eff" />
               </Box>
             </MenuItem>
           </Menu>
@@ -137,7 +134,7 @@ const RoomPage = () => {
             <CircularProgress />
           </Box>
         )}
-        {!loadingRooms && rooms && (
+        {!loadingRooms && (
           <Box>
             <Grid container>
               {showRooms.map((room) => (
@@ -171,7 +168,18 @@ const RoomPage = () => {
               </Button>
             )}
 
-            {loadingMoreRooms && <CircularProgress />}
+            {loadingMoreRooms && (
+              <Box
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 16,
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
           </Box>
         )}
       </Box>
