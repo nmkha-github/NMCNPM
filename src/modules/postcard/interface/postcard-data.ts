@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import CommentData from "../../../lib/interface/comment-data";
 import FileData from "../../../lib/interface/file-data";
 
-interface TaskData {
+interface PostCardData {
   id: string;
   title: string;
   content?: string;
@@ -13,4 +13,4 @@ interface TaskData {
   comments?: CommentData[];
 }
 
-export default TaskData;
+export default PostCardData;
