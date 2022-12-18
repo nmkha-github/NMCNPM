@@ -110,24 +110,17 @@ const Header = ({ children }: HeaderProps) => {
 
             <Box className={classes.nav}>
               <Box
-                className={
-                  classes.item +
-                  " " +
-                  (location.pathname.includes("/resource")
-                    ? classes.selection
-                    : "")
-                }
+                className={`${classes.item} ${
+                  location.pathname.includes("/resource") && classes.selection
+                }`}
               >
                 <Button
-                  className={
-                    classes.navItem +
-                    " " +
-                    (location.pathname.includes("/resource")
-                      ? classes.textSelection
-                      : "")
-                  }
+                  className={`${classes.navItem} ${
+                    location.pathname.includes("/resource") &&
+                    classes.textSelection
+                  }`}
                   onClick={() =>
-                    !location.pathname.includes("/resource") &&
+                    !location.pathname.endsWith("/resource") &&
                     navigate("/resource")
                   }
                 >
@@ -136,26 +129,16 @@ const Header = ({ children }: HeaderProps) => {
               </Box>
 
               <Box
-                className={
-                  classes.item +
-                  " " +
-                  (!location.pathname.includes("/resource") &&
-                  !location.pathname.includes("/schedule")
-                    ? classes.selection
-                    : "")
-                }
+                className={`${classes.item} ${
+                  location.pathname.includes("/room") && classes.selection
+                }`}
               >
                 <Button
-                  className={
-                    classes.navItem +
-                    " " +
-                    (!location.pathname.includes("/resource") &&
-                    !location.pathname.includes("/schedule")
-                      ? classes.textSelection
-                      : "")
-                  }
+                  className={`${classes.navItem} ${
+                    location.pathname.includes("/room") && classes.textSelection
+                  }`}
                   onClick={() =>
-                    !location.pathname.includes("/room") && navigate("/room")
+                    !location.pathname.endsWith("/room") && navigate("/room")
                   }
                 >
                   Phòng ban
@@ -163,24 +146,17 @@ const Header = ({ children }: HeaderProps) => {
               </Box>
 
               <Box
-                className={
-                  classes.item +
-                  " " +
-                  (location.pathname.includes("/schedule")
-                    ? classes.selection
-                    : "")
-                }
+                className={`${classes.item} ${
+                  location.pathname.includes("/schedule") && classes.selection
+                }`}
               >
                 <Button
-                  className={
-                    classes.navItem +
-                    " " +
-                    (location.pathname.includes("/schedule")
-                      ? classes.textSelection
-                      : "")
-                  }
+                  className={`${classes.navItem} ${
+                    location.pathname.includes("/schedule") &&
+                    classes.textSelection
+                  }`}
                   onClick={() =>
-                    !location.pathname.includes("/schedule") &&
+                    !location.pathname.endsWith("/schedule") &&
                     navigate("/schedule")
                   }
                 >
