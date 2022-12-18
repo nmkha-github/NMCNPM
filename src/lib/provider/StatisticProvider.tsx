@@ -102,7 +102,7 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
     }) => {
       const _limit = getLimit ?? LIMIT_LOAD_MEMBERS_PER_TIME;
       const _skip = typeof getStart === "number" ? getStart : members.length;
-      if (getStart && getStart > 0) {
+      if (_skip > 0) {
         setLoadingMoreMembers(true);
       } else {
         setLoadingMembers(true);
@@ -207,7 +207,7 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
       } catch (error) {
         showSnackbarError(error);
       } finally {
-        if (getStart && getStart > 0) {
+        if (_skip > 0) {
           setLoadingMoreMembers(false);
         } else {
           setLoadingMembers(false);

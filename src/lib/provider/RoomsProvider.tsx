@@ -143,7 +143,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
 
       const _limit = getLimit ?? LIMIT_LOAD_ROOMS_PER_TIME;
       const _skip = typeof getStart === "number" ? getStart : rooms.length;
-      if (getStart && getStart > 0) {
+      if (_skip > 0) {
         setLoadingMoreRooms(true);
       } else {
         setLoadingRooms(true);
@@ -165,7 +165,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
             const roomDocsResponse = await getDocs(
               query(collection(db, "room"), where("id", "in", roomsId))
             );
-            newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+            newRooms = [
+              ...roomsId.map((id) =>
+                roomDocsResponse.docs
+                  .filter((doc) => doc.data().id === id)[0]
+                  .data()
+              ),
+            ];
           }
         } else {
           const roomIdDocsResponse = await getDocs(
@@ -182,7 +188,13 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
             const roomDocsResponse = await getDocs(
               query(collection(db, "room"), where("id", "in", roomsId))
             );
-            newRooms = [...roomDocsResponse.docs.map((doc) => doc.data())];
+            newRooms = [
+              ...roomsId.map((id) =>
+                roomDocsResponse.docs
+                  .filter((doc) => doc.data().id === id)[0]
+                  .data()
+              ),
+            ];
           }
         }
 
@@ -200,7 +212,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
       } catch (error) {
         showSnackbarError(error);
       } finally {
-        if (getStart && getStart > 0) {
+        if (_skip > 0) {
           setLoadingMoreRooms(false);
         } else {
           setLoadingRooms(false);
@@ -408,6 +420,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         );
 
         setRooms(rooms.filter((room) => room.id !== id));
+        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data().id !== id));
       } catch (error) {
         showSnackbarError(error);
       } finally {

@@ -7,6 +7,8 @@ import RoomsProvider from './lib/provider/RoomsProvider';
 import Header from './modules/layout/components/Header/Header'
 import UserProvider from './lib/provider/UserProvider';
 import AppRoutes from './AppRoutes';
+import StatisticProvider from './lib/provider/StatisticProvider';
+import TasksProvider from './lib/provider/TasksProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,11 +20,13 @@ root.render(
             <Header>
               {/* add provider here */}
               <RoomsProvider>
-              {/* ----------------- */}
-                
-                <AppRoutes />
-
-              {/* add provider here */}
+                <StatisticProvider>
+                  <TasksProvider>
+                    {/* ----------------- */}
+                    <AppRoutes />
+                    {/* add provider here */}
+                  </TasksProvider>
+                </StatisticProvider>
               </RoomsProvider>
               {/* ----------------- */}
             </Header>
