@@ -118,6 +118,7 @@ const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
             style={{ padding: "8px 12px" }}
             variant="outlined"
             onClick={() => {
+              setId("");
               dialogProps.onClose?.({}, "backdropClick");
             }}
           >

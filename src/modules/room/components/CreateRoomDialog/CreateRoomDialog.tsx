@@ -122,6 +122,10 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
         <Button
           onClick={() => {
             dialogProps.onClose?.({}, "backdropClick");
+            setName("");
+            setDescription("");
+            setImageURL("");
+            setAgree(false);
           }}
           style={{ padding: 8 }}
         >
