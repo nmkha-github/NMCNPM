@@ -26,7 +26,7 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
   useEffect(() => {
     async function getUserData() {
       try {
-        setUser(await UserHelper.getUserById(task.assignee_id));
+        setUser(await UserHelper.getUserById(task.assignee_id || ""));
       } catch (error) {
         showSnackbarError(error);
       }
@@ -95,10 +95,10 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
           alignItems: "center",
         }}
         sx={{
-            "&:hover": {
-              cursor: "pointer",
-            },
-          }}
+          "&:hover": {
+            cursor: "pointer",
+          },
+        }}
         onClick={() => {
           navigate(`/room/${roomId}/task/${task.id}`);
         }}

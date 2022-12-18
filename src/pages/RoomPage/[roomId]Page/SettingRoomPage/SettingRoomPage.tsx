@@ -25,6 +25,7 @@ const SettingRoomPage = () => {
     auto_accepted: false,
     disabled_newsfeed: false,
     exit_locked: false,
+    manager_id: "",
   });
   const { roomId } = useParams();
   const { showSnackbarError } = useAppSnackbar();

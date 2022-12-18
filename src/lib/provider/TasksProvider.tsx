@@ -1,12 +1,20 @@
 import {
+  FieldValue,
+  Firestore,
   Timestamp,
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getDoc,
+  getDocs,
   onSnapshot,
+  query,
+  runTransaction,
   updateDoc,
+  where,
 } from "firebase/firestore";
+import { FirebaseApp } from "firebase/app";
 import React, { createContext, useCallback, useContext, useState } from "react";
 import TaskData from "../../modules/task/interface/task-data";
 import { db } from "../config/firebase-config";
@@ -145,7 +153,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       room_id: string;
       new_task: {
         title: string;
-        assignee_id: string;
+        assignee_id?: string;
         content?: string;
         deadline?: Timestamp | Date | string;
         attach_files?: FileData[];
@@ -164,12 +172,37 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
           id: docResponse.id,
         });
         const newTask = {
-          status: "To do",
+          status: "todo",
           id: docResponse.id,
           creator_id: user?.id,
           created_at: Timestamp.now(),
           ...new_task,
         };
+
+        if (newTask.assignee_id) {
+          const memberDocs = await getDocs(
+            query(
+              collection(db, "room", room_id, "member"),
+              where("id", "==", newTask.assignee_id)
+            )
+          );
+
+          await runTransaction(db, async (transaction) => {
+            const memberDoc = await transaction.get(
+              doc(db, "room", room_id, "member", memberDocs.docs[0].id)
+            );
+            if (!memberDoc.exists()) {
+              throw "Không tồn tại thành viên này";
+            }
+
+            transaction.update(
+              doc(db, "room", room_id, "member", memberDocs.docs[0].id),
+              {
+                [newTask.status]: memberDoc.data()[newTask.status] + 1,
+              }
+            );
+          });
+        }
 
         setTasks([newTask as TaskData, ...tasks]);
       } catch (error) {
@@ -178,6 +211,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         setCreatingTask(true);
       }
     },
+
     [showSnackbarError, tasks, user?.id]
   );
 
@@ -199,10 +233,61 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
     }) => {
       try {
         setUpdatingTask(true);
+
+        const taskBeforeDoc = await getDoc(
+          doc(db, "room", room_id, "task", id)
+        );
+        if (taskBeforeDoc.data()?.assignee_id) {
+          const memberHoldTaskDocs = await getDocs(
+            query(
+              collection(db, "room", room_id, "member"),
+              where("id", "==", taskBeforeDoc.data()?.assignee_id)
+            )
+          );
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
+              {
+                [taskBeforeDoc.data()?.status]:
+                  memberHoldTaskDocs.docs[0].data()[
+                    taskBeforeDoc.data()?.status
+                  ] - 1,
+              }
+            );
+          });
+        }
+
         await updateDoc(doc(db, "room", room_id, "task", id), {
           last_edit: Timestamp.now(),
           ...updateData,
         });
+
+        const taskAfterDoc = await getDoc(doc(db, "room", room_id, "task", id));
+        if (updateData.assignee_id) {
+          const memberAssigneeTaskDocs = await getDocs(
+            query(
+              collection(db, "room", room_id, "member"),
+              where("id", "==", updateData.assignee_id)
+            )
+          );
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(
+                db,
+                "room",
+                room_id,
+                "member",
+                memberAssigneeTaskDocs.docs[0].id
+              ),
+              {
+                [taskAfterDoc.data()?.status]:
+                  memberAssigneeTaskDocs.docs[0].data()[
+                    taskAfterDoc.data()?.status
+                  ] + 1,
+              }
+            );
+          });
+        }
 
         setTasks(
           tasks.map((task) => {
@@ -231,9 +316,27 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
     async ({ room_id, id }: { room_id: string; id: string }) => {
       try {
         setDeletingTask(true);
-        await deleteDoc(doc(db, "room", room_id, "task", id));
 
         setTasks(tasks.filter((task) => task.id !== id));
+
+        const taskDoc = await getDoc(doc(db, "room", room_id, "task", id));
+        const memberHoldTaskDocs = await getDocs(
+          query(
+            collection(db, "room", room_id, "member"),
+            where("id", "==", taskDoc.data()?.assignee_id)
+          )
+        );
+        await runTransaction(db, async (transaction) => {
+          transaction.update(
+            doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
+            {
+              [taskDoc.data()?.status]:
+                memberHoldTaskDocs.docs[0].data()[taskDoc.data()?.status] - 1,
+            }
+          );
+        });
+
+        await deleteDoc(doc(db, "room", room_id, "task", id));
 
         setCurrentTask({} as TaskData);
       } catch (error) {

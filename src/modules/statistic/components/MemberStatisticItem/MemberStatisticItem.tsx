@@ -54,23 +54,23 @@ const MemberStatisticItem = ({ memberData }: MemberStatisticItemProps) => {
       </Typography>
 
       <Typography className={classes.item + " " + classes.item3}>
-        {String(memberData.joinedDate ? memberData.joinedDate : 0)}
+        {String(memberData.joined_at ? memberData.joined_at : 0)}
       </Typography>
 
       <Typography className={classes.item + " " + classes.item2}>
-        {memberData.taskToDoCount}
+        {memberData.toDo}
       </Typography>
 
       <Typography className={classes.item + " " + classes.item2}>
-        {memberData.taskDoingCount}
+        {memberData.doing}
       </Typography>
 
       <Typography className={classes.item + " " + classes.item2}>
-        {memberData.taskReviewingCount}
+        {memberData.reviewing}
       </Typography>
 
       <Typography className={classes.item + " " + classes.item2}>
-        {memberData.taskDoneCount}
+        {memberData.done}
       </Typography>
 
       <Box className={classes.item + " " + classes.item2}>

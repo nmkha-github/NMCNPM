@@ -1,0 +1,304 @@
+import React, { createContext, useCallback, useContext, useState } from "react";
+import useAppSnackbar from "../hook/useAppSnackBar";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
+import { db } from "../config/firebase-config";
+import MemberData from "../../modules/statistic/interface/member-data";
+import UserData from "../../modules/user/interface/user-data";
+
+interface StatisticContextProps {
+  members: MemberData[];
+
+  getMembers: (payload: {
+    room_id: string;
+    getStart?: number;
+    getLimit?: number;
+  }) => Promise<void>;
+  loadingMembers: boolean;
+  loadingMoreMembers: boolean;
+  loadedAllMembers: boolean;
+
+  member: MemberData | UserData;
+  getMember: (payload: { room_id: string; member_id: string }) => Promise<void>;
+  loadingMember: boolean;
+
+  removeMember: (payload: {
+    room_id: string;
+    member_id: string;
+  }) => Promise<void>;
+  removingMember: boolean;
+}
+
+const StatisticContext = createContext<StatisticContextProps>({
+  members: [],
+
+  getMembers: async () => {},
+  loadingMembers: false,
+  loadingMoreMembers: false,
+  loadedAllMembers: false,
+
+  member: {
+    id: "",
+    name: "",
+    avatar: "",
+    toDo: 0,
+    doing: 0,
+    reviewing: 0,
+    done: 0,
+    joined_at: "",
+  },
+  getMember: async () => {},
+  loadingMember: false,
+
+  removeMember: async () => {},
+  removingMember: false,
+});
+
+interface StatisticContextProviderProps {
+  children: React.ReactNode;
+}
+
+const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
+  const [members, setMembers] = useState<MemberData[]>([]);
+  const [member, setMember] = useState<MemberData | UserData>({
+    id: "",
+    name: "",
+    avatar: "",
+    toDo: 0,
+    doing: 0,
+    reviewing: 0,
+    done: 0,
+    joined_at: "",
+  });
+  const [memberDocs, setMemberDocs] = useState<any[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [loadingMoreMembers, setLoadingMoreMembers] = useState(false);
+  const [loadedAllMembers, setLoadedAllMembers] = useState(false);
+  const [removingMember, setRemovingMember] = useState(false);
+  const [loadingMember, setLoadingMember] = useState(false);
+
+  const { showSnackbarError } = useAppSnackbar();
+
+  const LIMIT_LOAD_MEMBERS_PER_TIME = 10;
+  const getMembers = useCallback(
+    async ({
+      room_id,
+      getLimit,
+      getStart,
+    }: {
+      room_id: string;
+      getLimit?: number;
+      getStart?: number;
+    }) => {
+      const _limit = getLimit ?? LIMIT_LOAD_MEMBERS_PER_TIME;
+      const _skip = typeof getStart === "number" ? getStart : members.length;
+      if (getStart && getStart > 0) {
+        setLoadingMoreMembers(true);
+      } else {
+        setLoadingMembers(true);
+      }
+      try {
+        let newMembers: any[] = [];
+
+        if (_skip === 0) {
+          const memberDocsResponse = await getDocs(
+            query(
+              collection(db, "room", room_id, "member"),
+              orderBy("joined_at_value", "desc"),
+              limit(_limit)
+            )
+          );
+          setMemberDocs([...memberDocsResponse.docs]);
+          const membersStatistic = memberDocsResponse.docs.map((doc) => {
+            return {
+              id: doc.data().id,
+              toDo: doc.data().toDo,
+              doing: doc.data().doing,
+              reviewing: doc.data().reviewing,
+              done: doc.data().done,
+              joined_at: doc.data().joined_at,
+            };
+          });
+          if (membersStatistic.length) {
+            const memberDocsResponse = await getDocs(
+              query(
+                collection(db, "user"),
+                where(
+                  "id",
+                  "in",
+                  membersStatistic.map((member) => member.id)
+                )
+              )
+            );
+            newMembers = [
+              ...memberDocsResponse.docs.map((doc, index) => {
+                return {
+                  name: doc.data().name,
+                  avatar: doc.data().avatar,
+                  ...membersStatistic[index],
+                };
+              }),
+            ];
+          }
+        } else {
+          const memberDocsResponse = await getDocs(
+            query(
+              collection(db, "room", room_id, "member"),
+              orderBy("joined_at_value", "desc"),
+              startAfter(memberDocs[_skip - 1]),
+              limit(_limit)
+            )
+          );
+          setMemberDocs([...memberDocs, ...memberDocsResponse.docs]);
+          const membersStatistic = memberDocsResponse.docs.map((doc) => {
+            return {
+              id: doc.data().id,
+              toDo: doc.data().toDo,
+              doing: doc.data().doing,
+              reviewing: doc.data().reviewing,
+              done: doc.data().done,
+              joined_at: doc.data().joined_at,
+            };
+          });
+          if (membersStatistic.length) {
+            const memberDocsResponse = await getDocs(
+              query(
+                collection(db, "user"),
+                where(
+                  "id",
+                  "in",
+                  membersStatistic.map((member) => member.id)
+                )
+              )
+            );
+            newMembers = [
+              ...memberDocsResponse.docs.map((doc, index) => {
+                return {
+                  name: doc.data().name,
+                  avatar: doc.data().avatar,
+                  ...membersStatistic[index],
+                };
+              }),
+            ];
+          }
+        }
+
+        if (newMembers.length < _limit) {
+          setLoadedAllMembers(true);
+        } else {
+          setLoadedAllMembers(false);
+        }
+
+        if (_skip > 0) {
+          setMembers([...newMembers, ...members]);
+        } else {
+          setMembers([...newMembers]);
+        }
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        if (getStart && getStart > 0) {
+          setLoadingMoreMembers(false);
+        } else {
+          setLoadingMembers(false);
+        }
+      }
+    },
+    [memberDocs, members, showSnackbarError]
+  );
+
+  const getMember = useCallback(
+    async ({ room_id, member_id }: { room_id: string; member_id: string }) => {
+      try {
+        setLoadingMember(true);
+
+        const memberStatisticDoc = await getDoc(
+          doc(db, "room", room_id, "member", member_id)
+        );
+        const memberInfoDoc = await getDoc(doc(db, "user", member_id));
+
+        setMember({ ...memberStatisticDoc.data(), ...memberInfoDoc.data() } as
+          | MemberData
+          | UserData);
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setLoadingMember(false);
+      }
+    },
+    [showSnackbarError]
+  );
+
+  const removeMember = useCallback(
+    async ({ member_id, room_id }: { member_id: string; room_id: string }) => {
+      try {
+        setRemovingMember(true);
+        const docsResponse = await getDocs(
+          query(
+            collection(db, "user", member_id, "room"),
+            where("id", "==", room_id)
+          )
+        );
+        await deleteDoc(
+          doc(db, "user", member_id, "room", docsResponse.docs[0].id)
+        );
+
+        const memberDocsResponse = await getDocs(
+          query(
+            collection(db, "room", room_id, "member"),
+            where("id", "==", member_id)
+          )
+        );
+        await deleteDoc(
+          doc(db, "room", room_id, "member", memberDocsResponse.docs[0].id)
+        );
+
+        setMembers(members.filter((member) => member.id !== member_id));
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setRemovingMember(false);
+      }
+    },
+    [members, showSnackbarError]
+  );
+
+  return (
+    <StatisticContext.Provider
+      value={{
+        members,
+
+        getMembers,
+        loadingMembers,
+        loadingMoreMembers,
+        loadedAllMembers,
+
+        member,
+        getMember,
+        loadingMember,
+
+        removeMember,
+        removingMember,
+      }}
+    >
+      {children}
+    </StatisticContext.Provider>
+  );
+};
+
+export const useStatistic = () => {
+  const store = useContext(StatisticContext);
+  return store;
+};
+
+export default StatisticProvider;
