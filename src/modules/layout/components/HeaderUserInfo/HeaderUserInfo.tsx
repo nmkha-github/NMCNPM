@@ -20,10 +20,11 @@ import { useState } from "react";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import truncate from "../../../../lib/util/truncate";
 
 const useStyle = makeStyles((theme) => ({
   button: {
-    width: 120,
+    cursor: "pointer",
     background: "#ffffff",
     borderRadius: 90,
     display: "flex",
@@ -34,6 +35,9 @@ const useStyle = makeStyles((theme) => ({
     border: "none",
     verticalAlign: "middle",
     transition: "box-shadow 0.4s ease",
+    "&:hover": {
+      boxShadow: "0 1px 8px rgba(0, 0, 0, 0.3)",
+    },
   },
   accountContainer: {
     display: "flex",
@@ -57,14 +61,18 @@ const HeaderUserInfo = () => {
   return (
     <>
       <Tooltip title="Account">
-        <Box className={classes.button}>
-          <Typography style={{ marginLeft: 12 }}>User</Typography>
+        <Box
+          className={classes.button}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+            setAnchorEl(event.currentTarget)
+          }
+        >
+          <Typography style={{ marginLeft: 12 }}>
+            {truncate(user?.name || "Username")}
+          </Typography>
           <IconButton
             size="small"
             id="user-info-button"
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-              setAnchorEl(event.currentTarget)
-            }
             aria-controls={!!anchorEl ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={!!anchorEl ? "true" : undefined}
@@ -83,6 +91,7 @@ const HeaderUserInfo = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         TransitionComponent={Fade}
+        style={{ marginTop: 4 }}
       >
         <Box className={classes.accountContainer}>
           <Avatar
@@ -117,7 +126,10 @@ const HeaderUserInfo = () => {
         </MenuItem>
 
         <MenuItem
-          onClick={() => navigate("setting")}
+          onClick={() => {
+            navigate("setting");
+            setAnchorEl(null);
+          }}
           style={{ display: "block", padding: 8 }}
         >
           <ListItemIcon>

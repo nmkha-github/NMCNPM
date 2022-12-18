@@ -24,9 +24,12 @@ const useStyle = makeStyles((theme) => ({
     zIndex: 100,
   },
   logo: {
-    padding: "16px 0px",
+    padding: 8,
     height: "100%",
     cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
   },
   nav: {
     display: "flex",
