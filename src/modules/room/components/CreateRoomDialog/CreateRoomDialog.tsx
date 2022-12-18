@@ -85,7 +85,6 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           margin="dense"
           multiline
           maxRows={5}
-          rows={2}
           fullWidth
           variant="standard"
           onChange={(event) => {
@@ -123,6 +122,10 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
         <Button
           onClick={() => {
             dialogProps.onClose?.({}, "backdropClick");
+            setName("");
+            setDescription("");
+            setImageURL("");
+            setAgree(false);
           }}
           style={{ padding: 8 }}
         >
@@ -137,6 +140,10 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
               description: description,
             });
             dialogProps.onClose?.({}, "backdropClick");
+            setName("");
+            setDescription("");
+            setImageURL("");
+            setAgree(false);
           }}
           variant="contained"
           color="primary"

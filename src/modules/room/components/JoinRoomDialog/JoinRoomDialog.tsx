@@ -47,7 +47,7 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
-  const [collapse, setCollapse] = useState(true);
+  const [collapse, setCollapse] = useState(false);
   const [id, setId] = useState("");
 
   const { joinRoom, joiningRoom } = useRooms();
@@ -118,6 +118,7 @@ const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
             style={{ padding: "8px 12px" }}
             variant="outlined"
             onClick={() => {
+              setId("");
               dialogProps.onClose?.({}, "backdropClick");
             }}
           >
@@ -134,6 +135,7 @@ const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
             onClick={async () => {
               await joinRoom({ id: id });
               dialogProps.onClose?.({}, "backdropClick");
+              setId("");
             }}
           >
             <Typography>THAM GIA</Typography>&nbsp;&nbsp;
