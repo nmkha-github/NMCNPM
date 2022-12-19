@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import { Box, Button, TextField, Container } from "@mui/material";
+import { Box, Button, TextField, Container, BoxProps } from "@mui/material";
 import TaskData from "../../../task/interface/task-data";
 import { Typography } from "@material-ui/core";
 import UserHelper from "../../../user/util/user-helper";
@@ -14,7 +14,7 @@ interface TaskCardProps {
   task: TaskData;
   mode: "card" | "item";
 }
-const TaskCard = ({ task, mode }: TaskCardProps) => {
+const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
   const [taskMenuAnchorEl, setTaskMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -45,6 +45,7 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
         // onClick={() => {
         //   navigate(`/room/${roomId}/task/${task.id}`);
         // }}
+        {...boxProps}
       >
         <Box
           style={{
@@ -102,6 +103,7 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
         // onClick={() => {
         //   navigate(`/room/${roomId}/task/${task.id}`);
         // }}
+        {...boxProps}
       >
         <Box
           component="img"

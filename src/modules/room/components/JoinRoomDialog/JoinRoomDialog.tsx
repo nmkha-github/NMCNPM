@@ -47,7 +47,7 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
-  const [collapse, setCollapse] = useState(false);
+  const [collapse, setCollapse] = useState(true);
   const [id, setId] = useState("");
 
   const { joinRoom, joiningRoom } = useRooms();
@@ -96,7 +96,7 @@ const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
             Hướng dẫn
           </Typography>
 
-          <Collapse in={collapse}>
+          <Collapse in={!collapse}>
             <Typography className={classes.helpText}>
               Nếu chưa có mã phòng, hãy liên hệ trưởng phòng của bạn
             </Typography>

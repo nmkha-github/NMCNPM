@@ -30,7 +30,8 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     width: 820,
-    marginLeft: "15%",
+    position: "relative",
+    left: "calc(50% - 410px)",
     marginBottom: 40,
     padding: "32px 24px",
     borderRadius: 4,
@@ -48,7 +49,7 @@ const useStyle = makeStyles((theme) => ({
   avatarContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContains: "center",
+    justifyContent: "center",
     alignItems: "center",
   },
   avatar: {
