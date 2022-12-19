@@ -169,17 +169,13 @@ const SettingPage = () => {
 
       <LoadingButton
         onClick={async () => {
-          try {
-            await editUser({
-              id: user?.id || "",
-              fields: {
-                name: userEditData.name,
-                avatar: userEditData.avatar,
-              },
-            });
-          } catch (error) {
-            showSnackbarError(error);
-          }
+          await editUser({
+            id: user?.id || "",
+            fields: {
+              name: userEditData.name,
+              avatar: userEditData.avatar,
+            },
+          });
         }}
         variant="contained"
         loading={editingUser || loadingUser}
