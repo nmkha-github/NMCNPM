@@ -58,7 +58,9 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
           >
             {task.title}
           </Typography>
+          <Box sx={{marginLeft:"auto"}}>
           <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task}/>
+          </Box>
         </Box>
         <Typography style={{ fontSize: 14 }}>{task.content}</Typography>
         <Box style={{ display: "flex", justifyContent: "right" }}>
@@ -79,6 +81,8 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
       <Box
         style={{
           height: 35,
+          float: "none",
+          overflow: "hidden",
           padding: 10,
           border: "0.1px solid black",
           display: "flex",
@@ -102,10 +106,12 @@ const TaskCard = ({ task, mode }: TaskCardProps) => {
           }}
           src={user ? user.avatar : USER_AVATAR_DEFAULT}
         />
+        <Box style={{display:"flex",justifyContent:"space-between",alignItems:"center",width:'100%'}}>
         <Typography align="center" style={{ fontSize: 14, marginLeft: 10 }}>
           {task.title}
         </Typography>
         <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task}/>
+        </Box>
       </Box>
     );
   }

@@ -1,7 +1,9 @@
 import TaskListData from "../../interface/task-list";
 import TaskData from "../../interface/task-data";
 import { Box } from "@material-ui/core";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import TasksProvider, { useTasks } from "../../../../lib/provider/TasksProvider";
 import React from "react";
 import {
   DragDropContext,
@@ -13,11 +15,31 @@ import TaskCard from "../TaskCard/TaskCard";
 interface TaskListProps {
   taskList: TaskListData;
 }
-const TaskList = ({ taskList }: TaskListProps) => {
+const TaskList = () => {
   const [curTaskList, setCurTaskList] = useState<TaskData[]>();
-  useEffect(() => {
-    setCurTaskList(taskList.taskList);
-  }, [taskList]);
+  const { roomId } = useParams();
+  const {getTasks,updateTask}=useTasks();
+  useEffect(()=>{
+    getTasks({room_id:roomId||""});
+  },[]);
+  useEffect(()=>{
+     curTaskList?.forEach((task,index)=>{
+       updateTask({room_id:roomId?roomId:"",id:task.id,updateData:{order:index}});
+     })
+  },[curTaskList]);
+  // useEffect(() => {
+  //   async function getUserData() {
+  //     try {
+  //       setUser(await UserHelper.getUserById(task.assignee_id || ""));
+  //     } catch (error) {
+  //       showSnackbarError(error);
+  //     }
+  //   }
+  //   getUserData();
+  // }, []);
+  // useEffect(() => {
+  //   setCurTaskList(taskList.taskList);
+  // }, [taskList]);
   function handleOnDragEnd(result: DropResult) {
     if (!result.destination) return;
     if (!curTaskList) return;

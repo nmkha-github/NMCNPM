@@ -42,6 +42,7 @@ interface TasksContextProps {
       comments?: CommentData[];
       status?: string;
       deadline?: Timestamp | Date | string;
+      order?:number;
     };
   }) => Promise<void>;
   creatingTask: boolean;
@@ -55,6 +56,7 @@ interface TasksContextProps {
       deadline?: Timestamp | Date | string;
       content?: string;
       title?: string;
+      order?:number;
     };
   }) => Promise<void>;
   updatingTask: boolean;
@@ -159,11 +161,14 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         attach_files?: FileData[];
         comments?: CommentData[];
         status?: string;
+        order?:number;
       };
     }) => {
       if (!user?.id) return;
       try {
         setCreatingTask(true);
+        getTasks({room_id});
+        new_task.order=tasks.length;
         const docResponse = await addDoc(
           collection(db, "room", room_id, "task"),
           new_task
@@ -229,6 +234,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         deadline?: Timestamp | Date | string;
         content?: string;
         title?: string;
+        order?:number;
       };
     }) => {
       try {
@@ -321,10 +327,19 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
     async ({ room_id, id }: { room_id: string; id: string }) => {
       try {
         setDeletingTask(true);
-
         setTasks(tasks.filter((task) => task.id !== id));
 
         const taskDoc = await getDoc(doc(db, "room", room_id, "task", id));
+        const oldOrder=(taskDoc.data() as TaskData).order;
+        setTasks(tasks.map((task)=>{
+          if(task.order&&oldOrder&&task.order>oldOrder){
+              task.order-=1;
+              return task;
+          }
+          else{
+            return task;
+          }
+        }))
         const memberHoldTaskDocs = await getDocs(
           query(
             collection(db, "room", room_id, "member"),

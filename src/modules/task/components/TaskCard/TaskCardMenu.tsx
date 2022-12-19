@@ -16,7 +16,7 @@ const TaskCardMenu = ({ taskData,roomId }: { taskData: TaskData,roomId:string })
   const { deleteTask, deletingTask } = useTasks();
   let navigate = useNavigate();
   return (
-    <Box style={{ position: "absolute", right: 0 }}>
+    <Box>
       <IconButton
         type="button"
         onClick={(event) => {

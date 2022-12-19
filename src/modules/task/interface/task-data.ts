@@ -13,6 +13,7 @@ interface TaskData {
   created_at: Timestamp | Date | string;
   deadline?: Timestamp | Date | string;
   last_edit?: Timestamp | Date | string;
+  order?: number;
   comments?: CommentData[];
 }
 
