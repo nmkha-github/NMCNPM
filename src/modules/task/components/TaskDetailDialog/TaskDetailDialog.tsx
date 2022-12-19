@@ -49,6 +49,8 @@ import { useEffect, useState } from "react";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import truncate from "../../../../lib/util/truncate";
+import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
+import { useNavigate } from "react-router-dom";
 
 interface TaskDetailDialogProps {
   task?: TaskData;
@@ -113,8 +115,10 @@ const TaskDetailDialog = ({
   ...dialogProps
 }: TaskDetailDialogProps & DialogProps) => {
   const classes = useStyle();
+  const navigate = useNavigate();
+
   const { currentRoom, loadingCurrentRoom } = useRooms();
-  const { updateTask } = useTasks();
+  const { updateTask, deleteTask } = useTasks();
   const { user } = useUser();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -196,7 +200,7 @@ const TaskDetailDialog = ({
           {/* Header action buttons */}
           <Box className={classes.dialog_header_actions}>
             <Tooltip
-              TransitionProps={{ timeout: 1000 }}
+              TransitionProps={{ timeout: 800 }}
               title="Theo dõi"
               placement="top"
               TransitionComponent={Fade}
@@ -211,7 +215,7 @@ const TaskDetailDialog = ({
             </Tooltip>
 
             <Tooltip
-              TransitionProps={{ timeout: 1000 }}
+              TransitionProps={{ timeout: 800 }}
               title="Thích"
               placement="top"
               TransitionComponent={Fade}
@@ -226,7 +230,7 @@ const TaskDetailDialog = ({
             </Tooltip>
 
             <Tooltip
-              TransitionProps={{ timeout: 1000 }}
+              TransitionProps={{ timeout: 800 }}
               title="Chia sẻ"
               placement="top"
               TransitionComponent={Fade}
@@ -239,7 +243,7 @@ const TaskDetailDialog = ({
             </Tooltip>
 
             <Tooltip
-              TransitionProps={{ timeout: 1000 }}
+              TransitionProps={{ timeout: 800 }}
               title="Khác"
               placement="top"
               TransitionComponent={Fade}
@@ -261,7 +265,7 @@ const TaskDetailDialog = ({
             </Tooltip>
 
             <Tooltip
-              TransitionProps={{ timeout: 1000 }}
+              TransitionProps={{ timeout: 800 }}
               title="Thoát"
               placement="top"
               TransitionComponent={Fade}
@@ -316,24 +320,31 @@ const TaskDetailDialog = ({
 
             <Box className={classes.body_actions}>
               <Tooltip
-                TransitionProps={{ timeout: 1000 }}
+                TransitionProps={{ timeout: 800 }}
                 title="Đính kèm tập tin"
                 placement="bottom"
                 TransitionComponent={Fade}
                 arrow
               >
-                <Button
-                  startIcon={<AttachFileIcon />}
-                  className={classes.body_action}
-                  onClick={() => {}}
+                <UploadFile
+                  onSuccess={async (file) => {
+                    console.log(file.url);
+                    // chưa có hàm add file trong provider. (updateTask ko có attach_files)
+                  }}
                 >
-                  Đính kèm
-                </Button>
+                  <Button
+                    startIcon={<AttachFileIcon />}
+                    className={classes.body_action}
+                    onClick={() => {}}
+                  >
+                    Đính kèm
+                  </Button>
+                </UploadFile>
               </Tooltip>
 
               <Tooltip
                 title="Thêm công việc con"
-                TransitionProps={{ timeout: 1000 }}
+                TransitionProps={{ timeout: 800 }}
                 placement="bottom"
                 TransitionComponent={Fade}
                 arrow
@@ -348,7 +359,7 @@ const TaskDetailDialog = ({
               </Tooltip>
 
               <Tooltip
-                TransitionProps={{ timeout: 1000 }}
+                TransitionProps={{ timeout: 800 }}
                 title="Liên kết công việc khác"
                 placement="bottom"
                 TransitionComponent={Fade}
@@ -364,7 +375,7 @@ const TaskDetailDialog = ({
               </Tooltip>
 
               <Tooltip
-                TransitionProps={{ timeout: 1000 }}
+                TransitionProps={{ timeout: 800 }}
                 title="Hành động khác"
                 placement="bottom"
                 TransitionComponent={Fade}
@@ -577,17 +588,14 @@ const TaskDetailDialog = ({
         style={{ marginTop: 4 }}
       >
         <MenuItem
-          onClick={() => setMoreActionsAnchorEl(null)}
+          onClick={async () => {
+            setMoreActionsAnchorEl(null);
+            await deleteTask({ room_id: currentRoom.id, id: task?.id || "" });
+            dialogProps.onClose?.({}, "backdropClick");
+          }}
           style={{ display: "block", padding: "8px 12px" }}
         >
           Xóa công việc
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => setMoreActionsAnchorEl(null)}
-          style={{ display: "block", padding: "8px 12px" }}
-        >
-          Di chuyển công việc
         </MenuItem>
 
         <MenuItem
@@ -598,7 +606,9 @@ const TaskDetailDialog = ({
         </MenuItem>
 
         <MenuItem
-          onClick={() => setMoreActionsAnchorEl(null)}
+          onClick={() => {
+            navigate(`/room/${currentRoom.id}/task/${task?.id || ""}`);
+          }}
           style={{ display: "block", padding: "8px 12px" }}
         >
           Xem ở trang khác
