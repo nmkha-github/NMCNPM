@@ -84,9 +84,7 @@ const useStyle = makeStyles((theme) => ({
     padding: 0,
     gap: 12,
   },
-  children: {
-    marginTop: 82,
-  },
+  children: { height: "calc(100vh - 66px)" },
 }));
 
 const Header = ({ children }: HeaderProps) => {
@@ -95,7 +93,13 @@ const Header = ({ children }: HeaderProps) => {
   let navigate = useNavigate();
 
   return (
-    <>
+    <Box
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        marginTop: 66,
+      }}
+    >
       {!location.pathname.includes("/login") &&
         !location.pathname.includes("/register") &&
         !location.pathname.includes("/forgot-password") && (
@@ -175,7 +179,7 @@ const Header = ({ children }: HeaderProps) => {
         )}
 
       <Box className={classes.children}>{children}</Box>
-    </>
+    </Box>
   );
 };
 

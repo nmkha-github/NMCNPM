@@ -25,10 +25,8 @@ import { useRooms } from "../../../../lib/provider/RoomsProvider";
 
 const useStyle = makeStyles({
   cssStyle1: {
+    height: "calc(100vh - 66px)",
     width: "232px",
-    left: 0,
-    top: 64,
-    bottom: 0,
     borderRight: "1.5px solid rgba(231, 232, 239, 0.8)",
     fontFamily: "Inter",
     fontStyle: "normal",
@@ -51,7 +49,6 @@ const useStyle = makeStyles({
   cssStyle6: {
     width: "100%",
     paddingTop: "8px",
-    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -132,30 +129,39 @@ const LeftSideBar = () => {
   );
 
   return (
-    <Box className={classes.cssStyle1}>
-      <Box>
-        {loadingCurrentRoom ? (
-          <CircularProgress />
-        ) : (
-          <Box style={{ padding: "8px 16px" }}>
-            <Box className={classes.cssStyle2}>
-              <Typography variant="h6">
-                {currentRoom.name ? currentRoom.name : "N/A"}
-              </Typography>
+    <Box
+      style={{ display: "flex", flexDirection: "column" }}
+      className={classes.cssStyle1}
+    >
+      {loadingCurrentRoom ? (
+        <CircularProgress />
+      ) : (
+        <Box style={{ padding: "8px 16px" }}>
+          <Box className={classes.cssStyle2}>
+            <Typography variant="h6">
+              {currentRoom.name ? currentRoom.name : "N/A"}
+            </Typography>
 
-              <Typography variant="subtitle2">
-                {"Mã phòng: " + (currentRoom.id ? currentRoom.id : "N/A")}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box style={{ height: 16 }} />
-
-            <CopyToClipboardBox text={currentRoom.id} />
+            <Typography variant="subtitle2">{"Mã phòng: "}</Typography>
+            <Typography>{currentRoom.id ? currentRoom.id : "N/A"}</Typography>
           </Box>
-        )}
+          <Divider />
+          <Box style={{ height: 16 }} />
 
-        <Typography className={classes.cssStyle5}>Danh mục</Typography>
-        <Divider />
+          <CopyToClipboardBox text={currentRoom.id} />
+        </Box>
+      )}
+
+      <Typography className={classes.cssStyle5}>Danh mục</Typography>
+      <Divider />
+      <Box
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          justifyContent: "space-between",
+        }}
+      >
         <MenuList>
           {items.map((item, index) => {
             return (
