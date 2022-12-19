@@ -16,6 +16,7 @@ import {
   Menu,
   MenuItem,
   Paper,
+  Popover,
   Table,
   TableBody,
   TableCell,
@@ -44,7 +45,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
@@ -56,8 +56,7 @@ interface TaskDetailDialogProps {
 
 const useStyle = makeStyles((theme) => ({
   dialog: {
-    padding: 16,
-    maxHeight: 500,
+    padding: "16px 24px",
   },
   dialog_header: {
     display: "flex",
@@ -65,19 +64,29 @@ const useStyle = makeStyles((theme) => ({
     alignItems: "center",
     width: "100%",
   },
-  dialog_header_actions: {},
-  dialog_body: {
+  dialog_header_actions: {
     display: "flex",
     flexDirection: "row",
-    gap: 32,
+    gap: 8,
   },
-  dialog_body_left: {},
-  dialog_body_right: {},
+  dialog_body: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+    gap: 48,
+  },
+  dialog_body_left: {
+    flexGrow: 24,
+  },
+  dialog_body_right: {
+    flexGrow: 7,
+  },
   body_actions: {
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "flex-start",
     gap: 8,
-    margin: "8px 0px 12px",
+    margin: "8px 0px 20px",
   },
   body_action: {
     textTransform: "none",
@@ -88,6 +97,14 @@ const useStyle = makeStyles((theme) => ({
     "&:hover": {
       background: "#EBECF0",
     },
+  },
+  field_title: {
+    fontFamily:
+      "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,'Fira Sans','Droid Sans','Helvetica Neue',sans-serif",
+    fontWeight: 600,
+    fontSize: 14,
+    lineHeight: "24px",
+    color: "#666666",
   },
 }));
 
@@ -119,6 +136,9 @@ const TaskDetailDialog = ({
     last_edit: "",
     comments: [],
   });
+
+  const [moreActionsAnchorEl, setMoreActionsAnchorEl] =
+    useState<null | HTMLElement>(null);
 
   const statusOptions = ["TODO", "DOING", "REVIEWING", "DONE"]; // for test; get from provider later
 
@@ -153,7 +173,12 @@ const TaskDetailDialog = ({
   }, [task]);
 
   return (
-    <Dialog {...dialogProps} fullScreen={fullScreen} maxWidth="md">
+    <Dialog
+      {...dialogProps}
+      fullScreen={fullScreen}
+      fullWidth={true}
+      maxWidth="lg"
+    >
       <Box className={classes.dialog}>
         {/* Header of the dialog */}
         <Box className={classes.dialog_header}>
@@ -171,8 +196,11 @@ const TaskDetailDialog = ({
           {/* Header action buttons */}
           <Box className={classes.dialog_header_actions}>
             <Tooltip
+              TransitionProps={{ timeout: 1000 }}
               title="Theo dõi"
               placement="top"
+              TransitionComponent={Fade}
+              arrow
               onClick={() => {
                 setWatches(!watches);
               }}
@@ -183,8 +211,11 @@ const TaskDetailDialog = ({
             </Tooltip>
 
             <Tooltip
+              TransitionProps={{ timeout: 1000 }}
               title="Thích"
               placement="top"
+              TransitionComponent={Fade}
+              arrow
               onClick={() => {
                 setVoted(!voted);
               }}
@@ -194,21 +225,47 @@ const TaskDetailDialog = ({
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Chia sẻ" placement="top" onClick={() => {}}>
+            <Tooltip
+              TransitionProps={{ timeout: 1000 }}
+              title="Chia sẻ"
+              placement="top"
+              TransitionComponent={Fade}
+              arrow
+              onClick={() => {}}
+            >
               <IconButton>
                 <ShareIcon />
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Khác" placement="top" onClick={() => {}}>
-              <IconButton>
+            <Tooltip
+              TransitionProps={{ timeout: 1000 }}
+              title="Khác"
+              placement="top"
+              TransitionComponent={Fade}
+              arrow
+            >
+              <IconButton
+                id="more-actions-button"
+                aria-controls={
+                  !!moreActionsAnchorEl ? "more-actions-menu" : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={!!moreActionsAnchorEl ? "true" : undefined}
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                  setMoreActionsAnchorEl(event.currentTarget)
+                }
+              >
                 <MoreHorizIcon />
               </IconButton>
             </Tooltip>
 
             <Tooltip
+              TransitionProps={{ timeout: 1000 }}
               title="Thoát"
               placement="top"
+              TransitionComponent={Fade}
+              arrow
               onClick={() => dialogProps.onClose?.({}, "backdropClick")}
             >
               <IconButton>
@@ -230,6 +287,8 @@ const TaskDetailDialog = ({
               {isEditingTitle ? (
                 <TextField
                   autoFocus
+                  fullWidth
+                  size="small"
                   variant="outlined"
                   onChange={(event) => {
                     setEditTask({ ...editTask, title: event.target.value });
@@ -249,7 +308,13 @@ const TaskDetailDialog = ({
             </ClickAwayListener>
 
             <Box className={classes.body_actions}>
-              <Tooltip title="Đính kèm tập tin" placement="bottom">
+              <Tooltip
+                TransitionProps={{ timeout: 1000 }}
+                title="Đính kèm tập tin"
+                placement="bottom"
+                TransitionComponent={Fade}
+                arrow
+              >
                 <Button
                   startIcon={<AttachFileIcon />}
                   className={classes.body_action}
@@ -259,7 +324,13 @@ const TaskDetailDialog = ({
                 </Button>
               </Tooltip>
 
-              <Tooltip title="Thêm công việc con" placement="bottom">
+              <Tooltip
+                TransitionProps={{ timeout: 1000 }}
+                title="Thêm công việc con"
+                placement="bottom"
+                TransitionComponent={Fade}
+                arrow
+              >
                 <Button
                   startIcon={<AccountTreeIcon />}
                   className={classes.body_action}
@@ -269,7 +340,13 @@ const TaskDetailDialog = ({
                 </Button>
               </Tooltip>
 
-              <Tooltip title="Liên kết công việc khác" placement="bottom">
+              <Tooltip
+                TransitionProps={{ timeout: 1000 }}
+                title="Liên kết công việc khác"
+                placement="bottom"
+                TransitionComponent={Fade}
+                arrow
+              >
                 <Button
                   startIcon={<AddLinkIcon />}
                   className={classes.body_action}
@@ -279,7 +356,13 @@ const TaskDetailDialog = ({
                 </Button>
               </Tooltip>
 
-              <Tooltip title="Hành động khác" placement="bottom">
+              <Tooltip
+                TransitionProps={{ timeout: 1000 }}
+                title="Hành động khác"
+                placement="bottom"
+                TransitionComponent={Fade}
+                arrow
+              >
                 <Button
                   startIcon={<MoreHorizIcon />}
                   className={classes.body_action}
@@ -290,7 +373,9 @@ const TaskDetailDialog = ({
               </Tooltip>
             </Box>
 
-            <Typography>Mô tả công việc:</Typography>
+            <Typography className={classes.field_title}>
+              Mô tả công việc:
+            </Typography>
             <ClickAwayListener
               onClickAway={() => {
                 setIsEditingContent(false);
@@ -301,6 +386,7 @@ const TaskDetailDialog = ({
                   autoFocus
                   variant="outlined"
                   fullWidth
+                  size="small"
                   onChange={(event) => {
                     setEditTask({ ...editTask, content: event.target.value });
                   }}
@@ -319,9 +405,14 @@ const TaskDetailDialog = ({
               )}
             </ClickAwayListener>
 
-            <Divider />
+            <Divider style={{ margin: "24px 0px 16px" }} />
 
-            <Typography>Bình luận</Typography>
+            <Typography
+              className={classes.field_title}
+              style={{ marginBottom: "8px" }}
+            >
+              Bình luận
+            </Typography>
 
             <Box
               style={{
@@ -363,42 +454,23 @@ const TaskDetailDialog = ({
               </ListItem>
             </List>
 
-            <Menu
-              id="lock-menu"
-              anchorEl={statusAnchorEl}
-              open={!!statusAnchorEl}
-              onClose={() => setStatusAnchorEl(null)}
-              MenuListProps={{
-                "aria-labelledby": "lock-button",
-              }}
-              TransitionComponent={Fade}
-            >
-              {statusOptions.map((option, index) => (
-                <MenuItem
-                  key={option}
-                  selected={index === statusSelectedIndex}
-                  onClick={(event) => {
-                    setStatusSelectedIndex(index);
-                    setStatusAnchorEl(null);
-                  }}
-                >
-                  {option}
-                </MenuItem>
-              ))}
-            </Menu>
-
             {/* Detail table */}
             <TableContainer component={Paper}>
               <Table style={{ minWidth: 350 }}>
                 <TableHead>
                   <TableRow>
-                    <b>Thông tin chi tiết</b>
+                    <TableCell>
+                      <b>Thông tin chi tiết</b>
+                    </TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
                   <TableRow>
-                    <TableCell>Người đảm nhận:</TableCell>
+                    <TableCell className={classes.field_title}>
+                      Người đảm nhận:
+                    </TableCell>
                     <TableCell>
                       <List component="nav">
                         <ListItem
@@ -423,41 +495,11 @@ const TaskDetailDialog = ({
                           />
                         </ListItem>
                       </List>
-
-                      <Menu
-                        id="assignee-menu"
-                        anchorEl={memberAnchorEl}
-                        open={!!memberAnchorEl}
-                        onClose={() => setMemberAnchorEl(null)}
-                        MenuListProps={{
-                          "aria-labelledby": "assignee-button",
-                        }}
-                        TransitionComponent={Fade}
-                      >
-                        {memberOptions.map((member, index) => (
-                          <MenuItem
-                            key={member?.id || ""}
-                            selected={index === memberSelectedIndex}
-                            onClick={() => {
-                              setMemberSelectedIndex(index);
-                              setMemberAnchorEl(null);
-                            }}
-                          >
-                            <Avatar
-                              src={member?.avatar}
-                              alt="Avatar of assignee"
-                              style={{ marginRight: 12 }}
-                            />
-
-                            {member?.name || "N/A"}
-                          </MenuItem>
-                        ))}
-                      </Menu>
                     </TableCell>
                   </TableRow>
 
                   <TableRow>
-                    <TableCell>Nhãn:</TableCell>
+                    <TableCell className={classes.field_title}>Nhãn:</TableCell>
                     <TableCell>
                       <TextField
                         type="text"
@@ -469,12 +511,16 @@ const TaskDetailDialog = ({
                   </TableRow>
 
                   <TableRow>
-                    <TableCell>Ngày tạo:</TableCell>
+                    <TableCell className={classes.field_title}>
+                      Ngày tạo:
+                    </TableCell>
                     <TableCell>{editTask.created_at.toString()}</TableCell>
                   </TableRow>
 
                   <TableRow>
-                    <TableCell>Ngày đến hạn:</TableCell>
+                    <TableCell className={classes.field_title}>
+                      Ngày đến hạn:
+                    </TableCell>
                     <TableCell>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -485,7 +531,9 @@ const TaskDetailDialog = ({
                             inputProps,
                             InputProps,
                           }) => (
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Box
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
                               <input ref={inputRef} {...inputProps} />
                               {InputProps?.endAdornment}
                             </Box>
@@ -500,6 +548,120 @@ const TaskDetailDialog = ({
           </Box>
         </Box>
       </Box>
+
+      {/* Menu of header-more-actions-list */}
+      <Popover
+        id="more-actions-menu"
+        anchorEl={moreActionsAnchorEl}
+        open={!!moreActionsAnchorEl}
+        onClose={() => setMoreActionsAnchorEl(null)}
+        aria-labelledby="more-action-button"
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        TransitionComponent={Fade}
+        style={{ marginTop: 4 }}
+      >
+        <MenuItem
+          onClick={() => setMoreActionsAnchorEl(null)}
+          style={{ display: "block", padding: "8px 12px" }}
+        >
+          Xóa công việc
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => setMoreActionsAnchorEl(null)}
+          style={{ display: "block", padding: "8px 12px" }}
+        >
+          Di chuyển công việc
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => setMoreActionsAnchorEl(null)}
+          style={{ display: "block", padding: "8px 12px" }}
+        >
+          Nhân bản công việc
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => setMoreActionsAnchorEl(null)}
+          style={{ display: "block", padding: "8px 12px" }}
+        >
+          Xem ở trang khác
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => setMoreActionsAnchorEl(null)}
+          style={{ display: "block", padding: "8px 12px" }}
+        >
+          In
+        </MenuItem>
+      </Popover>
+
+      {/* Menu of status-list */}
+      <Menu
+        id="lock-menu"
+        anchorEl={statusAnchorEl}
+        open={!!statusAnchorEl}
+        onClose={() => setStatusAnchorEl(null)}
+        MenuListProps={{
+          "aria-labelledby": "lock-button",
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        TransitionComponent={Fade}
+      >
+        {statusOptions.map((option, index) => (
+          <MenuItem
+            key={option}
+            selected={index === statusSelectedIndex}
+            onClick={(event) => {
+              setStatusSelectedIndex(index);
+              setStatusAnchorEl(null);
+            }}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+
+      {/* Menu of member-list (assignee) */}
+      <Menu
+        id="assignee-menu"
+        anchorEl={memberAnchorEl}
+        open={!!memberAnchorEl}
+        onClose={() => setMemberAnchorEl(null)}
+        MenuListProps={{
+          "aria-labelledby": "assignee-button",
+        }}
+        TransitionComponent={Fade}
+        transformOrigin={{
+          horizontal: "right",
+          vertical: "top",
+        }}
+        anchorOrigin={{
+          horizontal: "right",
+          vertical: "bottom",
+        }}
+      >
+        {memberOptions.map((member, index) => (
+          <MenuItem
+            key={member?.id || ""}
+            selected={index === memberSelectedIndex}
+            onClick={() => {
+              setMemberSelectedIndex(index);
+              setMemberAnchorEl(null);
+            }}
+          >
+            <Avatar
+              src={member?.avatar}
+              alt="Avatar of assignee"
+              style={{ marginRight: 12 }}
+            />
+
+            {truncate(member?.name || "N/A")}
+          </MenuItem>
+        ))}
+      </Menu>
     </Dialog>
   );
 };
