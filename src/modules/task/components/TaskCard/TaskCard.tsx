@@ -9,6 +9,7 @@ import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
 import { useNavigate, useParams } from "react-router-dom";
+import TaskCardMenu from "./TaskCardMenu";
 
 interface TaskCardProps {
   task: TaskData;
@@ -46,6 +47,14 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
         //   navigate(`/room/${roomId}/task/${task.id}`);
         // }}
         {...boxProps}
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+          },
+        }}
+        onDoubleClick={() => {
+          navigate(`/room/${roomId}/task/${task.id}`);
+        }}
       >
         <Box
           style={{
@@ -62,14 +71,7 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
           >
             {task.title}
           </Typography>
-          <IconButton
-            style={{ position: "absolute", right: 0 }}
-            onClick={(event: React.MouseEvent<HTMLElement>) =>
-              setTaskMenuAnchorEl(event.currentTarget)
-            }
-          >
-            <BiDotsVerticalRounded />
-          </IconButton>
+          <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
         </Box>
         <Typography style={{ fontSize: 14 }}>{task.content}</Typography>
         <Box style={{ display: "flex", justifyContent: "right" }}>
@@ -104,6 +106,14 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
         //   navigate(`/room/${roomId}/task/${task.id}`);
         // }}
         {...boxProps}
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+          },
+        }}
+        onDoubleClick={() => {
+          navigate(`/room/${roomId}/task/${task.id}`);
+        }}
       >
         <Box
           component="img"
@@ -117,14 +127,7 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
         <Typography align="center" style={{ fontSize: 14, marginLeft: 10 }}>
           {task.title}
         </Typography>
-        <IconButton
-          style={{ position: "absolute", right: 0 }}
-          onClick={(event: React.MouseEvent<HTMLElement>) =>
-            setTaskMenuAnchorEl(event.currentTarget)
-          }
-        >
-          <BiDotsVerticalRounded />
-        </IconButton>
+        <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
       </Box>
     );
   }

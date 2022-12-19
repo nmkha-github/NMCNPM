@@ -11,6 +11,9 @@ import UploadFile from "../../lib/components/UploadFile/UploadFile";
 import TaskCard from "../../modules/task/components/TaskCard/TaskCard";
 import TaskData from "../../modules/task/interface/task-data";
 import TaskDetailDialog from "../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
+import AssignMemberBox from "../../modules/task/components/AssignMemberBox/AssignMemberBox";
+import MemberData from "../../modules/statistic/interface/member-data";
+import UserData from "../../modules/user/interface/user-data";
 
 const HomePage = () => {
   const dataName = false;
@@ -44,6 +47,17 @@ const HomePage = () => {
         onClick={() => {
           setTaskShow({ ...task });
         }}
+      />
+      <AssignMemberBox
+        task={{
+          id: "WttA7CdT5Qvbg5XG0xei",
+          title: "",
+          assignee_id: "ujl8YpvL4ogSzkkroLsH",
+          created_at: "",
+          status: "",
+          creator_id: "",
+        }}
+        onChoose={(member) => {}}
       />
       <UploadFile
         onSuccess={(file) => {
