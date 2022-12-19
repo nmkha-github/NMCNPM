@@ -30,7 +30,8 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "flex-start",
     width: 820,
-    marginLeft: "15%",
+    position: "relative",
+    left: "calc(50% - 410px)",
     marginBottom: 40,
     padding: "32px 24px",
     borderRadius: 4,
@@ -48,7 +49,7 @@ const useStyle = makeStyles((theme) => ({
   avatarContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContains: "center",
+    justifyContent: "center",
     alignItems: "center",
   },
   avatar: {
@@ -168,17 +169,13 @@ const SettingPage = () => {
 
       <LoadingButton
         onClick={async () => {
-          try {
-            await editUser({
-              id: user?.id || "",
-              fields: {
-                name: userEditData.name,
-                avatar: userEditData.avatar,
-              },
-            });
-          } catch (error) {
-            showSnackbarError(error);
-          }
+          await editUser({
+            id: user?.id || "",
+            fields: {
+              name: userEditData.name,
+              avatar: userEditData.avatar,
+            },
+          });
         }}
         variant="contained"
         loading={editingUser || loadingUser}
