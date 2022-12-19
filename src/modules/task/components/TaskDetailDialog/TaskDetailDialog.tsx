@@ -145,14 +145,12 @@ const TaskDetailDialog = ({
   const [statusAnchorEl, setStatusAnchorEl] = useState<null | HTMLElement>(
     null
   );
-  const [statusSelectedIndex, setStatusSelectedIndex] = useState(
-    statusOptions.indexOf(task?.status || "TODO")
-  );
+  const [statusSelectedIndex, setStatusSelectedIndex] = useState(0);
 
-  const memberOptions = [user, user, user]; // for test; get from provider later (?create new provider: membersProvider)
+  const memberOptions = [user, user, user, user, user]; // for test; get from provider later (?create new provider: membersProvider)
   memberOptions.push({
-    id: "undefined",
-    auth_id: "undefined",
+    id: "",
+    auth_id: "",
     email: "",
     name: "Chưa xác định",
     avatar: "",
@@ -162,14 +160,16 @@ const TaskDetailDialog = ({
   const [memberAnchorEl, setMemberAnchorEl] = useState<null | HTMLElement>(
     null
   );
-  const [memberSelectedIndex, setMemberSelectedIndex] = useState(
-    memberOptions.findIndex(
-      (member) => member && member.id === (task?.assignee_id || "undefined")
-    )
-  );
+  const [memberSelectedIndex, setMemberSelectedIndex] = useState(0);
 
   useEffect(() => {
     task && setEditTask({ ...task });
+    setStatusSelectedIndex(statusOptions.indexOf(task?.status || "TODO"));
+    setMemberSelectedIndex(
+      memberOptions.findIndex(
+        (member) => member && member.id === (task?.assignee_id || "")
+      )
+    );
   }, [task]);
 
   return (
@@ -280,8 +280,15 @@ const TaskDetailDialog = ({
           {/* Left section of the dialog */}
           <Box className={classes.dialog_body_left}>
             <ClickAwayListener
-              onClickAway={() => {
-                setIsEditingTitle(false);
+              onClickAway={async () => {
+                if (isEditingTitle) {
+                  setIsEditingTitle(false);
+                  await updateTask({
+                    room_id: currentRoom.id,
+                    id: editTask.id,
+                    updateData: { title: editTask.title },
+                  });
+                }
               }}
             >
               {isEditingTitle ? (
@@ -302,7 +309,7 @@ const TaskDetailDialog = ({
                   className={classes.edit_field}
                   style={{ padding: "6px 4px", fontWeight: "bold" }}
                 >
-                  {editTask.title}
+                  {truncate(editTask.title, 20)}
                 </Typography>
               )}
             </ClickAwayListener>
@@ -325,8 +332,8 @@ const TaskDetailDialog = ({
               </Tooltip>
 
               <Tooltip
-                TransitionProps={{ timeout: 1000 }}
                 title="Thêm công việc con"
+                TransitionProps={{ timeout: 1000 }}
                 placement="bottom"
                 TransitionComponent={Fade}
                 arrow
@@ -377,8 +384,15 @@ const TaskDetailDialog = ({
               Mô tả công việc:
             </Typography>
             <ClickAwayListener
-              onClickAway={() => {
-                setIsEditingContent(false);
+              onClickAway={async () => {
+                if (isEditingContent) {
+                  setIsEditingContent(false);
+                  await updateTask({
+                    room_id: currentRoom.id,
+                    id: editTask.id,
+                    updateData: { content: editTask.content },
+                  });
+                }
               }}
             >
               {isEditingContent ? (
@@ -440,9 +454,9 @@ const TaskDetailDialog = ({
             <List component="nav">
               <ListItem
                 button
-                id="lock-button"
+                id="status-button"
                 aria-haspopup="listbox"
-                aria-controls="lock-menu"
+                aria-controls="status-menu"
                 aria-expanded={!!statusAnchorEl ? "true" : undefined}
                 onClick={(event) => setStatusAnchorEl(event.currentTarget)}
               >
@@ -477,7 +491,7 @@ const TaskDetailDialog = ({
                           button
                           id="assignee-button"
                           aria-haspopup="listbox"
-                          aria-controls="lock-menu"
+                          aria-controls="assignee-menu"
                           aria-expanded={!!memberAnchorEl ? "true" : undefined}
                           onClick={(event) =>
                             setMemberAnchorEl(event.currentTarget)
@@ -490,7 +504,8 @@ const TaskDetailDialog = ({
                           />
                           <ListItemText
                             primary={truncate(
-                              memberOptions[memberSelectedIndex]?.name || "N/A"
+                              memberOptions[memberSelectedIndex]?.name || "N/A",
+                              18
                             )}
                           />
                         </ListItem>
@@ -599,12 +614,12 @@ const TaskDetailDialog = ({
 
       {/* Menu of status-list */}
       <Menu
-        id="lock-menu"
+        id="status-menu"
         anchorEl={statusAnchorEl}
         open={!!statusAnchorEl}
         onClose={() => setStatusAnchorEl(null)}
         MenuListProps={{
-          "aria-labelledby": "lock-button",
+          "aria-labelledby": "status-button",
         }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -614,9 +629,14 @@ const TaskDetailDialog = ({
           <MenuItem
             key={option}
             selected={index === statusSelectedIndex}
-            onClick={(event) => {
+            onClick={async (event) => {
               setStatusSelectedIndex(index);
               setStatusAnchorEl(null);
+              await updateTask({
+                room_id: currentRoom.id,
+                id: editTask.id,
+                updateData: { status: option },
+              });
             }}
           >
             {option}
@@ -647,9 +667,14 @@ const TaskDetailDialog = ({
           <MenuItem
             key={member?.id || ""}
             selected={index === memberSelectedIndex}
-            onClick={() => {
+            onClick={async () => {
               setMemberSelectedIndex(index);
               setMemberAnchorEl(null);
+              await updateTask({
+                room_id: currentRoom.id,
+                id: editTask.id,
+                updateData: { assignee_id: member?.id || "" },
+              });
             }}
           >
             <Avatar
