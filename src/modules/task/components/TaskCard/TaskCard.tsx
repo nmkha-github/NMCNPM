@@ -14,8 +14,9 @@ import TaskCardMenu from "./TaskCardMenu";
 interface TaskCardProps {
   task: TaskData;
   mode: "card" | "item";
+  isDragging:string;
 }
-const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
+const TaskCard = ({ task, mode,isDragging, ...boxProps }: TaskCardProps & BoxProps) => {
   const [taskMenuAnchorEl, setTaskMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -37,7 +38,7 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
   if (mode === "card") {
     return (
       <Box
-        style={{ width: 260, padding: 12, border: "1px solid black" }}
+        style={{ width: 260, padding: 12, border: "1px solid black",background:`${isDragging===task.id ? "#d8f9ff" : "white"}` }}
         // sx={{
         //   "&:hover": {
         //     cursor: "pointer",
@@ -73,7 +74,7 @@ const TaskCard = ({ task, mode, ...boxProps }: TaskCardProps & BoxProps) => {
           </Typography>
           <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
         </Box>
-        <Typography style={{ fontSize: 14 }}>{task.content}</Typography>
+        <Typography style={{ fontSize: 14 }}>{task.content&&task.content.length>60 ? task.content.slice(0,60)+"...": task.content}</Typography>
         <Box style={{ display: "flex", justifyContent: "right" }}>
           <Box
             component="img"

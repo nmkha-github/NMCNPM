@@ -1,7 +1,12 @@
 import TaskListData from "../../interface/task-list";
 import TaskData from "../../interface/task-data";
 import { Box } from "@material-ui/core";
+import { useParams } from "react-router-dom";
+import { Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import TasksProvider, {
+  useTasks,
+} from "../../../../lib/provider/TasksProvider";
 import React from "react";
 import {
   DragDropContext,
@@ -11,26 +16,18 @@ import {
 } from "react-beautiful-dnd";
 import TaskCard from "../TaskCard/TaskCard";
 interface TaskListProps {
-  taskList: TaskListData;
+  type: string;
+  curTaskList: TaskData[];
+  status?: string;
+  isDragging:string;
+  setTaskShow(data: TaskData): void;
 }
-const TaskList = ({ taskList }: TaskListProps) => {
-  const [curTaskList, setCurTaskList] = useState<TaskData[]>();
-  useEffect(() => {
-    setCurTaskList(taskList.taskList);
-  }, [taskList]);
-  function handleOnDragEnd(result: DropResult) {
-    if (!result.destination) return;
-    if (!curTaskList) return;
-    const items = Array.from(curTaskList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setCurTaskList(items);
-  }
+const TaskList = ({ type, status, setTaskShow,curTaskList,isDragging }: TaskListProps) => {
+  const [isDraggingOver,setIsDraggingOver]=useState(false);
   return (
-    <div>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="tasks">
-          {(provided) => (
+    <Box style={{ height: "auto" }}>
+        <Droppable droppableId={status?status:"tasks"}>
+          {(provided,snapshot) => (
             <ul
               className="tasks"
               {...provided.droppableProps}
@@ -45,7 +42,27 @@ const TaskList = ({ taskList }: TaskListProps) => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        {<TaskCard mode="item" task={task} />}
+                        {type === "card" ? (
+                          <Box style={{ marginBottom: 8 }}>
+                            <TaskCard
+                              mode="card"
+                              isDragging={isDragging}
+                              task={task}
+                              onClick={() => {
+                                setTaskShow({ ...task });
+                              }}
+                            />
+                          </Box>
+                        ) : (
+                          <TaskCard
+                            mode="item"
+                            task={task}
+                            isDragging={isDragging}
+                            onClick={() => {
+                              setTaskShow({ ...task });
+                            }}
+                          />
+                        )}
                       </li>
                     )}
                   </Draggable>
@@ -55,8 +72,7 @@ const TaskList = ({ taskList }: TaskListProps) => {
             </ul>
           )}
         </Droppable>
-      </DragDropContext>
-    </div>
+    </Box>
   );
 };
 
