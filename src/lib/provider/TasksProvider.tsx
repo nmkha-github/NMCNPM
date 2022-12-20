@@ -1,6 +1,4 @@
 import {
-  FieldValue,
-  Firestore,
   Timestamp,
   addDoc,
   collection,
@@ -14,7 +12,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { FirebaseApp } from "firebase/app";
 import React, { createContext, useCallback, useContext, useState } from "react";
 import TaskData from "../../modules/task/interface/task-data";
 import { db } from "../config/firebase-config";
@@ -28,9 +25,8 @@ interface TasksContextProps {
   getTasks: (payload: { room_id: string }) => Promise<void>;
   loadingTasks: boolean;
 
-  currentTask: TaskData;
-  getCurrentTask: (payload: { room_id: string; id: string }) => Promise<void>;
-  loadingCurrentTask: boolean;
+  currentTask?: TaskData;
+  setCurrentTask: (task?: TaskData) => void;
 
   createTask: (payload: {
     room_id: string;
@@ -50,7 +46,7 @@ interface TasksContextProps {
     room_id: string;
     id: string;
     updateData: {
-      status?: string;
+      status: string;
       assignee_id?: string;
       deadline?: Timestamp | Date | string;
       content?: string;
@@ -77,8 +73,7 @@ const TasksContext = createContext<TasksContextProps>({
     creator_id: "",
     created_at: "",
   },
-  getCurrentTask: async () => {},
-  loadingCurrentTask: false,
+  setCurrentTask: () => {},
 
   createTask: async () => {},
   creatingTask: false,
@@ -96,16 +91,8 @@ interface TasksContextProviderProps {
 
 const TasksProvider = ({ children }: TasksContextProviderProps) => {
   const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [currentTask, setCurrentTask] = useState<TaskData>({
-    id: "",
-    title: "",
-    status: "",
-    assignee_id: "",
-    creator_id: "",
-    created_at: "",
-  });
+  const [currentTask, setCurrentTask] = useState<TaskData>();
   const [loadingTasks, setLoadingTasks] = useState(false);
-  const [loadingCurrentTask, setLoadingCurrentTask] = useState(false);
   const [updatingTask, setUpdatingTask] = useState(false);
   const [creatingTask, setCreatingTask] = useState(false);
   const [deletingTask, setDeletingTask] = useState(false);
@@ -124,22 +111,6 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         showSnackbarError(error);
       } finally {
         setLoadingTasks(false);
-      }
-    },
-    [showSnackbarError]
-  );
-
-  const getCurrentTask = useCallback(
-    async ({ room_id, id }: { room_id: string; id: string }) => {
-      try {
-        setLoadingCurrentTask(true);
-        onSnapshot(doc(db, "room", room_id, "task", id), (taskDoc) => {
-          setCurrentTask({ ...(taskDoc.data() as TaskData) });
-        });
-      } catch (error) {
-        showSnackbarError(error);
-      } finally {
-        showSnackbarError(false);
       }
     },
     [showSnackbarError]
@@ -225,7 +196,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       room_id: string;
       id: string;
       updateData: {
-        status?: string;
+        status: string;
         assignee_id?: string;
         deadline?: Timestamp | Date | string;
         content?: string;
@@ -310,10 +281,6 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             );
           });
         }
-
-        
-
-        setCurrentTask({ ...currentTask, ...updateData });
       } catch (error) {
         showSnackbarError(error);
       } finally {
@@ -368,8 +335,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         loadingTasks,
 
         currentTask,
-        getCurrentTask,
-        loadingCurrentTask,
+        setCurrentTask,
 
         createTask,
         creatingTask,

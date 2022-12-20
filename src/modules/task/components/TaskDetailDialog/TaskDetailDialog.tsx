@@ -289,7 +289,10 @@ const TaskDetailDialog = ({
                   await updateTask({
                     room_id: currentRoom.id,
                     id: editTask.id,
-                    updateData: { title: editTask.title },
+                    updateData: {
+                      status: editTask.status,
+                      title: editTask.title,
+                    },
                   });
                 }
               }}
@@ -400,7 +403,10 @@ const TaskDetailDialog = ({
                   await updateTask({
                     room_id: currentRoom.id,
                     id: editTask.id,
-                    updateData: { content: editTask.content },
+                    updateData: {
+                      status: editTask.status,
+                      content: editTask.content,
+                    },
                   });
                 }
               }}
@@ -682,7 +688,10 @@ const TaskDetailDialog = ({
               await updateTask({
                 room_id: currentRoom.id,
                 id: editTask.id,
-                updateData: { assignee_id: member?.id || "" },
+                updateData: {
+                  status: editTask.status,
+                  assignee_id: member?.id || "",
+                },
               });
             }}
           >

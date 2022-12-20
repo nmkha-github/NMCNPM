@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from "react";
-import IconButton from "@mui/material/IconButton";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import { Box, Button, TextField, Container, BoxProps } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 import TaskData from "../../../task/interface/task-data";
 import { Typography } from "@material-ui/core";
 import UserHelper from "../../../user/util/user-helper";
 import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TaskCardMenu from "./TaskCardMenu";
+import { useTasks } from "../../../../lib/provider/TasksProvider";
 
 interface TaskCardProps {
   task: TaskData;
   mode: "card" | "item";
-  isDragging:string;
+  isDragging: string;
 }
-const TaskCard = ({ task, mode,isDragging, ...boxProps }: TaskCardProps & BoxProps) => {
-  const [taskMenuAnchorEl, setTaskMenuAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const open = Boolean(taskMenuAnchorEl);
-  const { showSnackbarError } = useAppSnackbar();
-  const navigate = useNavigate();
-  const { roomId } = useParams();
+
+const TaskCard = ({
+  task,
+  mode,
+  isDragging,
+  ...boxProps
+}: TaskCardProps & BoxProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
+  const { showSnackbarError } = useAppSnackbar();
+  const { roomId } = useParams();
+  const { setCurrentTask } = useTasks();
+
   useEffect(() => {
     async function getUserData() {
       try {
@@ -33,28 +35,25 @@ const TaskCard = ({ task, mode,isDragging, ...boxProps }: TaskCardProps & BoxPro
         showSnackbarError(error);
       }
     }
+
     getUserData();
   }, []);
+
   if (mode === "card") {
     return (
       <Box
-        style={{ width: 260, padding: 12, border: "1px solid black",background:`${isDragging===task.id ? "#d8f9ff" : "white"}` }}
-        // sx={{
-        //   "&:hover": {
-        //     cursor: "pointer",
-        //   },
-        // }}
-        // onClick={() => {
-        //   navigate(`/room/${roomId}/task/${task.id}`);
-        // }}
+        style={{
+          width: 260,
+          padding: 12,
+          border: "1px solid black",
+          background: `${isDragging === task.id ? "#d8f9ff" : "white"}`,
+        }}
         {...boxProps}
+        onClick={() => setCurrentTask(task)}
         sx={{
           "&:hover": {
             cursor: "pointer",
           },
-        }}
-        onDoubleClick={() => {
-          navigate(`/room/${roomId}/task/${task.id}`);
         }}
       >
         <Box
@@ -74,7 +73,11 @@ const TaskCard = ({ task, mode,isDragging, ...boxProps }: TaskCardProps & BoxPro
           </Typography>
           <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
         </Box>
-        <Typography style={{ fontSize: 14 }}>{task.content&&task.content.length>60 ? task.content.slice(0,60)+"...": task.content}</Typography>
+        <Typography style={{ fontSize: 14 }}>
+          {task.content && task.content.length > 60
+            ? task.content.slice(0, 60) + "..."
+            : task.content}
+        </Typography>
         <Box style={{ display: "flex", justifyContent: "right" }}>
           <Box
             component="img"
@@ -98,23 +101,13 @@ const TaskCard = ({ task, mode,isDragging, ...boxProps }: TaskCardProps & BoxPro
           display: "flex",
           alignItems: "center",
         }}
-        // sx={{
-        //   "&:hover": {
-        //     cursor: "pointer",
-        //   },
-        // }}
-        // onClick={() => {
-        //   navigate(`/room/${roomId}/task/${task.id}`);
-        // }}
         {...boxProps}
         sx={{
           "&:hover": {
             cursor: "pointer",
           },
         }}
-        onDoubleClick={() => {
-          navigate(`/room/${roomId}/task/${task.id}`);
-        }}
+        onClick={() => setCurrentTask(task)}
       >
         <Box
           component="img"

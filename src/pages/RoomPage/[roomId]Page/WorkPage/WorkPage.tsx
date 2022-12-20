@@ -3,29 +3,33 @@ import LeftSideBar from "../../../../modules/room/components/LeftSideBar/LeftSid
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { useParams } from "react-router-dom";
 import TaskData from "../../../../modules/task/interface/task-data";
-import TaskCard from "../../../../modules/task/components/TaskCard/TaskCard";
 import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
 import { Box, Typography } from "@material-ui/core";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
-import AuthProvider from "../../../../lib/provider/AuthProvider";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
+
 const WorkPage = () => {
-  const { currentRoom, getCurrentRoom } = useRooms();
+  const { getCurrentRoom } = useRooms();
   const { roomId } = useParams();
   const [tasksToDo, setTasksToDo] = useState<TaskData[]>([]);
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
   const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
-  const [taskShow, setTaskShow] = useState<TaskData>();
-  const { tasks, getTasks, updateTask, updatingTask } = useTasks();
+  const {
+    tasks,
+    getTasks,
+    updateTask,
+    updatingTask,
+    currentTask,
+    setCurrentTask,
+  } = useTasks();
   const [isDraggingId, setIsDraggingId] = useState("-1");
-  useEffect(() => {
-    getCurrentRoom(roomId || "");
-  }, []);
 
   useEffect(() => {
+    getCurrentRoom(roomId || "");
     getTasks({ room_id: roomId || "" });
   }, []);
+
   useEffect(() => {
     tasks.sort((a, b) => {
       if (a.last_edit && b.last_edit) {
@@ -54,6 +58,7 @@ const WorkPage = () => {
       })
     );
   }, [tasks]);
+
   function handleOnDragStart(result: DragStart) {
     if (result.source.droppableId === "DOING") {
       setIsDraggingId(tasksDoing[result.source.index].id);
@@ -107,9 +112,9 @@ const WorkPage = () => {
     <Box style={{ display: "flex" }}>
       <LeftSideBar />
       <TaskDetailDialog
-        task={taskShow}
-        open={!!taskShow}
-        onClose={() => setTaskShow(undefined)}
+        task={currentTask}
+        open={!!currentTask}
+        onClose={() => setCurrentTask(undefined)}
       />
       <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center" }}>
         <Box
@@ -154,7 +159,6 @@ const WorkPage = () => {
                 status={"TODO"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
             <Box
@@ -183,7 +187,6 @@ const WorkPage = () => {
                 status={"DOING"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
             <Box
@@ -211,7 +214,6 @@ const WorkPage = () => {
                 status={"DONE"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
           </DragDropContext>
