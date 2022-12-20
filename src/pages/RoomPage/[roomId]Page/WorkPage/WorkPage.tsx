@@ -5,11 +5,13 @@ import { useParams } from "react-router-dom";
 import TaskData from "../../../../modules/task/interface/task-data";
 import TaskCard from "../../../../modules/task/components/TaskCard/TaskCard";
 import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
-import { Box, Typography } from "@material-ui/core";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import AuthProvider from "../../../../lib/provider/AuthProvider";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
+import { Box, Button, TextField,Typography } from "@mui/material";
+
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
+import CreateTaskDialog from "../../../../modules/task/components/CreateTaskDialog/CreateTaskDialog";
 const WorkPage = () => {
   const { currentRoom, getCurrentRoom } = useRooms();
   const { roomId } = useParams();
@@ -17,7 +19,8 @@ const WorkPage = () => {
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
   const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
   const [taskReviewing,setTaskReviewing]=useState<TaskData[]>([]);
-  const { tasks, getTasks, updateTask, updatingTask,currentTask,setCurrentTask } = useTasks();
+  const { tasks, getTasks, updateTask, updatingTask,currentTask,setCurrentTask,createTask } = useTasks();
+  const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
   const [isDraggingId, setIsDraggingId] = useState("-1");
   useEffect(() => {
     getCurrentRoom(roomId || "");
@@ -41,31 +44,32 @@ const WorkPage = () => {
 
   useEffect(() => {
     setTasksDoing(
-      tasks.filter((task) => task.status === "DOING").sort(compareTasks)
+      tasks.filter((task) => task.status === "doing").sort(compareTasks)
     );
     setTasksToDo(
-      tasks.filter((task) => task.status === "TODO").sort(compareTasks)
+      tasks.filter((task) => task.status === "toDo").sort(compareTasks)
     );
     setTasksDone(
-      tasks.filter((task) => task.status === "DONE").sort(compareTasks)
+      tasks.filter((task) => task.status === "done").sort(compareTasks)
     );
     setTaskReviewing(
-      tasks.filter((task) => task.status === "REVIEWING").sort(compareTasks)
+      tasks.filter((task) => task.status === "reviewing").sort(compareTasks)
     );
   }, [tasks]);
 
   function handleOnDragStart(result: DragStart) {
-    if (result.source.droppableId === "DOING") {
+    if (result.source.droppableId === "doing") {
       setIsDraggingId(tasksDoing[result.source.index].id);
-    } else if (result.source.droppableId === "TODO") {
+    } else if (result.source.droppableId === "toDo") {
       setIsDraggingId(tasksToDo[result.source.index].id);
-    } else if (result.source.droppableId === "DONE"){
+    } else if (result.source.droppableId === "done"){
       setIsDraggingId(tasksDone[result.source.index].id);
     }
     else{
       setIsDraggingId(taskReviewing[result.source.index].id);
     }
   }
+
   function handleOnDragEnd(result: DropResult) {
     setIsDraggingId("-1");
     if (updatingTask) {
@@ -73,19 +77,19 @@ const WorkPage = () => {
     }
     if (!result.destination) return;
     if (result.destination.droppableId !== result.source.droppableId) {
-      if (result.source.droppableId === "DOING") {
+      if (result.source.droppableId === "doing") {
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksDoing[result.source.index].id,
           updateData: { status: result.destination.droppableId },
         });
-      } else if (result.source.droppableId === "TODO") {
+      } else if (result.source.droppableId === "toDo") {
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksToDo[result.source.index].id,
           updateData: { status: result.destination.droppableId },
         });
-      } else if(result.source.droppableId === "DONE"){
+      } else if(result.source.droppableId === "done"){
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksDone[result.source.index].id,
@@ -110,7 +114,21 @@ const WorkPage = () => {
         open={!!currentTask}
         onClose={() => setCurrentTask(undefined)}
       />
-      <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center" }}>
+      <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center",flexDirection:"column" }}>
+        <Button
+              variant="contained"
+              color="primary"
+              style={{ margin: "0.625rem",width:"200px" }}
+              onClick={() => {
+                setOpenCreateTaskDialog(true);
+              }}
+            >
+              Tạo công việc
+            </Button>
+          <CreateTaskDialog
+          open={openCreateTaskDialog}
+          onClose={()=>{setOpenCreateTaskDialog(false);}}
+          />
         <Box
           style={{
             display: "flex",
@@ -150,7 +168,7 @@ const WorkPage = () => {
               </Typography>
               <TaskList
                 curTaskList={tasksToDo}
-                status={"TODO"}
+                status={"toDo"}
                 type={"card"}
                 isDragging={isDraggingId}
               />
@@ -178,7 +196,7 @@ const WorkPage = () => {
               </Typography>
               <TaskList
                 curTaskList={tasksDoing}
-                status={"DOING"}
+                status={"doing"}
                 type={"card"}
                 isDragging={isDraggingId}
               />
@@ -206,7 +224,7 @@ const WorkPage = () => {
               </Typography>
               <TaskList
                 curTaskList={taskReviewing}
-                status={"REVIEWING"}
+                status={"reviewing"}
                 type={"card"}
                 isDragging={isDraggingId}
               />
@@ -233,7 +251,7 @@ const WorkPage = () => {
               </Typography>
               <TaskList
                 curTaskList={tasksDone}
-                status={"DONE"}
+                status={"done"}
                 type={"card"}
                 isDragging={isDraggingId}
               />
