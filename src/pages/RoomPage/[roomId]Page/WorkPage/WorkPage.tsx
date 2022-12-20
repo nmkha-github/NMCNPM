@@ -17,8 +17,7 @@ const WorkPage = () => {
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
   const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
   const [taskReviewing,setTaskReviewing]=useState<TaskData[]>([]);
-  const [taskShow, setTaskShow] = useState<TaskData>();
-  const { tasks, getTasks, updateTask, updatingTask } = useTasks();
+  const { tasks, getTasks, updateTask, updatingTask,currentTask,setCurrentTask } = useTasks();
   const [isDraggingId, setIsDraggingId] = useState("-1");
   useEffect(() => {
     getCurrentRoom(roomId || "");
@@ -107,9 +106,9 @@ const WorkPage = () => {
     <Box style={{ display: "flex" }}>
       <LeftSideBar />
       <TaskDetailDialog
-        task={taskShow}
-        open={!!taskShow}
-        onClose={() => setTaskShow(undefined)}
+        task={currentTask}
+        open={!!currentTask}
+        onClose={() => setCurrentTask(undefined)}
       />
       <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center" }}>
         <Box
@@ -154,7 +153,6 @@ const WorkPage = () => {
                 status={"TODO"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
             <Box
@@ -183,7 +181,6 @@ const WorkPage = () => {
                 status={"DOING"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
             <Box
@@ -212,7 +209,6 @@ const WorkPage = () => {
                 status={"REVIEWING"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
             <Box
@@ -240,7 +236,6 @@ const WorkPage = () => {
                 status={"DONE"}
                 type={"card"}
                 isDragging={isDraggingId}
-                setTaskShow={setTaskShow}
               />
             </Box>
           </DragDropContext>
