@@ -69,7 +69,6 @@ const AppRoutes = () => {
       <Route path="room/:roomId/member/:memberId" element={<MemberPage />} />
       <Route path="room/:roomId/work" element={<WorkPage />} />
       <Route path="room/:roomId/setting-room" element={<SettingRoomPage />} />
-      <Route path="testTaskList" element={<TaskList taskList={testTaskList} />} />
     </Routes>
   );
 };
