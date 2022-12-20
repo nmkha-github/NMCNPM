@@ -1,4 +1,4 @@
-import getOrderString from "./task-helper";
+import TaskHelper from "./task-helper";
 
 function getRndInteger(min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -11,7 +11,7 @@ const getOrderString_test = () => {
     let index = getRndInteger(0, ranks.length);
     let prev = index - 1 < 0 ? "" : ranks.at(index - 1) || "";
     let next = ranks.at(index) || "";
-    let mid = getOrderString(prev, next);
+    let mid = TaskHelper.getOrderString(prev, next);
 
     console.log({ step: i, index: index, prev: prev, mid: mid, next: next });
     if ((mid >= next && next !=="") || (mid <= prev && prev !=="")) {
