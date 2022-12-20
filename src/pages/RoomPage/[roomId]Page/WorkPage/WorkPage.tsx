@@ -9,7 +9,7 @@ import { Box, Typography } from "@material-ui/core";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import AuthProvider from "../../../../lib/provider/AuthProvider";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
 const WorkPage = () => {
   const { currentRoom, getCurrentRoom } = useRooms();
   const { roomId } = useParams();
@@ -18,7 +18,7 @@ const WorkPage = () => {
   const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
   const [taskShow, setTaskShow] = useState<TaskData>();
   const { tasks, getTasks, updateTask, updatingTask } = useTasks();
-
+  const [isDraggingId, setIsDraggingId] = useState("-1");
   useEffect(() => {
     getCurrentRoom(roomId || "");
   }, []);
@@ -54,7 +54,17 @@ const WorkPage = () => {
       })
     );
   }, [tasks]);
+  function handleOnDragStart(result: DragStart) {
+    if (result.source.droppableId === "DOING") {
+      setIsDraggingId(tasksDoing[result.source.index].id);
+    } else if (result.source.droppableId === "TODO") {
+      setIsDraggingId(tasksToDo[result.source.index].id);
+    } else {
+      setIsDraggingId(tasksDone[result.source.index].id);
+    }
+  }
   function handleOnDragEnd(result: DropResult) {
+    setIsDraggingId("-1");
     if (updatingTask) {
       return;
     }
@@ -112,6 +122,7 @@ const WorkPage = () => {
         >
           <DragDropContext
             onDragEnd={handleOnDragEnd}
+            onDragStart={handleOnDragStart}
           >
             <Box
               style={{
@@ -142,6 +153,7 @@ const WorkPage = () => {
                 curTaskList={tasksToDo}
                 status={"TODO"}
                 type={"card"}
+                isDragging={isDraggingId}
                 setTaskShow={setTaskShow}
               />
             </Box>
@@ -170,6 +182,7 @@ const WorkPage = () => {
                 curTaskList={tasksDoing}
                 status={"DOING"}
                 type={"card"}
+                isDragging={isDraggingId}
                 setTaskShow={setTaskShow}
               />
             </Box>
@@ -197,6 +210,7 @@ const WorkPage = () => {
                 curTaskList={tasksDone}
                 status={"DONE"}
                 type={"card"}
+                isDragging={isDraggingId}
                 setTaskShow={setTaskShow}
               />
             </Box>

@@ -19,13 +19,15 @@ interface TaskListProps {
   type: string;
   curTaskList: TaskData[];
   status?: string;
+  isDragging:string;
   setTaskShow(data: TaskData): void;
 }
-const TaskList = ({ type, status, setTaskShow,curTaskList }: TaskListProps) => {
+const TaskList = ({ type, status, setTaskShow,curTaskList,isDragging }: TaskListProps) => {
+  const [isDraggingOver,setIsDraggingOver]=useState(false);
   return (
     <Box style={{ height: "auto" }}>
         <Droppable droppableId={status?status:"tasks"}>
-          {(provided) => (
+          {(provided,snapshot) => (
             <ul
               className="tasks"
               {...provided.droppableProps}
@@ -44,6 +46,7 @@ const TaskList = ({ type, status, setTaskShow,curTaskList }: TaskListProps) => {
                           <Box style={{ marginBottom: 8 }}>
                             <TaskCard
                               mode="card"
+                              isDragging={isDragging}
                               task={task}
                               onClick={() => {
                                 setTaskShow({ ...task });
@@ -54,6 +57,7 @@ const TaskList = ({ type, status, setTaskShow,curTaskList }: TaskListProps) => {
                           <TaskCard
                             mode="item"
                             task={task}
+                            isDragging={isDragging}
                             onClick={() => {
                               setTaskShow({ ...task });
                             }}
