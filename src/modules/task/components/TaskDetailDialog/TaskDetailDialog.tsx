@@ -137,7 +137,6 @@ const TaskDetailDialog = ({
     creator_id: "",
     created_at: "",
     deadline: "",
-    last_edit: "",
     comments: [],
   });
 

@@ -12,7 +12,7 @@ interface TaskData {
   creator_id: string;
   created_at: Timestamp | Date | string;
   deadline?: Timestamp | Date | string;
-  last_edit?: Timestamp | Date | string;
+  last_edit?: Timestamp;
   comments?: CommentData[];
 }
 

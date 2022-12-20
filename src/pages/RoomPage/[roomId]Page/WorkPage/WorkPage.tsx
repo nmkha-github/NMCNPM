@@ -8,25 +8,90 @@ import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDial
 import { Box, Typography } from "@material-ui/core";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import AuthProvider from "../../../../lib/provider/AuthProvider";
-
+import { useTasks } from "../../../../lib/provider/TasksProvider";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 const WorkPage = () => {
   const { currentRoom, getCurrentRoom } = useRooms();
   const { roomId } = useParams();
-
-  const task = {
-    id: "WttA7CdT5Qvbg5XG0xei",
-    title: "task title",
-    status: "TODO",
-    assignee_id: "ujl8YpvL4ogSzkkroLsH",
-    creator_id: "ujl8YpvL4ogSzkkroLsH",
-    created_at: "12:00",
-  };
-
+  const [tasksToDo, setTasksToDo] = useState<TaskData[]>([]);
+  const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
+  const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
   const [taskShow, setTaskShow] = useState<TaskData>();
+  const { tasks, getTasks, updateTask, updatingTask } = useTasks();
 
   useEffect(() => {
     getCurrentRoom(roomId || "");
   }, []);
+
+  useEffect(() => {
+    getTasks({ room_id: roomId || "" });
+  }, []);
+  useEffect(() => {
+    tasks.sort((a, b) => {
+      if (a.last_edit && b.last_edit) {
+        if (a.last_edit.toMillis() < b.last_edit.toMillis()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else {
+        return -1;
+      }
+    });
+    setTasksDoing(
+      tasks.filter((task) => {
+        return task.status === "DOING";
+      })
+    );
+    setTasksToDo(
+      tasks.filter((task) => {
+        return task.status === "TODO";
+      })
+    );
+    setTasksDone(
+      tasks.filter((task) => {
+        return task.status === "DONE";
+      })
+    );
+  }, [tasks]);
+  function handleOnDragEnd(result: DropResult) {
+    if (updatingTask) {
+      return;
+    }
+    if (!result.destination) return;
+    if (result.destination.droppableId !== result.source.droppableId) {
+      if (result.source.droppableId === "DOING") {
+        updateTask({
+          room_id: roomId ? roomId : "",
+          id: tasksDoing[result.source.index].id,
+          updateData: { status: result.destination.droppableId },
+        });
+      } else if (result.source.droppableId === "TODO") {
+        updateTask({
+          room_id: roomId ? roomId : "",
+          id: tasksToDo[result.source.index].id,
+          updateData: { status: result.destination.droppableId },
+        });
+      } else {
+        updateTask({
+          room_id: roomId ? roomId : "",
+          id: tasksDone[result.source.index].id,
+          updateData: { status: result.destination.droppableId },
+        });
+      }
+      tasks.sort((a, b) => {
+        if (a.last_edit && b.last_edit) {
+          if (a.last_edit.toMillis() < b.last_edit.toMillis()) {
+            return 1;
+          } else {
+            return -1;
+          }
+        } else {
+          return -1;
+        }
+      });
+    }
+  }
 
   return (
     <Box style={{ display: "flex" }}>
@@ -36,86 +101,106 @@ const WorkPage = () => {
         open={!!taskShow}
         onClose={() => setTaskShow(undefined)}
       />
-      <Box style={{flexGrow:"1",display:"flex",justifyContent:"center"}}>
+      <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center" }}>
         <Box
           style={{
             display: "flex",
             marginTop: 16,
             marginLeft: 8,
+            height: "auto",
           }}
         >
-          <Box
-            style={{
-              width: 300,
-              background: "#f1f3f9",
-              display: "flex",
-              flexWrap:"wrap",
-              marginRight: 12,
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent:"flex-start"
-            }}
+          <DragDropContext
+            onDragEnd={handleOnDragEnd}
           >
-            <Typography
+            <Box
               style={{
-                marginTop:8,
-                fontSize: 18,
-                textDecoration: "underline",
-                marginBottom: 12,
+                width: 300,
+                background: "#f1f3f9",
+                height: "auto",
+                minHeight: 0,
+                display: "flex",
+                flexWrap: "wrap",
+                flexShrink: 0,
+                marginRight: 12,
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-start",
               }}
             >
-              TO DO
-            </Typography>
-            <TaskList status={"TODO"} type={"card"} setTaskShow={setTaskShow} />
-          </Box>
-          <Box
-            style={{
-              width: 300,
-              height:"100%",
-              background: "#f1f3f9",
-              display: "flex",
-              marginRight: 12,
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography
+              <Typography
+                style={{
+                  marginTop: 8,
+                  fontSize: 18,
+                  textDecoration: "underline",
+                  marginBottom: 12,
+                }}
+              >
+                TO DO
+              </Typography>
+              <TaskList
+                curTaskList={tasksToDo}
+                status={"TODO"}
+                type={"card"}
+                setTaskShow={setTaskShow}
+              />
+            </Box>
+            <Box
               style={{
-                marginTop:8,
-                fontSize: 18,
-                textDecoration: "underline",
-                marginBottom: 12,
+                width: 300,
+                height: "auto",
+                background: "#f1f3f9",
+                display: "flex",
+                marginRight: 12,
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              DOING
-            </Typography>
-            <TaskList
-              status={"DOING"}
-              type={"card"}
-              setTaskShow={setTaskShow}
-            />
-          </Box>
-          <Box
-            style={{
-              width: 300,
-              background: "#f1f3f9",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Typography
+              <Typography
+                style={{
+                  marginTop: 8,
+                  fontSize: 18,
+                  textDecoration: "underline",
+                  marginBottom: 12,
+                }}
+              >
+                DOING
+              </Typography>
+              <TaskList
+                curTaskList={tasksDoing}
+                status={"DOING"}
+                type={"card"}
+                setTaskShow={setTaskShow}
+              />
+            </Box>
+            <Box
               style={{
-                marginTop:8,
-                fontSize: 18,
-                textDecoration: "underline",
-                marginBottom: 12,
+                width: 300,
+                background: "#f1f3f9",
+                height: "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              DONE
-            </Typography>
-            <TaskList status={"DONE"} type={"card"} setTaskShow={setTaskShow} />
-          </Box>
+              <Typography
+                style={{
+                  marginTop: 8,
+                  fontSize: 18,
+                  textDecoration: "underline",
+                  marginBottom: 12,
+                }}
+              >
+                DONE
+              </Typography>
+              <TaskList
+                curTaskList={tasksDone}
+                status={"DONE"}
+                type={"card"}
+                setTaskShow={setTaskShow}
+              />
+            </Box>
+          </DragDropContext>
         </Box>
       </Box>
     </Box>

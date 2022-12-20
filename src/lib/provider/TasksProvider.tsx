@@ -236,6 +236,20 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         const time = Timestamp.now();
         setUpdatingTask(true);
 
+        setTasks(
+          tasks.map((task) => {
+            if (task.id === id) {
+              return {
+                last_edit: time,
+                ...task,
+                ...updateData,
+              };
+            }
+
+            return task;
+          })
+        );
+
         const taskBeforeDoc = await getDoc(
           doc(db, "room", room_id, "task", id)
         );
@@ -297,18 +311,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
           });
         }
 
-        setTasks(
-          tasks.map((task) => {
-            if (task.id === id) {
-              return {
-                ...task,
-                ...updateData,
-              };
-            }
-
-            return task;
-          })
-        );
+        
 
         setCurrentTask({ ...currentTask, ...updateData });
       } catch (error) {

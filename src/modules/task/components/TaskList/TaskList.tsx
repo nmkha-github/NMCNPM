@@ -2,6 +2,7 @@ import TaskListData from "../../interface/task-list";
 import TaskData from "../../interface/task-data";
 import { Box } from "@material-ui/core";
 import { useParams } from "react-router-dom";
+import { Timestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import TasksProvider, {
   useTasks,
@@ -15,43 +16,15 @@ import {
 } from "react-beautiful-dnd";
 import TaskCard from "../TaskCard/TaskCard";
 interface TaskListProps {
-  type: String;
-  status?: String;
+  type: string;
+  curTaskList: TaskData[];
+  status?: string;
   setTaskShow(data: TaskData): void;
 }
-const TaskList = ({ type, status, setTaskShow }: TaskListProps) => {
-  const [curTaskList, setCurTaskList] = useState<TaskData[]>();
-  const { roomId } = useParams();
-  const { tasks, getTasks, updateTask, updatingTask } = useTasks();
-  useEffect(() => {
-    getTasks({ room_id: roomId || "" });
-  }, []);
-  useEffect(() => {
-    if (status) {
-      setCurTaskList(
-        tasks.filter((task) => {
-          return task.status === status;
-        })
-      );
-    } else {
-      setCurTaskList(tasks);
-    }
-  }, [tasks]);
-  function handleOnDragEnd(result: DropResult) {
-    if (updatingTask) {
-      return;
-    }
-    if (!result.destination) return;
-    if (!curTaskList) return;
-    const items = Array.from(curTaskList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setCurTaskList(items);
-  }
+const TaskList = ({ type, status, setTaskShow,curTaskList }: TaskListProps) => {
   return (
-    <Box>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="tasks">
+    <Box style={{ height: "auto" }}>
+        <Droppable droppableId={status?status:"tasks"}>
           {(provided) => (
             <ul
               className="tasks"
@@ -95,7 +68,6 @@ const TaskList = ({ type, status, setTaskShow }: TaskListProps) => {
             </ul>
           )}
         </Droppable>
-      </DragDropContext>
     </Box>
   );
 };
