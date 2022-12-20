@@ -114,7 +114,7 @@ const WorkPage = () => {
         open={!!currentTask}
         onClose={() => setCurrentTask(undefined)}
       />
-      <Box style={{ flexGrow: "1", display: "flex", justifyContent: "center",flexDirection:"column" }}>
+      <Box style={{ flexGrow: "1", display: "flex",flexDirection:"column" }}>
         <Button
               variant="contained"
               color="primary"
@@ -149,7 +149,6 @@ const WorkPage = () => {
                 minHeight: 0,
                 display: "flex",
                 flexWrap: "wrap",
-                flexShrink: 0,
                 marginRight: 12,
                 flexDirection: "column",
                 alignItems: "center",
