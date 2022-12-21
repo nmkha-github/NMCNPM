@@ -224,7 +224,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         const taskBeforeDoc = await getDoc(
           doc(db, "room", room_id, "task", id)
         );
-
+        // console.log(111);
         if (taskBeforeDoc.data()?.assignee_id) {
           const memberHoldTaskDocs = await getDocs(
             query(
@@ -232,6 +232,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
               where("id", "==", taskBeforeDoc.data()?.assignee_id)
             )
           );
+          // console.log(222);
 
           await runTransaction(db, async (transaction) => {
             transaction.update(
@@ -245,11 +246,13 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             );
           });
         }
+        // console.log(444);
 
         await updateDoc(doc(db, "room", room_id, "task", id), {
           last_edit: time,
           ...updateData,
         });
+        // console.log(555);
 
         const taskAfter = {
           ...taskBeforeDoc.data(),
@@ -267,23 +270,27 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             )
           )
         );
-        await runTransaction(db, async (transaction) => {
-          transaction.update(
-            doc(
-              db,
-              "room",
-              room_id,
-              "member",
-              memberAssigneeTaskDocs.docs[0].id
-            ),
-            {
-              [taskAfter.status || "error"]:
-                memberAssigneeTaskDocs.docs[0].data()[
-                  taskAfter.status || "error"
-                ] + 1,
-            }
-          );
-        });
+        // console.log(666);
+        if (memberAssigneeTaskDocs.docs[0]) {
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(
+                db,
+                "room",
+                room_id,
+                "member",
+                memberAssigneeTaskDocs.docs[0].id
+              ),
+              {
+                [taskAfter.status || "error"]:
+                  memberAssigneeTaskDocs.docs[0].data()[
+                    taskAfter.status || "error"
+                  ] + 1,
+              }
+            );
+          });
+        }
+        // console.log(777);
       } catch (error) {
         showSnackbarError(error);
       } finally {
