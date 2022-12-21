@@ -312,6 +312,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           } as RoomData,
           ...rooms,
         ]);
+        setRoomIdDocs([...roomIdDocs, docResponse]);
         showSnackbarSuccess("Tạo phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);
@@ -319,7 +320,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setCreatingRoom(false);
       }
     },
-    [rooms, showSnackbarError, showSnackbarSuccess, user]
+    [roomIdDocs, rooms, showSnackbarError, showSnackbarSuccess, user]
   );
 
   const updateRoom = useCallback(
@@ -395,6 +396,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         });
 
         setRooms([{ ...newRoom, joined_at: time } as RoomData, ...rooms]);
+        setRoomIdDocs([...roomIdDocs, docResponse]);
         showSnackbarSuccess("Tham gia phòng ban thành công");
       } catch (error) {
         showSnackbarError(error);
@@ -402,7 +404,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setJoiningRoom(false);
       }
     },
-    [rooms, showSnackbarError, showSnackbarSuccess, user]
+    [roomIdDocs, rooms, showSnackbarError, showSnackbarSuccess, user]
   );
 
   const deleteRoom = useCallback(
@@ -427,7 +429,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         setDeletingRoom(false);
       }
     },
-    [rooms, showSnackbarError, user]
+    [roomIdDocs, rooms, showSnackbarError, user]
   );
 
   const leaveRoom = useCallback(
@@ -454,13 +456,14 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         );
 
         setRooms(rooms.filter((room) => room.id !== id));
+        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data().id !== id));
       } catch (error) {
         showSnackbarError(error);
       } finally {
         setLeavingRoom(false);
       }
     },
-    [rooms, showSnackbarError, user?.id]
+    [roomIdDocs, rooms, showSnackbarError, user]
   );
 
   return (
