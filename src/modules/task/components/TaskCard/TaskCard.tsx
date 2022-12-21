@@ -49,7 +49,7 @@ const TaskCard = ({
           background: `${isDragging === task.id ? "#d8f9ff" : "white"}`,
         }}
         {...boxProps}
-        onClick={() => setCurrentTask(task)}
+        onDoubleClick={() => setCurrentTask(task)}
         sx={{
           "&:hover": {
             cursor: "pointer",
@@ -71,7 +71,7 @@ const TaskCard = ({
           >
             {task.title}
           </Typography>
-          <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
+          <TaskCardMenu taskData={task} />
         </Box>
         <Typography style={{ fontSize: 14 }}>
           {task.content && task.content.length > 60
@@ -122,9 +122,9 @@ const TaskCard = ({
         <Typography align="center" style={{ fontSize: 14, marginLeft: 10 }}>
           {task.title}
         </Typography>
-        <TaskCardMenu roomId={roomId ? roomId : ""} taskData={task} />
+        <TaskCardMenu taskData={task} />
       </Box>
-    );
+    ); 
   }
 };
 

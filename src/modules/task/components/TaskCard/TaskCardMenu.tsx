@@ -5,15 +5,17 @@ import { useState } from "react";
 import { BiLogIn, BiEdit, BiTrash } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
+import { useParams } from "react-router-dom";
 import TaskData from "../../interface/task-data";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 const ITEM_HEIGHT = 48;
 
-const TaskCardMenu = ({ taskData,roomId }: { taskData: TaskData,roomId:string }) => {
+const TaskCardMenu = ({ taskData }: { taskData: TaskData }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { deleteTask, deletingTask } = useTasks();
+  const { roomId } = useParams();
+  const { deleteTask, deletingTask,setCurrentTask } = useTasks();
   let navigate = useNavigate();
   return (
     <Box style={{ position: "absolute", right: 0 }}>
@@ -39,24 +41,11 @@ const TaskCardMenu = ({ taskData,roomId }: { taskData: TaskData,roomId:string })
         }}
         anchorOrigin={{ vertical: "center", horizontal: "center" }}
       >
-        <MenuItem
-          style={{ display: "flex", padding: 8 }}
-          onClick={() => {
-            navigate(`/room/${roomId}/task/${taskData.id}`);
-          }}
-        >
-          <ListItemIcon>
-            <BiLogIn fontSize="large" />
-          </ListItemIcon>
-          <Typography variant="inherit" noWrap width="18ch">
-            Xem công việc
-          </Typography>
-        </MenuItem>
 
         <MenuItem
           style={{ display: "flex", padding: 8 }}
           onClick={() => {
-            navigate(`/room/${roomId}/task/${taskData.id}/setting-task`);
+            setCurrentTask(taskData);
           }}
         >
           <ListItemIcon>
@@ -73,7 +62,7 @@ const TaskCardMenu = ({ taskData,roomId }: { taskData: TaskData,roomId:string })
           <MenuItem
             style={{ display: "flex", padding: 8 }}
             onClick={async () => {
-              await deleteTask({ room_id:roomId,id: taskData.id });
+              await deleteTask({ room_id:roomId?roomId:"",id: taskData.id });
               setAnchorEl(null);
             }}
           >
