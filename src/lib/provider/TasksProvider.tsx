@@ -46,7 +46,7 @@ interface TasksContextProps {
     room_id: string;
     id: string;
     updateData: {
-      status: string;
+      status: "toDo" | "doing" | "reviewing" | "done";
       assignee_id?: string;
       deadline?: Timestamp | Date | string;
       content?: string;
@@ -68,7 +68,7 @@ const TasksContext = createContext<TasksContextProps>({
   currentTask: {
     id: "",
     title: "",
-    status: "",
+    status: "toDo",
     assignee_id: "",
     creator_id: "",
     created_at: "",
@@ -180,7 +180,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       } catch (error) {
         showSnackbarError(error);
       } finally {
-        setCreatingTask(true);
+        setCreatingTask(false);
       }
     },
 
@@ -196,7 +196,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       room_id: string;
       id: string;
       updateData: {
-        status: string;
+        status: "toDo" | "doing" | "reviewing" | "done";
         assignee_id?: string;
         deadline?: Timestamp | Date | string;
         content?: string;
@@ -256,38 +256,41 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
           last_edit: time,
           ...updateData,
         };
-        if (updateData.assignee_id) {
-          const memberAssigneeTaskDocs = await getDocs(
-            query(
-              collection(db, "room", room_id, "member"),
-              where("id", "==", updateData.assignee_id)
+
+        const memberAssigneeTaskDocs = await getDocs(
+          query(
+            collection(db, "room", room_id, "member"),
+            where(
+              "id",
+              "==",
+              updateData.assignee_id || taskBeforeDoc.data()?.assignee_id
             )
+          )
+        );
+        await runTransaction(db, async (transaction) => {
+          transaction.update(
+            doc(
+              db,
+              "room",
+              room_id,
+              "member",
+              memberAssigneeTaskDocs.docs[0].id
+            ),
+            {
+              [taskAfter.status || "error"]:
+                memberAssigneeTaskDocs.docs[0].data()[
+                  taskAfter.status || "error"
+                ] + 1,
+            }
           );
-          await runTransaction(db, async (transaction) => {
-            transaction.update(
-              doc(
-                db,
-                "room",
-                room_id,
-                "member",
-                memberAssigneeTaskDocs.docs[0].id
-              ),
-              {
-                [taskAfter.status || "error"]:
-                  memberAssigneeTaskDocs.docs[0].data()[
-                    taskAfter.status || "error"
-                  ] + 1,
-              }
-            );
-          });
-        }
+        });
       } catch (error) {
         showSnackbarError(error);
       } finally {
         setUpdatingTask(false);
       }
     },
-    [currentTask, showSnackbarError, tasks]
+    [showSnackbarError, tasks]
   );
 
   const deleteTask = useCallback(

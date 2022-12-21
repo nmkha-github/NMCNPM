@@ -8,7 +8,7 @@ import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDial
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import AuthProvider from "../../../../lib/provider/AuthProvider";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
-import { Box, Button, TextField,Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
 import CreateTaskDialog from "../../../../modules/task/components/CreateTaskDialog/CreateTaskDialog";
@@ -18,8 +18,16 @@ const WorkPage = () => {
   const [tasksToDo, setTasksToDo] = useState<TaskData[]>([]);
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
   const [tasksDone, setTasksDone] = useState<TaskData[]>([]);
-  const [taskReviewing,setTaskReviewing]=useState<TaskData[]>([]);
-  const { tasks, getTasks, updateTask, updatingTask,currentTask,setCurrentTask,createTask } = useTasks();
+  const [taskReviewing, setTaskReviewing] = useState<TaskData[]>([]);
+  const {
+    tasks,
+    getTasks,
+    updateTask,
+    updatingTask,
+    currentTask,
+    setCurrentTask,
+    createTask,
+  } = useTasks();
   const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
   const [isDraggingId, setIsDraggingId] = useState("-1");
   useEffect(() => {
@@ -62,10 +70,9 @@ const WorkPage = () => {
       setIsDraggingId(tasksDoing[result.source.index].id);
     } else if (result.source.droppableId === "toDo") {
       setIsDraggingId(tasksToDo[result.source.index].id);
-    } else if (result.source.droppableId === "done"){
+    } else if (result.source.droppableId === "done") {
       setIsDraggingId(tasksDone[result.source.index].id);
-    }
-    else{
+    } else {
       setIsDraggingId(taskReviewing[result.source.index].id);
     }
   }
@@ -81,26 +88,49 @@ const WorkPage = () => {
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksDoing[result.source.index].id,
-          updateData: { status: result.destination.droppableId },
+          updateData: {
+            status: result.destination.droppableId as
+              | "toDo"
+              | "doing"
+              | "reviewing"
+              | "done",
+          },
         });
       } else if (result.source.droppableId === "toDo") {
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksToDo[result.source.index].id,
-          updateData: { status: result.destination.droppableId },
+          updateData: {
+            status: result.destination.droppableId as
+              | "toDo"
+              | "doing"
+              | "reviewing"
+              | "done",
+          },
         });
-      } else if(result.source.droppableId === "done"){
+      } else if (result.source.droppableId === "done") {
         updateTask({
           room_id: roomId ? roomId : "",
           id: tasksDone[result.source.index].id,
-          updateData: { status: result.destination.droppableId },
+          updateData: {
+            status: result.destination.droppableId as
+              | "toDo"
+              | "doing"
+              | "reviewing"
+              | "done",
+          },
         });
-      }
-      else{
+      } else {
         updateTask({
           room_id: roomId ? roomId : "",
           id: taskReviewing[result.source.index].id,
-          updateData: { status: result.destination.droppableId },
+          updateData: {
+            status: result.destination.droppableId as
+              | "toDo"
+              | "doing"
+              | "reviewing"
+              | "done",
+          },
         });
       }
     }
@@ -114,21 +144,23 @@ const WorkPage = () => {
         open={!!currentTask}
         onClose={() => setCurrentTask(undefined)}
       />
-      <Box style={{ flexGrow: "1", display: "flex",flexDirection:"column" }}>
+      <Box style={{ flexGrow: "1", display: "flex", flexDirection: "column" }}>
         <Button
-              variant="contained"
-              color="primary"
-              style={{ margin: "0.625rem",width:"200px" }}
-              onClick={() => {
-                setOpenCreateTaskDialog(true);
-              }}
-            >
-              Tạo công việc
-            </Button>
-          <CreateTaskDialog
+          variant="contained"
+          color="primary"
+          style={{ margin: "0.625rem", width: "200px" }}
+          onClick={() => {
+            setOpenCreateTaskDialog(true);
+          }}
+        >
+          Tạo công việc
+        </Button>
+        <CreateTaskDialog
           open={openCreateTaskDialog}
-          onClose={()=>{setOpenCreateTaskDialog(false);}}
-          />
+          onClose={() => {
+            setOpenCreateTaskDialog(false);
+          }}
+        />
         <Box
           style={{
             display: "flex",
@@ -163,7 +195,7 @@ const WorkPage = () => {
                   marginBottom: 12,
                 }}
               >
-                TO DO
+                Chưa làm
               </Typography>
               <TaskList
                 curTaskList={tasksToDo}
@@ -191,7 +223,7 @@ const WorkPage = () => {
                   marginBottom: 12,
                 }}
               >
-                DOING
+                Đang làm
               </Typography>
               <TaskList
                 curTaskList={tasksDoing}
@@ -219,7 +251,7 @@ const WorkPage = () => {
                   marginBottom: 12,
                 }}
               >
-                REVIEWING
+                Chờ nhận xét
               </Typography>
               <TaskList
                 curTaskList={taskReviewing}
@@ -246,7 +278,7 @@ const WorkPage = () => {
                   marginBottom: 12,
                 }}
               >
-                DONE
+                Hoàn thành
               </Typography>
               <TaskList
                 curTaskList={tasksDone}

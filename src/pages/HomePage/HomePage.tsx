@@ -11,6 +11,7 @@ import TaskDetailDialog from "../../modules/task/components/TaskDetailDialog/Tas
 import AssignMemberBox from "../../modules/task/components/AssignMemberBox/AssignMemberBox";
 import MemberData from "../../modules/statistic/interface/member-data";
 import UserData from "../../modules/user/interface/user-data";
+import BarChart from "../../lib/components/BarChart/BarChart";
 
 const HomePage = () => {
   const dataName = false;
@@ -27,13 +28,20 @@ const HomePage = () => {
 
   return (
     <div>
+      <BarChart
+        data={[
+          { value: 10, title: "abc" },
+          { value: 20, title: "cd" },
+          { value: 17, title: "nưu asdfnkjasd ádfsad" },
+        ]}
+      />
       <AssignMemberBox
         task={{
           id: "WttA7CdT5Qvbg5XG0xei",
           title: "",
           assignee_id: "ujl8YpvL4ogSzkkroLsH",
           created_at: "",
-          status: "",
+          status: "toDo",
           creator_id: "",
         }}
         onChoose={(member) => {}}

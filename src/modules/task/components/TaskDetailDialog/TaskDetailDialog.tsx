@@ -132,7 +132,7 @@ const TaskDetailDialog = ({
     title: "",
     content: "",
     attach_files: [],
-    status: "",
+    status: "toDo",
     assignee_id: "",
     creator_id: "",
     created_at: "",
@@ -143,7 +143,7 @@ const TaskDetailDialog = ({
   const [moreActionsAnchorEl, setMoreActionsAnchorEl] =
     useState<null | HTMLElement>(null);
 
-  const statusOptions = ["TODO", "DOING", "REVIEWING", "DONE"]; // for test; get from provider later
+  const statusOptions = ["toDo", "doing", "reviewing", "done"]; // for test; get from provider later
 
   const [statusAnchorEl, setStatusAnchorEl] = useState<null | HTMLElement>(
     null
@@ -167,7 +167,7 @@ const TaskDetailDialog = ({
 
   useEffect(() => {
     task && setEditTask({ ...task });
-    setStatusSelectedIndex(statusOptions.indexOf(task?.status || "TODO"));
+    setStatusSelectedIndex(statusOptions.indexOf(task?.status || "toDo"));
     setMemberSelectedIndex(
       memberOptions.findIndex(
         (member) => member && member.id === (task?.assignee_id || "")
@@ -650,7 +650,9 @@ const TaskDetailDialog = ({
               await updateTask({
                 room_id: currentRoom.id,
                 id: editTask.id,
-                updateData: { status: option },
+                updateData: {
+                  status: option as "toDo" | "doing" | "reviewing" | "done",
+                },
               });
             }}
           >

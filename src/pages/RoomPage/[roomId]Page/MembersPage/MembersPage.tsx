@@ -11,7 +11,14 @@ const MembersPage = () => {
   const { roomId } = useParams();
   const { user } = useUser();
   const { currentRoom, getCurrentRoom, loadingCurrentRoom } = useRooms();
-  const { members, getMembers, loadingMembers } = useStatistic();
+  const {
+    members,
+    getMembers,
+    loadingMembers,
+    roomStatistic,
+    getRoomStatistic,
+    loadingRoomStatistic,
+  } = useStatistic();
 
   const { showSnackbarError } = useAppSnackbar();
   const navigate = useNavigate();
@@ -21,15 +28,16 @@ const MembersPage = () => {
   }, []);
 
   useEffect(() => {
-    if (user?.id !== currentRoom.manager_id) {
-      showSnackbarError("Bạn không có quyền xem thông tin này");
-      navigate(`/room`);
-      return;
+    if (currentRoom) {
+      if (user?.id !== currentRoom.manager_id) {
+        showSnackbarError("Bạn không có quyền xem thông tin này");
+        navigate(`/room`);
+        return;
+      }
+      getMembers({ room_id: currentRoom.id });
+      getRoomStatistic({ room_id: currentRoom.id });
     }
-    getMembers({ room_id: roomId || "" });
   }, [currentRoom]);
-
-  useEffect(() => {});
 
   return (
     <Box style={{ display: "flex" }}>
@@ -40,7 +48,7 @@ const MembersPage = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box>{/* UI here */}</Box>
+        <Box></Box>
       )}
     </Box>
   );

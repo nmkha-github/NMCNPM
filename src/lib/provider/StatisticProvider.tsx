@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getCountFromServer,
   getDoc,
   getDocs,
   limit,
@@ -15,6 +16,7 @@ import {
 import { db } from "../config/firebase-config";
 import MemberData from "../../modules/statistic/interface/member-data";
 import UserData from "../../modules/user/interface/user-data";
+import RoomStatistic from "../../modules/room/interface/room-statistic";
 
 interface StatisticContextProps {
   members: MemberData[];
@@ -37,6 +39,10 @@ interface StatisticContextProps {
     member_id: string;
   }) => Promise<void>;
   removingMember: boolean;
+
+  roomStatistic: RoomStatistic;
+  getRoomStatistic: (payload: { room_id: string }) => Promise<void>;
+  loadingRoomStatistic: boolean;
 }
 
 const StatisticContext = createContext<StatisticContextProps>({
@@ -62,6 +68,10 @@ const StatisticContext = createContext<StatisticContextProps>({
 
   removeMember: async () => {},
   removingMember: false,
+
+  roomStatistic: { id: "", toDo: 0, doing: 0, reviewing: 0, done: 0 },
+  getRoomStatistic: async () => {},
+  loadingRoomStatistic: false,
 });
 
 interface StatisticContextProviderProps {
@@ -80,12 +90,20 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
     done: 0,
     joined_at: "",
   });
+  const [roomStatistic, setRoomStatistic] = useState<RoomStatistic>({
+    id: "",
+    toDo: 0,
+    doing: 0,
+    reviewing: 0,
+    done: 0,
+  });
   const [memberDocs, setMemberDocs] = useState<any[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [loadingMoreMembers, setLoadingMoreMembers] = useState(false);
   const [loadedAllMembers, setLoadedAllMembers] = useState(false);
   const [removingMember, setRemovingMember] = useState(false);
   const [loadingMember, setLoadingMember] = useState(false);
+  const [loadingRoomStatistic, setLoadingRoomStatistic] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
 
@@ -273,6 +291,52 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
     [members, showSnackbarError]
   );
 
+  const getRoomStatistic = useCallback(
+    async ({ room_id }: { room_id: string }) => {
+      try {
+        setLoadingRoomStatistic(true);
+
+        const toDoDoc = await getCountFromServer(
+          query(
+            collection(db, "room", room_id, "task"),
+            where("status", "==", "toDo")
+          )
+        );
+        const doingDoc = await getCountFromServer(
+          query(
+            collection(db, "room", room_id, "task"),
+            where("status", "==", "doing")
+          )
+        );
+        const reviewingDoc = await getCountFromServer(
+          query(
+            collection(db, "room", room_id, "task"),
+            where("status", "==", "reviewing")
+          )
+        );
+        const doneDoc = await getCountFromServer(
+          query(
+            collection(db, "room", room_id, "task"),
+            where("status", "==", "done")
+          )
+        );
+
+        setRoomStatistic({
+          id: room_id,
+          toDo: toDoDoc.data().count,
+          doing: doingDoc.data().count,
+          reviewing: reviewingDoc.data().count,
+          done: doneDoc.data().count,
+        });
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setLoadingRoomStatistic(false);
+      }
+    },
+    [showSnackbarError]
+  );
+
   return (
     <StatisticContext.Provider
       value={{
@@ -289,6 +353,10 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
 
         removeMember,
         removingMember,
+
+        roomStatistic,
+        getRoomStatistic,
+        loadingRoomStatistic,
       }}
     >
       {children}

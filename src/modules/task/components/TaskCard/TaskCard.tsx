@@ -95,6 +95,7 @@ const TaskCard = ({
     return (
       <Box
         style={{
+          width: 260,
           height: 35,
           padding: 10,
           border: "0.1px solid black",
