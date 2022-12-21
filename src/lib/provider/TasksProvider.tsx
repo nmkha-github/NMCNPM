@@ -308,23 +308,29 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         setTasks(tasks.filter((task) => task.id !== id));
 
         const taskDoc = await getDoc(doc(db, "room", room_id, "task", id));
+        // console.log(1111);
         const memberHoldTaskDocs = await getDocs(
           query(
             collection(db, "room", room_id, "member"),
             where("id", "==", taskDoc.data()?.assignee_id)
           )
         );
-        await runTransaction(db, async (transaction) => {
-          transaction.update(
-            doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
-            {
-              [taskDoc.data()?.status]:
-                memberHoldTaskDocs.docs[0].data()[taskDoc.data()?.status] - 1,
-            }
-          );
-        });
+        // console.log(2222);
+        if (memberHoldTaskDocs.docs[0]) {
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
+              {
+                [taskDoc.data()?.status]:
+                  memberHoldTaskDocs.docs[0].data()[taskDoc.data()?.status] - 1,
+              }
+            );
+          });
+        }
+        // console.log(4444);
 
         await deleteDoc(doc(db, "room", room_id, "task", id));
+        // console.log(5555);
 
         setCurrentTask({} as TaskData);
       } catch (error) {
