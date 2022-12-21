@@ -7,8 +7,10 @@ import TaskCard from "../../../../modules/task/components/TaskCard/TaskCard";
 import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import AuthProvider from "../../../../lib/provider/AuthProvider";
+import "react-perfect-scrollbar/dist/css/styles.css";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
 import CreateTaskDialog from "../../../../modules/task/components/CreateTaskDialog/CreateTaskDialog";
@@ -166,25 +168,22 @@ const WorkPage = () => {
             display: "flex",
             marginTop: 16,
             marginLeft: 8,
-            height: "auto",
+            height: 700,
           }}
         >
           <DragDropContext
             onDragEnd={handleOnDragEnd}
             onDragStart={handleOnDragStart}
           >
-            <Box
+            <PerfectScrollbar
               style={{
-                width: 300,
                 background: "#f1f3f9",
-                height: "auto",
-                minHeight: 0,
-                display: "flex",
-                flexWrap: "wrap",
                 marginRight: 12,
+                width: 300,
+                height: 700,
+                display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "flex-start",
               }}
             >
               <Typography
@@ -203,14 +202,38 @@ const WorkPage = () => {
                 type={"card"}
                 isDragging={isDraggingId}
               />
-            </Box>
-            <Box
+            </PerfectScrollbar>
+            <PerfectScrollbar style={{ background: "#f1f3f9",width: 300,
+                  height: 700,
+                  display: "flex",
+                  marginRight: 12,
+                  flexDirection: "column",
+                  alignItems: "center", }}>
+                <Typography
+                  style={{
+                    marginTop: 8,
+                    fontSize: 18,
+                    textDecoration: "underline",
+                    marginBottom: 12,
+                  }}
+                >
+                  Đang làm
+                </Typography>
+                <TaskList
+                  curTaskList={tasksDoing}
+                  status={"doing"}
+                  type={"card"}
+                  isDragging={isDraggingId}
+                />
+            </PerfectScrollbar>
+            <PerfectScrollbar
               style={{
                 width: 300,
-                height: "auto",
                 background: "#f1f3f9",
-                display: "flex",
+                height: 700,
                 marginRight: 12,
+                display: "flex",
+                overflowY: "scroll",
                 flexDirection: "column",
                 alignItems: "center",
               }}
@@ -223,35 +246,7 @@ const WorkPage = () => {
                   marginBottom: 12,
                 }}
               >
-                Đang làm
-              </Typography>
-              <TaskList
-                curTaskList={tasksDoing}
-                status={"doing"}
-                type={"card"}
-                isDragging={isDraggingId}
-              />
-            </Box>
-            <Box
-              style={{
-                width: 300,
-                background: "#f1f3f9",
-                height: "auto",
-                marginRight: 12,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                style={{
-                  marginTop: 8,
-                  fontSize: 18,
-                  textDecoration: "underline",
-                  marginBottom: 12,
-                }}
-              >
-                Chờ nhận xét
+                Chờ duyệt
               </Typography>
               <TaskList
                 curTaskList={taskReviewing}
@@ -259,13 +254,14 @@ const WorkPage = () => {
                 type={"card"}
                 isDragging={isDraggingId}
               />
-            </Box>
-            <Box
+            </PerfectScrollbar>
+            <PerfectScrollbar
               style={{
                 width: 300,
                 background: "#f1f3f9",
-                height: "auto",
+                height: 700,
                 display: "flex",
+                overflowY: "scroll",
                 flexDirection: "column",
                 alignItems: "center",
               }}
@@ -286,7 +282,7 @@ const WorkPage = () => {
                 type={"card"}
                 isDragging={isDraggingId}
               />
-            </Box>
+            </PerfectScrollbar>
           </DragDropContext>
         </Box>
       </Box>
