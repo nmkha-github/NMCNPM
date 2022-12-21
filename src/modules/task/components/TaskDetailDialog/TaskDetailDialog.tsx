@@ -51,6 +51,7 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import truncate from "../../../../lib/util/truncate";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
 import { useNavigate } from "react-router-dom";
+import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 
 interface TaskDetailDialogProps {
   task?: TaskData;
@@ -545,7 +546,9 @@ const TaskDetailDialog = ({
                     <TableCell className={classes.field_title}>
                       Ngày tạo:
                     </TableCell>
-                    <TableCell>{editTask.created_at.toString()}</TableCell>
+                    <TableCell>
+                      {convertTimeToString(editTask.created_at)}
+                    </TableCell>
                   </TableRow>
 
                   <TableRow>
