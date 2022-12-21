@@ -9,6 +9,7 @@ import UserProvider from './lib/provider/UserProvider';
 import AppRoutes from './AppRoutes';
 import StatisticProvider from './lib/provider/StatisticProvider';
 import TasksProvider from './lib/provider/TasksProvider';
+import PostsProvider from './lib/provider/PostsProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,9 +22,11 @@ root.render(
               <RoomsProvider>
                 <StatisticProvider>
                   <TasksProvider>
-                    {/* ----------------- */}
-                    <AppRoutes />
-                    {/* add provider here */}
+                    <PostsProvider>
+                      {/* ----------------- */}
+                      <AppRoutes />
+                      {/* add provider here */}
+                    </PostsProvider>
                   </TasksProvider>
                 </StatisticProvider>
               </RoomsProvider>
