@@ -54,6 +54,8 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
         <>
           <TextField
             value={textFieldValue}
+            placeholder="Nhập @ để gán"
+            size="small"
             onChange={(event) => {
               setTextFieldValue(event.target.value);
               if (event.target.value.includes("@")) {
@@ -73,6 +75,18 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
                     textFieldValue.substring(textFieldValue.indexOf("@") + 1)
                   )
                 )
+                .concat([
+                  {
+                    id: "",
+                    name: "Chưa xác định",
+                    avatar: "",
+                    toDo: 0,
+                    doing: 0,
+                    reviewing: 0,
+                    done: 0,
+                    joined_at: "",
+                  },
+                ])
                 .map((member) => (
                   <MenuItem
                     onClick={() => {
