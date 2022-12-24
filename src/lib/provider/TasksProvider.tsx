@@ -267,23 +267,25 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             )
           )
         );
-        await runTransaction(db, async (transaction) => {
-          transaction.update(
-            doc(
-              db,
-              "room",
-              room_id,
-              "member",
-              memberAssigneeTaskDocs.docs[0].id
-            ),
-            {
-              [taskAfter.status || "error"]:
-                memberAssigneeTaskDocs.docs[0].data()[
-                  taskAfter.status || "error"
-                ] + 1,
-            }
-          );
-        });
+
+        if (memberAssigneeTaskDocs.docs.length > 0)
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(
+                db,
+                "room",
+                room_id,
+                "member",
+                memberAssigneeTaskDocs.docs[0].id
+              ),
+              {
+                [taskAfter.status || "error"]:
+                  memberAssigneeTaskDocs.docs[0].data()[
+                    taskAfter.status || "error"
+                  ] + 1,
+              }
+            );
+          });
       } catch (error) {
         showSnackbarError(error);
       } finally {
