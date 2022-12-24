@@ -118,6 +118,19 @@ const TaskDetailDialog = ({
   task,
   ...dialogProps
 }: TaskDetailDialogProps & DialogProps) => {
+  const emptyTask = {
+    id: "",
+    title: "",
+    content: "",
+    attach_files: [],
+    status: "toDo" as "toDo" | "doing" | "reviewing" | "done",
+    assignee_id: "",
+    creator_id: "",
+    created_at: "",
+    deadline: "",
+    comments: [],
+  };
+
   const classes = useStyle();
   const navigate = useNavigate();
 
@@ -133,18 +146,7 @@ const TaskDetailDialog = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingContent, setIsEditingContent] = useState(false);
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
-  const [editTask, setEditTask] = useState<TaskData>({
-    id: "",
-    title: "",
-    content: "",
-    attach_files: [],
-    status: "toDo",
-    assignee_id: "",
-    creator_id: "",
-    created_at: "",
-    deadline: "",
-    comments: [],
-  });
+  const [editTask, setEditTask] = useState<TaskData>({ ...emptyTask });
 
   const [moreActionsAnchorEl, setMoreActionsAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -259,18 +261,7 @@ const TaskDetailDialog = ({
               arrow
               onClick={() => {
                 dialogProps.onClose?.({}, "backdropClick");
-                setEditTask({
-                  id: "",
-                  title: "",
-                  content: "",
-                  attach_files: [],
-                  status: "toDo",
-                  assignee_id: "",
-                  creator_id: "",
-                  created_at: "",
-                  deadline: "",
-                  comments: [],
-                });
+                setEditTask({ ...emptyTask });
                 setVoted(false);
                 setWatches(false);
                 setIsEditingTitle(false);
@@ -331,28 +322,27 @@ const TaskDetailDialog = ({
             </ClickAwayListener>
 
             <Box className={classes.body_actions}>
-              <Tooltip
-                TransitionProps={{ timeout: 800 }}
-                title="Đính kèm tập tin"
-                placement="bottom"
-                TransitionComponent={Fade}
-                arrow
+              <UploadFile
+                onSuccess={async (file) => {
+                  console.log(file.url);
+                  // chưa có hàm add file trong provider. (updateTask ko có attach_files)
+                }}
               >
-                <UploadFile
-                  onSuccess={async (file) => {
-                    console.log(file.url);
-                    // chưa có hàm add file trong provider. (updateTask ko có attach_files)
-                  }}
+                <Tooltip
+                  TransitionProps={{ timeout: 800 }}
+                  title="Đính kèm tập tin"
+                  placement="bottom"
+                  TransitionComponent={Fade}
+                  arrow
                 >
                   <Button
                     startIcon={<AttachFileIcon />}
                     className={classes.body_action}
-                    onClick={() => {}}
                   >
                     Đính kèm
                   </Button>
-                </UploadFile>
-              </Tooltip>
+                </Tooltip>
+              </UploadFile>
 
               <Tooltip
                 title="Thêm công việc con"
