@@ -25,7 +25,7 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         ...boxProps.style,
       }}
       onDoubleClick={() => {
-        navigate(`/room/${roomData.id}/newsfeed`);
+        navigate(`/room/${roomData.id}/work`);
       }}
     >
       <img

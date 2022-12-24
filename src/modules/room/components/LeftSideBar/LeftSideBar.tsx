@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FeedIcon from "@mui/icons-material/Feed";
 import HomeRepairServiceOutlinedIcon from "@mui/icons-material/HomeRepairServiceOutlined";
@@ -9,6 +9,8 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { makeStyles } from "@mui/styles";
 import {
   Box,
@@ -24,41 +26,50 @@ import CopyToClipboardBox from "../../../../lib/components/CopyToClipboardBox/Co
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 
 const useStyle = makeStyles({
-  cssStyle1: {
+  container: {
     height: "calc(100vh - 66px)",
-    width: "232px",
+    width: "244px",
     borderRight: "1.5px solid rgba(231, 232, 239, 0.8)",
     fontFamily: "Inter",
     fontStyle: "normal",
     background: "white",
-  },
-  cssStyle2: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "4px",
-  },
-  cssStyle5: {
-    padding: "16px 20px 8px",
-    fontSize: "14px",
-    fontWeight: 700,
-    lineHeight: "130%",
-    letterSpacing: "0.4px",
-    color: "#373A43",
-  },
-  cssStyle6: {
-    width: "100%",
-    paddingTop: "8px",
-    bottom: 0,
     left: 0,
-    right: 0,
-    borderTop: "1px solid #E7E8EF",
+    position: "relative",
+    transition: "left  200ms linear 0s",
   },
-  cssStyle7: {
+  collapse: {
+    left: "-232px",
+  },
+  collapseButton: {
+    position: "absolute",
+    width: 24,
+    height: 24,
+    borderRadius: "100%",
+    right: "-12px",
+    top: 20,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#FFFFFF",
+    color: "#6B778C",
+    boxShadow:
+      "rgb(9 30 66 / 8%) 0px 0px 0px 1px, rgb(9 30 66 / 8%) 0px 2px 4px 1px",
+    cursor: "pointer",
+    border: "1px solid rgba(227, 242, 253, 0.5)",
+    opacity: 0,
+    transition:
+      "background-color 100ms linear 0s, color 100ms linear 0s, opacity 550ms cubic-bezier(0.2, 0, 0, 1) 0s",
+    "&:hover": {
+      background: "#4C9AFF",
+      color: "#FFFFFF",
+      opacity: 1,
+    },
+  },
+  menuItem: {
     padding: "0 12px",
     width: "100%",
   },
-  cssStyle8: {
+  itemBox: {
     width: "100%",
     padding: "12px 8px",
     display: "flex",
@@ -74,7 +85,7 @@ const useStyle = makeStyles({
     letterSpacing: "0.1px",
     color: "#373A43",
   },
-  cssStyle9: {
+  selection: {
     backgroundColor: "rgba(227, 242, 253, 0.5)",
     color: "#1E88E5",
   },
@@ -86,20 +97,21 @@ const LeftSideBar = () => {
   const navigate = useNavigate();
   const { currentRoom, loadingCurrentRoom } = useRooms();
   const location = useLocation();
+  const [collapse, setCollapse] = useState(false);
 
   const items = useMemo(
     () => [
-      {
-        label: "Bản tin",
-        icon: <FeedOutlinedIcon />,
-        filledIcon: <FeedIcon />,
-        href: `/room/${currentRoom.id}/newsfeed`,
-      },
       {
         label: "Nơi làm việc",
         icon: <HomeRepairServiceOutlinedIcon />,
         filledIcon: <HomeRepairServiceIcon />,
         href: `/room/${currentRoom.id}/work`,
+      },
+      {
+        label: "Bản tin",
+        icon: <FeedOutlinedIcon />,
+        filledIcon: <FeedIcon />,
+        href: `/room/${currentRoom.id}/newsfeed`,
       },
       ...(user?.id === currentRoom.manager_id
         ? [
@@ -131,29 +143,58 @@ const LeftSideBar = () => {
   return (
     <Box
       style={{ display: "flex", flexDirection: "column" }}
-      className={classes.cssStyle1}
+      className={classes.container + " " + (collapse ? classes.collapse : "")}
     >
-      {loadingCurrentRoom ? (
-        <CircularProgress />
-      ) : (
-        <Box style={{ padding: "8px 16px" }}>
-          <Box className={classes.cssStyle2}>
+      <Box
+        className={classes.collapseButton}
+        onClick={() => setCollapse(!collapse)}
+      >
+        {collapse ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+      </Box>
+
+      <Box style={{ padding: "8px 16px", height: 132 }}>
+        {loadingCurrentRoom ? (
+          <CircularProgress />
+        ) : (
+          <>
             <Typography variant="h6">
               {currentRoom.name ? currentRoom.name : "N/A"}
             </Typography>
 
-            <Typography variant="subtitle2">{"Mã phòng: "}</Typography>
-            <Typography>{currentRoom.id ? currentRoom.id : "N/A"}</Typography>
-          </Box>
-          <Divider />
-          <Box style={{ height: 16 }} />
+            <Typography
+              style={{
+                margin: "8px 0",
+                fontSize: "14px",
+                fontWeight: 700,
+                lineHeight: "130%",
+                letterSpacing: "0.4px",
+                color: "#373A43",
+              }}
+            >
+              {"Mã phòng: "}
+            </Typography>
+            <CopyToClipboardBox
+              text={currentRoom.id ? currentRoom.id : "N/A"}
+            />
+          </>
+        )}
+      </Box>
 
-          <CopyToClipboardBox text={currentRoom.id} />
-        </Box>
-      )}
-
-      <Typography className={classes.cssStyle5}>Danh mục</Typography>
       <Divider />
+
+      <Typography
+        style={{
+          padding: "16px 20px 8px",
+          fontSize: "14px",
+          fontWeight: 700,
+          lineHeight: "130%",
+          letterSpacing: "0.4px",
+          color: "#373A43",
+        }}
+      >
+        Danh mục
+      </Typography>
+
       <Box
         style={{
           display: "flex",
@@ -167,16 +208,16 @@ const LeftSideBar = () => {
             return (
               <MenuItem
                 key={`left-side-bar-${index}`}
-                className={classes.cssStyle7}
+                className={classes.menuItem}
                 onClick={() => navigate(item.href)}
-                style={{ display: "block", padding: 8 }}
+                style={{ display: "block" }}
               >
                 <Box
                   className={
-                    classes.cssStyle8 +
+                    classes.itemBox +
                     " " +
                     (location.pathname.includes(item.href)
-                      ? classes.cssStyle9
+                      ? classes.selection
                       : "")
                   }
                 >
@@ -190,20 +231,29 @@ const LeftSideBar = () => {
           })}
         </MenuList>
 
-        <Box className={classes.cssStyle6}>
+        <Box
+          style={{
+            width: "100%",
+            paddingTop: "8px",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderTop: "1px solid #E7E8EF",
+          }}
+        >
           <MenuItem
-            className={classes.cssStyle7}
+            className={classes.menuItem}
             onClick={() =>
               navigate("/room/" + currentRoom.id + "/setting-room")
             }
-            style={{ display: "block", padding: 8 }}
+            style={{ display: "block" }}
           >
             <Box
               className={
-                classes.cssStyle8 +
+                classes.itemBox +
                 " " +
                 (location.pathname.includes("/setting-room")
-                  ? classes.cssStyle9
+                  ? classes.selection
                   : "")
               }
             >

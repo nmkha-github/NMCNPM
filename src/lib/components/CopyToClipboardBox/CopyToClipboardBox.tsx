@@ -30,8 +30,8 @@ const CopyToClipboardBox = ({
       style={{
         backgroundColor: "whitesmoke",
         borderRadius: 8,
-        paddingLeft: 16,
-        border: `1px solid #000000`,
+        padding: "0 8px",
+        border: `1px solid #666666`,
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
@@ -44,6 +44,7 @@ const CopyToClipboardBox = ({
           flex: 1,
           textOverflow: "ellipsis",
           color: !copying ? "#282A3A" : "#D6E4E5",
+          fontSize: 14,
         }}
       >
         {text}
