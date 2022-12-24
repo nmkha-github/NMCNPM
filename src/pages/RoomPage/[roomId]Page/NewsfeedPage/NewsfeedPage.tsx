@@ -11,11 +11,7 @@ const NewsfeedPage = () => {
     getCurrentRoom(roomId || "");
   }, []);
 
-  return (
-    <div>
-      <LeftSideBar />
-    </div>
-  );
+  return <LeftSideBar></LeftSideBar>;
 };
 
 export default NewsfeedPage;

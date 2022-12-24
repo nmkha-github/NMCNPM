@@ -40,9 +40,7 @@ const MembersPage = () => {
   }, [currentRoom]);
 
   return (
-    <Box style={{ display: "flex" }}>
-      <LeftSideBar />
-
+    <LeftSideBar>
       {loadingCurrentRoom ? (
         <Box style={{ marginTop: 16 }}>
           <CircularProgress />
@@ -50,7 +48,7 @@ const MembersPage = () => {
       ) : (
         <Box></Box>
       )}
-    </Box>
+    </LeftSideBar>
   );
 };
 

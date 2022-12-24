@@ -140,12 +140,8 @@ const WorkPage = () => {
 
   return (
     <>
-      <Box style={{ display: "flex" }}>
-        <LeftSideBar />
-
-        <Box
-          style={{ flexGrow: "1", display: "flex", flexDirection: "column" }}
-        >
+      <LeftSideBar>
+        <Box style={{ display: "flex", flexDirection: "column" }}>
           <Button
             variant="contained"
             color="primary"
@@ -297,7 +293,7 @@ const WorkPage = () => {
             </DragDropContext>
           </Box>
         </Box>
-      </Box>
+      </LeftSideBar>
 
       <TaskDetailDialog
         task={currentTask}
