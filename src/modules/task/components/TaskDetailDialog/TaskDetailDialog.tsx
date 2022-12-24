@@ -510,7 +510,7 @@ const TaskDetailDialog = ({
                             id: editTask.id,
                             updateData: {
                               status: editTask.status,
-                              content: editTask.content,
+                              assignee_id: member.id,
                             },
                           })
                         }
