@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import FeedIcon from "@mui/icons-material/Feed";
 import HomeRepairServiceOutlinedIcon from "@mui/icons-material/HomeRepairServiceOutlined";
@@ -9,6 +9,8 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { makeStyles } from "@mui/styles";
 import {
   Box,
@@ -23,42 +25,58 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import CopyToClipboardBox from "../../../../lib/components/CopyToClipboardBox/CopyToClipboardBox";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 
+interface LeftSideBarProps {
+  children?: React.ReactElement;
+}
+
 const useStyle = makeStyles({
-  cssStyle1: {
+  container: {
+    position: "fixed",
+    left: 0,
+    width: "244px",
     height: "calc(100vh - 66px)",
-    width: "232px",
     borderRight: "1.5px solid rgba(231, 232, 239, 0.8)",
     fontFamily: "Inter",
     fontStyle: "normal",
     background: "white",
-  },
-  cssStyle2: {
+    transition: "left 200ms linear 0s",
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "4px",
   },
-  cssStyle5: {
-    padding: "16px 20px 8px",
-    fontSize: "14px",
-    fontWeight: 700,
-    lineHeight: "130%",
-    letterSpacing: "0.4px",
-    color: "#373A43",
+  collapse: {
+    left: "-232px",
   },
-  cssStyle6: {
-    width: "100%",
-    paddingTop: "8px",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTop: "1px solid #E7E8EF",
+  collapseButton: {
+    position: "absolute",
+    width: 24,
+    height: 24,
+    borderRadius: "100%",
+    right: "-12px",
+    top: 20,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#FFFFFF",
+    color: "#6B778C",
+    boxShadow:
+      "rgb(9 30 66 / 8%) 0px 0px 0px 1px, rgb(9 30 66 / 8%) 0px 2px 4px 1px",
+    cursor: "pointer",
+    border: "1px solid rgba(227, 242, 253, 0.5)",
+    opacity: 0,
+    transition:
+      "background-color 100ms linear 0s, color 100ms linear 0s, opacity 550ms cubic-bezier(0.2, 0, 0, 1) 0s",
+    "&:hover": { background: "#4C9AFF", color: "#FFFFFF", opacity: 1 },
   },
-  cssStyle7: {
+  collapseButtonDisplay: {
+    opacity: 1,
+  },
+  menuItem: {
     padding: "0 12px",
     width: "100%",
+    transition: "padding-left 200ms linear 100ms",
+    "&:hover": { paddingLeft: 24 },
   },
-  cssStyle8: {
+  itemBox: {
     width: "100%",
     padding: "12px 8px",
     display: "flex",
@@ -74,32 +92,41 @@ const useStyle = makeStyles({
     letterSpacing: "0.1px",
     color: "#373A43",
   },
-  cssStyle9: {
+  selection: {
     backgroundColor: "rgba(227, 242, 253, 0.5)",
     color: "#1E88E5",
   },
+  childrenSection: {
+    marginLeft: 248,
+    transition: "margin-left  200ms linear 0s",
+  },
+  childrenCollapse: {
+    marginLeft: 16,
+  },
 });
 
-const LeftSideBar = () => {
+const LeftSideBar = ({ children }: LeftSideBarProps) => {
   const classes = useStyle();
   const { user } = useUser();
   const navigate = useNavigate();
   const { currentRoom, loadingCurrentRoom } = useRooms();
   const location = useLocation();
+  const [collapse, setCollapse] = useState(false);
+  const [hoverCollapseButton, setHoverCollapseButton] = useState(false);
 
   const items = useMemo(
     () => [
-      {
-        label: "Bản tin",
-        icon: <FeedOutlinedIcon />,
-        filledIcon: <FeedIcon />,
-        href: `/room/${currentRoom.id}/newsfeed`,
-      },
       {
         label: "Nơi làm việc",
         icon: <HomeRepairServiceOutlinedIcon />,
         filledIcon: <HomeRepairServiceIcon />,
         href: `/room/${currentRoom.id}/work`,
+      },
+      {
+        label: "Bản tin",
+        icon: <FeedOutlinedIcon />,
+        filledIcon: <FeedIcon />,
+        href: `/room/${currentRoom.id}/newsfeed`,
       },
       ...(user?.id === currentRoom.manager_id
         ? [
@@ -129,95 +156,150 @@ const LeftSideBar = () => {
   );
 
   return (
-    <Box
-      style={{ display: "flex", flexDirection: "column" }}
-      className={classes.cssStyle1}
-    >
-      {loadingCurrentRoom ? (
-        <CircularProgress />
-      ) : (
-        <Box style={{ padding: "8px 16px" }}>
-          <Box className={classes.cssStyle2}>
-            <Typography variant="h6">
-              {currentRoom.name ? currentRoom.name : "N/A"}
-            </Typography>
-
-            <Typography variant="subtitle2">{"Mã phòng: "}</Typography>
-            <Typography>{currentRoom.id ? currentRoom.id : "N/A"}</Typography>
-          </Box>
-          <Divider />
-          <Box style={{ height: 16 }} />
-
-          <CopyToClipboardBox text={currentRoom.id} />
-        </Box>
-      )}
-
-      <Typography className={classes.cssStyle5}>Danh mục</Typography>
-      <Divider />
+    <>
       <Box
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          justifyContent: "space-between",
-        }}
+        className={classes.container + " " + (collapse ? classes.collapse : "")}
+        onMouseEnter={() => setHoverCollapseButton(true)}
+        onMouseLeave={() => setHoverCollapseButton(false)}
       >
-        <MenuList>
-          {items.map((item, index) => {
-            return (
-              <MenuItem
-                key={`left-side-bar-${index}`}
-                className={classes.cssStyle7}
-                onClick={() => navigate(item.href)}
-                style={{ display: "block", padding: 8 }}
-              >
-                <Box
-                  className={
-                    classes.cssStyle8 +
-                    " " +
-                    (location.pathname.includes(item.href)
-                      ? classes.cssStyle9
-                      : "")
-                  }
-                >
-                  {location.pathname.includes(item.href)
-                    ? item.filledIcon
-                    : item.icon}
-                  <Typography variant="body1">{item.label}</Typography>
-                </Box>
-              </MenuItem>
-            );
-          })}
-        </MenuList>
+        <Box style={{ padding: "8px 16px", height: 132, position: "relative" }}>
+          {loadingCurrentRoom ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Typography variant="h6">
+                {currentRoom.name ? currentRoom.name : "N/A"}
+              </Typography>
 
-        <Box className={classes.cssStyle6}>
-          <MenuItem
-            className={classes.cssStyle7}
-            onClick={() =>
-              navigate("/room/" + currentRoom.id + "/setting-room")
+              <Typography
+                style={{
+                  margin: "8px 0",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  lineHeight: "130%",
+                  letterSpacing: "0.4px",
+                  color: "#373A43",
+                }}
+              >
+                {"Mã phòng: "}
+              </Typography>
+              <CopyToClipboardBox
+                text={currentRoom.id ? currentRoom.id : "N/A"}
+              />
+            </>
+          )}
+
+          <Box
+            className={
+              classes.collapseButton +
+              " " +
+              (hoverCollapseButton ? classes.collapseButtonDisplay : "")
             }
-            style={{ display: "block", padding: 8 }}
+            onClick={() => setCollapse(!collapse)}
           >
-            <Box
-              className={
-                classes.cssStyle8 +
-                " " +
-                (location.pathname.includes("/setting-room")
-                  ? classes.cssStyle9
-                  : "")
+            {collapse ? <KeyboardArrowRightIcon /> : <KeyboardArrowLeftIcon />}
+          </Box>
+        </Box>
+
+        <Divider />
+
+        <Typography
+          style={{
+            padding: "16px 20px 8px",
+            fontSize: "14px",
+            fontWeight: 700,
+            lineHeight: "130%",
+            letterSpacing: "0.4px",
+            color: "#373A43",
+          }}
+        >
+          Danh mục
+        </Typography>
+
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <MenuList>
+            {items.map((item, index) => {
+              return (
+                <MenuItem
+                  key={`left-side-bar-${index}`}
+                  className={classes.menuItem}
+                  onClick={() => navigate(item.href)}
+                  style={{ display: "block" }}
+                >
+                  <Box
+                    className={
+                      classes.itemBox +
+                      " " +
+                      (location.pathname.includes(item.href)
+                        ? classes.selection
+                        : "")
+                    }
+                  >
+                    {location.pathname.includes(item.href)
+                      ? item.filledIcon
+                      : item.icon}
+                    <Typography variant="body1">{item.label}</Typography>
+                  </Box>
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+
+          <Box
+            style={{
+              width: "100%",
+              paddingTop: "8px",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderTop: "1px solid #E7E8EF",
+            }}
+          >
+            <MenuItem
+              className={classes.menuItem}
+              onClick={() =>
+                navigate("/room/" + currentRoom.id + "/setting-room")
               }
+              style={{ display: "block" }}
             >
-              {location.pathname.includes("/setting-room") ? (
-                <SettingsIcon />
-              ) : (
-                <SettingsOutlinedIcon />
-              )}
-              <Typography variant="body1">Cài đặt</Typography>
-            </Box>
-          </MenuItem>
+              <Box
+                className={
+                  classes.itemBox +
+                  " " +
+                  (location.pathname.includes("/setting-room")
+                    ? classes.selection
+                    : "")
+                }
+              >
+                {location.pathname.includes("/setting-room") ? (
+                  <SettingsIcon />
+                ) : (
+                  <SettingsOutlinedIcon />
+                )}
+                <Typography variant="body1">Cài đặt</Typography>
+              </Box>
+            </MenuItem>
+          </Box>
         </Box>
       </Box>
-    </Box>
+
+      <Box
+        className={
+          classes.childrenSection +
+          " " +
+          (collapse ? classes.childrenCollapse : "")
+        }
+      >
+        {children}
+      </Box>
+    </>
   );
 };
 

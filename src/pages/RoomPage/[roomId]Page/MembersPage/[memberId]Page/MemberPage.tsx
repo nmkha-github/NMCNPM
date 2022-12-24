@@ -33,9 +33,7 @@ const MemberPage = () => {
   useEffect(() => {});
 
   return (
-    <Box style={{ display: "flex" }}>
-      <LeftSideBar />
-
+    <LeftSideBar>
       {loadingCurrentRoom ? (
         <Box style={{ marginTop: 16 }}>
           <CircularProgress />
@@ -43,7 +41,7 @@ const MemberPage = () => {
       ) : (
         <Box>{/* UI here */}</Box>
       )}
-    </Box>
+    </LeftSideBar>
   );
 };
 
