@@ -50,8 +50,11 @@ import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import truncate from "../../../../lib/util/truncate";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
+import AssignMemberBox from "../AssignMemberBox/AssignMemberBox";
 import { useNavigate } from "react-router-dom";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
+import { useStatistic } from "../../../../lib/provider/StatisticProvider";
+import { Timestamp } from "firebase/firestore";
 
 interface TaskDetailDialogProps {
   task?: TaskData;
@@ -59,7 +62,7 @@ interface TaskDetailDialogProps {
 
 const useStyle = makeStyles((theme) => ({
   dialog: {
-    padding: "16px 24px",
+    padding: "8px 24px 16px",
   },
   dialog_header: {
     display: "flex",
@@ -120,6 +123,7 @@ const TaskDetailDialog = ({
 
   const { currentRoom, loadingCurrentRoom } = useRooms();
   const { updateTask, deleteTask } = useTasks();
+  const { member, getMember } = useStatistic();
   const { user } = useUser();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -128,6 +132,7 @@ const TaskDetailDialog = ({
   const [watches, setWatches] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingContent, setIsEditingContent] = useState(false);
+  const [isEditingDeadline, setIsEditingDeadline] = useState(false);
   const [editTask, setEditTask] = useState<TaskData>({
     id: "",
     title: "",
@@ -151,29 +156,11 @@ const TaskDetailDialog = ({
   );
   const [statusSelectedIndex, setStatusSelectedIndex] = useState(0);
 
-  const memberOptions = [user, user, user, user, user]; // for test; get from provider later (?create new provider: membersProvider)
-  memberOptions.push({
-    id: "",
-    auth_id: "",
-    email: "",
-    name: "Chưa xác định",
-    avatar: "",
-    created_at: "",
-  }); // For undefined assignee
-
-  const [memberAnchorEl, setMemberAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [memberSelectedIndex, setMemberSelectedIndex] = useState(0);
-
   useEffect(() => {
     task && setEditTask({ ...task });
     setStatusSelectedIndex(statusOptions.indexOf(task?.status || "toDo"));
-    setMemberSelectedIndex(
-      memberOptions.findIndex(
-        (member) => member && member.id === (task?.assignee_id || "")
-      )
-    );
+
+    task && getMember({ room_id: currentRoom.id, member_id: task.creator_id });
   }, [task]);
 
   return (
@@ -270,7 +257,29 @@ const TaskDetailDialog = ({
               placement="top"
               TransitionComponent={Fade}
               arrow
-              onClick={() => dialogProps.onClose?.({}, "backdropClick")}
+              onClick={() => {
+                dialogProps.onClose?.({}, "backdropClick");
+                setEditTask({
+                  id: "",
+                  title: "",
+                  content: "",
+                  attach_files: [],
+                  status: "toDo",
+                  assignee_id: "",
+                  creator_id: "",
+                  created_at: "",
+                  deadline: "",
+                  comments: [],
+                });
+                setVoted(false);
+                setWatches(false);
+                setIsEditingTitle(false);
+                setIsEditingContent(false);
+                setIsEditingDeadline(false);
+                setMoreActionsAnchorEl(null);
+                setStatusAnchorEl(null);
+                setStatusSelectedIndex(0);
+              }}
             >
               <IconButton>
                 <ClearIcon />
@@ -503,30 +512,37 @@ const TaskDetailDialog = ({
                       Người đảm nhận:
                     </TableCell>
                     <TableCell>
-                      <List component="nav">
-                        <ListItem
-                          button
-                          id="assignee-button"
-                          aria-haspopup="listbox"
-                          aria-controls="assignee-menu"
-                          aria-expanded={!!memberAnchorEl ? "true" : undefined}
-                          onClick={(event) =>
-                            setMemberAnchorEl(event.currentTarget)
-                          }
-                        >
-                          <Avatar
-                            src={memberOptions[memberSelectedIndex]?.avatar}
-                            alt="Avatar of assignee"
-                            style={{ marginRight: 12 }}
-                          />
-                          <ListItemText
-                            primary={truncate(
-                              memberOptions[memberSelectedIndex]?.name || "N/A",
-                              18
-                            )}
-                          />
-                        </ListItem>
-                      </List>
+                      <AssignMemberBox
+                        task={editTask}
+                        onChoose={async (member) =>
+                          await updateTask({
+                            room_id: currentRoom.id,
+                            id: editTask.id,
+                            updateData: {
+                              status: editTask.status,
+                              content: editTask.content,
+                            },
+                          })
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell className={classes.field_title}>
+                      Người tạo:
+                    </TableCell>
+                    <TableCell
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
+                      <Avatar
+                        src={member.avatar}
+                        alt="Avatar of creator"
+                        style={{ marginRight: 12 }}
+                      />
+                      <Typography>
+                        {truncate(member.name || "N/A", 26)}
+                      </Typography>
                     </TableCell>
                   </TableRow>
 
@@ -558,19 +574,64 @@ const TaskDetailDialog = ({
                     <TableCell>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                          value={null}
-                          onChange={(newValue) => {}}
+                          value={task?.deadline || null}
+                          inputFormat="DD/MM/YYYY"
+                          onChange={(newValue: Timestamp | null) => {
+                            newValue &&
+                              setEditTask({
+                                ...editTask,
+                                deadline: new Timestamp(
+                                  newValue.toDate().getTime() / 1000,
+                                  0
+                                ),
+                              });
+                          }}
+                          onClose={async () => {
+                            await updateTask({
+                              room_id: currentRoom.id,
+                              id: editTask.id,
+                              updateData: {
+                                status: editTask.status,
+                                deadline: editTask.deadline,
+                              },
+                            });
+                          }}
                           renderInput={({
                             inputRef,
                             inputProps,
                             InputProps,
                           }) => (
-                            <Box
-                              style={{ display: "flex", alignItems: "center" }}
+                            <ClickAwayListener
+                              onClickAway={() => {
+                                if (isEditingDeadline) {
+                                  setIsEditingDeadline(false);
+                                }
+                              }}
                             >
-                              <input ref={inputRef} {...inputProps} />
-                              {InputProps?.endAdornment}
-                            </Box>
+                              {isEditingDeadline ? (
+                                <Box
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <input ref={inputRef} {...inputProps} />
+                                  {InputProps?.endAdornment}
+                                </Box>
+                              ) : (
+                                <Typography
+                                  onClick={() => setIsEditingDeadline(true)}
+                                  className={classes.edit_field}
+                                  style={{ padding: "8px 4px" }}
+                                >
+                                  {editTask.deadline
+                                    ? convertTimeToString(
+                                        editTask.deadline || ""
+                                      )
+                                    : "Không"}
+                                </Typography>
+                              )}
+                            </ClickAwayListener>
                           )}
                         />
                       </LocalizationProvider>
@@ -660,53 +721,6 @@ const TaskDetailDialog = ({
             }}
           >
             {option}
-          </MenuItem>
-        ))}
-      </Menu>
-
-      {/* Menu of member-list (assignee) */}
-      <Menu
-        id="assignee-menu"
-        anchorEl={memberAnchorEl}
-        open={!!memberAnchorEl}
-        onClose={() => setMemberAnchorEl(null)}
-        MenuListProps={{
-          "aria-labelledby": "assignee-button",
-        }}
-        TransitionComponent={Fade}
-        transformOrigin={{
-          horizontal: "right",
-          vertical: "top",
-        }}
-        anchorOrigin={{
-          horizontal: "right",
-          vertical: "bottom",
-        }}
-      >
-        {memberOptions.map((member, index) => (
-          <MenuItem
-            key={member?.id || ""}
-            selected={index === memberSelectedIndex}
-            onClick={async () => {
-              setMemberSelectedIndex(index);
-              setMemberAnchorEl(null);
-              await updateTask({
-                room_id: currentRoom.id,
-                id: editTask.id,
-                updateData: {
-                  status: editTask.status,
-                  assignee_id: member?.id || "",
-                },
-              });
-            }}
-          >
-            <Avatar
-              src={member?.avatar}
-              alt="Avatar of assignee"
-              style={{ marginRight: 12 }}
-            />
-
-            {truncate(member?.name || "N/A")}
           </MenuItem>
         ))}
       </Menu>
