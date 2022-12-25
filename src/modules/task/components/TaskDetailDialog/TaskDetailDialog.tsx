@@ -415,7 +415,7 @@ const TaskDetailDialog = ({
                   });
                   setCurrentTask({
                     ...task,
-                    title: editTask.content,
+                    content: editTask.content,
                   } as TaskData);
                 }
               }}
