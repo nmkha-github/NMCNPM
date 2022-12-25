@@ -1,5 +1,5 @@
-import { MenuItem, Popper } from "@material-ui/core";
-import { Avatar, Box, TextField, Typography } from "@mui/material";
+import { MenuItem } from "@material-ui/core";
+import { Avatar, Box, Menu, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
@@ -43,71 +43,32 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
       });
     };
 
-    if (hintPeopleAnchorEl) {
-      getHintPeople();
-    }
-  }, [hintPeopleAnchorEl, roomId]);
+    getHintPeople();
+  }, [roomId]);
 
   return (
-    <Box>
+    <>
       {showTextField ? (
-        <>
-          <TextField
-            value={textFieldValue}
-            placeholder="Nhập @ để gán"
-            size="small"
-            onChange={(event) => {
-              setTextFieldValue(event.target.value);
-              if (event.target.value.includes("@")) {
-                if (!hintPeopleAnchorEl) {
-                  setHintPeopleAnchorEl(event.currentTarget);
-                }
-              } else {
-                setHintPeopleAnchorEl(null);
+        <TextField
+          value={textFieldValue}
+          placeholder="Nhập @ để gán"
+          size="small"
+          onBlur={() => {
+            setShowTextField(false);
+            setHintPeopleAnchorEl(null);
+          }}
+          autoFocus
+          onChange={(event) => {
+            setTextFieldValue(event.target.value);
+            if (event.target.value.includes("@")) {
+              if (!hintPeopleAnchorEl) {
+                setHintPeopleAnchorEl(event.currentTarget);
               }
-            }}
-          />
-          <Popper open={!!hintPeopleAnchorEl} anchorEl={hintPeopleAnchorEl}>
-            <Box>
-              {members
-                .filter((member) =>
-                  member.name.includes(
-                    textFieldValue.substring(textFieldValue.indexOf("@") + 1)
-                  )
-                )
-                .concat([
-                  {
-                    id: "",
-                    name: "Chưa xác định",
-                    avatar: "",
-                    toDo: 0,
-                    doing: 0,
-                    reviewing: 0,
-                    done: 0,
-                    joined_at: "",
-                  },
-                ])
-                .map((member) => (
-                  <MenuItem
-                    onClick={() => {
-                      onChoose(member);
-                      setShowTextField(false);
-                    }}
-                  >
-                    <Box
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar src={member.avatar} style={{ marginRight: 8 }} />
-                      <Typography>{member.name}</Typography>
-                    </Box>
-                  </MenuItem>
-                ))}
-            </Box>
-          </Popper>
-        </>
+            } else {
+              setHintPeopleAnchorEl(null);
+            }
+          }}
+        />
       ) : (
         <Box
           style={{ display: "flex", alignItems: "center" }}
@@ -118,10 +79,57 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
             src={assignee?.avatar || USER_AVATAR_DEFAULT}
             style={{ marginRight: 8 }}
           />
-          <Typography>{assignee?.name}</Typography>
+          <Typography>{assignee?.name || "Chưa xác định"}</Typography>
         </Box>
       )}
-    </Box>
+
+      <Menu
+        open={!!hintPeopleAnchorEl}
+        anchorEl={hintPeopleAnchorEl}
+        disableAutoFocus
+      >
+        <Box>
+          {members
+            .filter((member) =>
+              member.name.includes(
+                textFieldValue.substring(textFieldValue.indexOf("@") + 1)
+              )
+            )
+            .concat([
+              {
+                id: "",
+                name: "Chưa xác định",
+                avatar: "",
+                toDo: 0,
+                doing: 0,
+                reviewing: 0,
+                done: 0,
+                joined_at: "",
+              },
+            ])
+            .map((member) => (
+              <MenuItem
+                onClick={() => {
+                  onChoose(member);
+                  setAssignee(member);
+                  setShowTextField(false);
+                  setHintPeopleAnchorEl(null);
+                }}
+              >
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar src={member.avatar} style={{ marginRight: 8 }} />
+                  <Typography>{member.name}</Typography>
+                </Box>
+              </MenuItem>
+            ))}
+        </Box>
+      </Menu>
+    </>
   );
 };
 

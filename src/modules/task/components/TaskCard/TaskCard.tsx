@@ -6,7 +6,6 @@ import UserHelper from "../../../user/util/user-helper";
 import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
-import { useParams } from "react-router-dom";
 import TaskCardMenu from "./TaskCardMenu";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 
@@ -24,20 +23,24 @@ const TaskCard = ({
 }: TaskCardProps & BoxProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
   const { showSnackbarError } = useAppSnackbar();
-  const { roomId } = useParams();
-  const { setCurrentTask } = useTasks();
+  const { setCurrentTask, currentTask } = useTasks();
+
+  const getUserData = async (id?: string) => {
+    try {
+      setUser(await UserHelper.getUserById(id || ""));
+    } catch (error) {
+      showSnackbarError(error);
+    }
+  };
+  useEffect(() => {
+    getUserData(task.assignee_id);
+  }, []);
 
   useEffect(() => {
-    async function getUserData() {
-      try {
-        setUser(await UserHelper.getUserById(task.assignee_id || ""));
-      } catch (error) {
-        showSnackbarError(error);
-      }
+    if (currentTask && currentTask.id === task.id) {
+      getUserData(currentTask?.assignee_id);
     }
-
-    getUserData();
-  }, []);
+  }, [currentTask]);
 
   if (mode === "card") {
     return (
@@ -124,7 +127,7 @@ const TaskCard = ({
         </Typography>
         <TaskCardMenu taskData={task} />
       </Box>
-    ); 
+    );
   }
 };
 

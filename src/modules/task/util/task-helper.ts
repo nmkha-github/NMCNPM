@@ -50,6 +50,19 @@ const TaskHelper = {
   
     return rank;
   },
+
+  convertStatus: (status: string): string =>{
+    switch (status) {
+      case "toDo":
+        return "Chưa làm";
+      case "doing":
+        return "Đang làm";
+      case "reviewing":
+        return "Đang duyệt"
+      default:
+        return "Hoàn thành"
+    }
+  }
 }
 
 export default TaskHelper;

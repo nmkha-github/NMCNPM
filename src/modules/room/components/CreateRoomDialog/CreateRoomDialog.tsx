@@ -93,7 +93,6 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
         />
 
         <TextField
-          autoFocus
           label="URL hình ảnh"
           type="text"
           variant="standard"

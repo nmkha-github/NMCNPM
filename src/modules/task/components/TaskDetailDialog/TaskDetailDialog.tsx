@@ -55,6 +55,7 @@ import { useNavigate } from "react-router-dom";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { Timestamp } from "firebase/firestore";
+import TaskHelper from "../../util/task-helper";
 
 interface TaskDetailDialogProps {
   task?: TaskData;
@@ -135,7 +136,7 @@ const TaskDetailDialog = ({
   const navigate = useNavigate();
 
   const { currentRoom, loadingCurrentRoom } = useRooms();
-  const { updateTask, deleteTask } = useTasks();
+  const { updateTask, deleteTask, setCurrentTask } = useTasks();
   const { member, getMember } = useStatistic();
   const { user } = useUser();
   const theme = useTheme();
@@ -295,6 +296,10 @@ const TaskDetailDialog = ({
                       title: editTask.title,
                     },
                   });
+                  setCurrentTask({
+                    ...task,
+                    title: editTask.title,
+                  } as TaskData);
                 }
               }}
             >
@@ -408,6 +413,10 @@ const TaskDetailDialog = ({
                       content: editTask.content,
                     },
                   });
+                  setCurrentTask({
+                    ...task,
+                    title: editTask.content,
+                  } as TaskData);
                 }
               }}
             >
@@ -478,7 +487,9 @@ const TaskDetailDialog = ({
               >
                 <ListItemText
                   primary="Trạng thái"
-                  secondary={statusOptions[statusSelectedIndex]}
+                  secondary={TaskHelper.convertStatus(
+                    statusOptions[statusSelectedIndex]
+                  )}
                 />
                 <ExpandMoreIcon />
               </ListItem>
@@ -504,7 +515,7 @@ const TaskDetailDialog = ({
                     <TableCell>
                       <AssignMemberBox
                         task={editTask}
-                        onChoose={async (member) =>
+                        onChoose={async (member) => {
                           await updateTask({
                             room_id: currentRoom.id,
                             id: editTask.id,
@@ -512,8 +523,12 @@ const TaskDetailDialog = ({
                               status: editTask.status,
                               assignee_id: member.id,
                             },
-                          })
-                        }
+                          });
+                          setCurrentTask({
+                            ...task,
+                            assignee_id: member.id,
+                          } as TaskData);
+                        }}
                       />
                     </TableCell>
                   </TableRow>
@@ -710,7 +725,7 @@ const TaskDetailDialog = ({
               });
             }}
           >
-            {option}
+            {TaskHelper.convertStatus(option)}
           </MenuItem>
         ))}
       </Menu>
