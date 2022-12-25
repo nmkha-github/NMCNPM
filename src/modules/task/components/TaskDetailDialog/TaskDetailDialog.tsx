@@ -581,26 +581,33 @@ const TaskDetailDialog = ({
                         <DatePicker
                           value={task?.deadline || null}
                           inputFormat="DD/MM/YYYY"
-                          onChange={(newValue: Timestamp | null) => {
-                            newValue &&
-                              setEditTask({
-                                ...editTask,
-                                deadline: new Timestamp(
-                                  newValue.toDate().getTime() / 1000,
-                                  0
-                                ),
-                              });
-                          }}
-                          onClose={async () => {
+                          onChange={async (newValue: Timestamp | null) => {
+                            if (
+                              !newValue ||
+                              String(newValue) === "Invalid Date"
+                            ) {
+                              return;
+                            }
+                            setEditTask({
+                              ...editTask,
+                              deadline: new Timestamp(
+                                newValue.toDate().getTime() / 1000,
+                                0
+                              ),
+                            });
                             await updateTask({
                               room_id: currentRoom.id,
                               id: editTask.id,
                               updateData: {
                                 status: editTask.status,
-                                deadline: editTask.deadline,
+                                deadline: new Timestamp(
+                                  newValue.toDate().getTime() / 1000,
+                                  0
+                                ),
                               },
                             });
                           }}
+                          onClose={async () => {}}
                           renderInput={({
                             inputRef,
                             inputProps,
@@ -627,13 +634,19 @@ const TaskDetailDialog = ({
                                 <Typography
                                   onClick={() => setIsEditingDeadline(true)}
                                   className={classes.edit_field}
-                                  style={{ padding: "8px 4px" }}
+                                  style={{
+                                    padding: "8px 4px",
+                                    color:
+                                      TaskHelper.convertDeadline(
+                                        editTask.deadline
+                                      ) === "Quá hạn"
+                                        ? "red"
+                                        : "black",
+                                  }}
                                 >
-                                  {editTask.deadline
-                                    ? convertTimeToString(
-                                        editTask.deadline || ""
-                                      )
-                                    : "Không"}
+                                  {TaskHelper.convertDeadline(
+                                    editTask.deadline
+                                  )}
                                 </Typography>
                               )}
                             </ClickAwayListener>

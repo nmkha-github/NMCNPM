@@ -3,6 +3,10 @@ Lexorank
 The idea of Atlassian JIRA
 */
 
+import { Timestamp } from "@firebase/firestore";
+import { Typography } from "@mui/material/styles/createTypography";
+import { ReactNode } from "react";
+
 const mid = (prev: number, next: number) => Math.floor((prev + next) / 2);
 
 const getChar = (str: string, i: number, defaultChar: number) =>
@@ -62,6 +66,30 @@ const TaskHelper = {
       default:
         return "Hoàn thành"
     }
+  },
+
+  convertDeadline: (deadline: Timestamp | Date | string | undefined): string =>{
+    if (deadline?.constructor === Date){
+      return "Ngày " + deadline.getDate() + " tháng " + (deadline.getMonth() + 1) + " năm " + deadline.getFullYear();  
+    }
+
+    if (deadline?.constructor === Timestamp) {
+      const seconds = deadline.seconds - Timestamp.now().seconds;
+      if (seconds < 0) return "Quá hạn";
+      
+      if (seconds < 60) return String(seconds) + " giây";
+  
+      const minutes = seconds / 60;
+      if (minutes < 60) return Math.floor(minutes) + " phút";
+
+      const hours = seconds / 3600;
+      if (hours < 24) return Math.floor(hours) + " giờ"
+
+      const date = new Date(deadline.seconds * 1000)
+      return  "Ngày " + date.getDate() + " tháng " + (date.getMonth() + 1) + " năm " + date.getFullYear()
+    }
+
+    return "Không";
   }
 }
 
