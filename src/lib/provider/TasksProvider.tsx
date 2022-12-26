@@ -309,15 +309,17 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             where("id", "==", taskDoc.data()?.assignee_id)
           )
         );
-        await runTransaction(db, async (transaction) => {
-          transaction.update(
-            doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
-            {
-              [taskDoc.data()?.status]:
-                memberHoldTaskDocs.docs[0].data()[taskDoc.data()?.status] - 1,
-            }
-          );
-        });
+        if (memberHoldTaskDocs.docs.length) {
+          await runTransaction(db, async (transaction) => {
+            transaction.update(
+              doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
+              {
+                [taskDoc.data()?.status]:
+                  memberHoldTaskDocs.docs[0].data()[taskDoc.data()?.status] - 1,
+              }
+            );
+          });
+        }
 
         await deleteDoc(doc(db, "room", room_id, "task", id));
 

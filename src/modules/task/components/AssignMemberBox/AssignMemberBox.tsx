@@ -97,7 +97,7 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
             )
             .concat([
               {
-                id: "",
+                id: "1",
                 name: "Chưa xác định",
                 avatar: "",
                 toDo: 0,
