@@ -2,6 +2,7 @@
 
 #package
 .package-lock.json
+.yarn.lock
 .package.json
 
 # dependencies
