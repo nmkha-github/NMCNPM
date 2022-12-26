@@ -10,6 +10,7 @@ import NewsfeedPage from "./pages/RoomPage/[roomId]Page/NewsfeedPage/NewsfeedPag
 import SettingRoomPage from "./pages/RoomPage/[roomId]Page/SettingRoomPage/SettingRoomPage";
 import WorkPage from "./pages/RoomPage/[roomId]Page/WorkPage/WorkPage";
 import MemberPage from "./pages/RoomPage/[roomId]Page/MembersPage/[memberId]Page/MemberPage";
+import EmptyPage from "./pages/EmptyPage/EmptyPage";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       <Route path="register" element={<RegisterPage />} />
       <Route path="forgot-password" element={<ForgotPasswordPage />} />
 
+      <Route path="*" element={<EmptyPage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="home" element={<HomePage />} />
       <Route path="setting" element={<SettingPage />} />
