@@ -19,7 +19,6 @@ const AppRoutes = () => {
       <Route path="register" element={<RegisterPage />} />
       <Route path="forgot-password" element={<ForgotPasswordPage />} />
 
-      <Route path="*" element={<EmptyPage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="home" element={<HomePage />} />
       <Route path="setting" element={<SettingPage />} />
@@ -32,6 +31,7 @@ const AppRoutes = () => {
       <Route path="room/:roomId/member/:memberId" element={<MemberPage />} />
       <Route path="room/:roomId/work" element={<WorkPage />} />
       <Route path="room/:roomId/setting-room" element={<SettingRoomPage />} />
+      <Route path="*" element={<EmptyPage />} />
     </Routes>
   );
 };
