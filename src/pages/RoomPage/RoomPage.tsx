@@ -137,8 +137,14 @@ const RoomPage = () => {
         {!loadingRooms && (
           <Box>
             <Grid container>
-              {showRooms.map((room) => (
-                <Grid xs={4} sm={3} md={3}>
+              {showRooms.map((room, index) => (
+                <Grid
+                  key={`room-item-${index}`}
+                  item={true}
+                  xs={4}
+                  sm={3}
+                  md={3}
+                >
                   <RoomItem
                     roomData={room}
                     style={{ marginTop: 16, marginRight: 16 }}
