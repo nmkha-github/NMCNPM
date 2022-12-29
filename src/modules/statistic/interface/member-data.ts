@@ -9,6 +9,7 @@ interface MemberData {
   reviewing: number;
   done: number;
   joined_at: Timestamp | Date | string;
+  room_index?: number;
 }
 
 export default MemberData;
