@@ -24,7 +24,7 @@ const BarChart = ({
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
-
+        padding: 24,
         ...boxProps.style,
       }}
     >
@@ -37,6 +37,13 @@ const BarChart = ({
           }}
         >
           <Typography>{item.title}</Typography>
+          <Box
+            style={{
+              backgroundColor: "blue",
+              height: 1,
+              width: chartWidth ?? 40,
+            }}
+          />
           <Box
             style={{
               transition: "max-height 250ms ease-in",
