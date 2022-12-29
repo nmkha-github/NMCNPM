@@ -4,14 +4,21 @@ import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
-import { Box, CircularProgress } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import BarChart from "../../../../lib/components/BarChart/BarChart";
 
 const MembersPage = () => {
   const { roomId } = useParams();
   const { user } = useUser();
-  const { currentRoom, getCurrentRoom } = useRooms();
+  const { currentRoom, getCurrentRoom, loadingCurrentRoom } = useRooms();
   const {
     members,
     getMembers,
@@ -43,28 +50,19 @@ const MembersPage = () => {
 
   return (
     <LeftSideBar>
-      <Box
-        style={{
-          height: 400,
-          marginTop: 24,
-          position: "relative",
-        }}
-      >
-        <BarChart
-          style={{
-            height: 400,
-            width: "100%",
-            position: "absolute",
-            bottom: 0,
-          }}
-          data={[
-            { value: roomStatistic.toDo, title: "Chưa làm" },
-            { value: roomStatistic.doing, title: "Đang làm" },
-            { value: roomStatistic.reviewing, title: "Chờ duyệt" },
-            { value: roomStatistic.done, title: "Hoàn thành" },
-          ]}
-        />
-      </Box>
+      {loadingCurrentRoom ? (
+        <Box style={{ marginTop: 16 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow></TableRow>
+            </TableHead>
+          </Table>
+        </TableContainer>
+      )}
     </LeftSideBar>
   );
 };

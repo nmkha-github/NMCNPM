@@ -16,7 +16,7 @@ const BarChart = ({
     let max = -1;
     data.forEach((item) => (max = Math.max(max, item.value)));
     setMaxValue(max);
-  }, []);
+  }, [data]);
 
   return (
     <Box
