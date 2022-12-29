@@ -1,5 +1,5 @@
 import TaskData from "../../interface/task-data";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import TaskCard from "../TaskCard/TaskCard";

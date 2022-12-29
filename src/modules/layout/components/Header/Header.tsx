@@ -1,4 +1,4 @@
-import { Box, Button, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import APP_LOGO from "../../constants/app-logo";
@@ -133,7 +133,15 @@ const Header = ({ children }: HeaderProps) => {
                     navigate("/resource")
                   }
                 >
-                  Tài nguyên
+                  <Typography
+                    style={{
+                      color: location.pathname.includes("/resource")
+                        ? "#1E88E5"
+                        : "black",
+                    }}
+                  >
+                    Tài nguyên
+                  </Typography>
                 </Button>
               </Box>
 
@@ -150,7 +158,15 @@ const Header = ({ children }: HeaderProps) => {
                     !location.pathname.endsWith("/room") && navigate("/room")
                   }
                 >
-                  Phòng ban
+                  <Typography
+                    style={{
+                      color: location.pathname.includes("/room")
+                        ? "#1E88E5"
+                        : "black",
+                    }}
+                  >
+                    Phòng ban
+                  </Typography>
                 </Button>
               </Box>
 
@@ -169,7 +185,15 @@ const Header = ({ children }: HeaderProps) => {
                     navigate("/schedule")
                   }
                 >
-                  Lịch
+                  <Typography
+                    style={{
+                      color: location.pathname.includes("/schedule")
+                        ? "#1E88E5"
+                        : "black",
+                    }}
+                  >
+                    Lịch
+                  </Typography>
                 </Button>
               </Box>
             </Box>

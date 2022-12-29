@@ -6,12 +6,11 @@ import {
   Fade,
   IconButton,
   ListItemIcon,
-  makeStyles,
   MenuItem,
   Popover,
   Tooltip,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import PortraitIcon from "@mui/icons-material/Portrait";
 import Settings from "@mui/icons-material/Settings";
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
@@ -21,6 +20,7 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import truncate from "../../../../lib/util/truncate";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useStyle = makeStyles((theme) => ({
   button: {
@@ -63,7 +63,7 @@ const HeaderUserInfo = () => {
       <Tooltip title="Account">
         <Box
           className={classes.button}
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+          onClick={(event: React.MouseEvent<HTMLDivElement>) =>
             setAnchorEl(event.currentTarget)
           }
         >
