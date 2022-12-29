@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   BoxProps,
+  IconButton,
   Avatar,
   TextField,
   InputBase,
@@ -19,6 +20,7 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
 import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
 const CreatePostCard = () => {
   const emptyPost = {
@@ -76,18 +78,27 @@ const CreatePostCard = () => {
       {currentPost.image === "" ? (
         <></>
       ) : (
-        <img
-          src={currentPost.image}
-          style={{
-            marginTop: 8,
-            maxHeight: 320,
-            minHeight: 120,
-            width: "100%",
-            padding: 16,
-            objectFit: "cover",
-            height: "auto",
-          }}
-        />
+        <Box style={{ padding: 16, position: "relative" }}>
+          <img
+            src={currentPost.image}
+            style={{
+              marginTop: 8,
+              maxHeight: 320,
+              minHeight: 120,
+              width: "100%",
+              objectFit: "cover",
+              height: "auto",
+            }}
+          />
+          <IconButton
+            style={{ top: 32, right: 24, position: "absolute" }}
+            onClick={() => {
+              setCurrentPost({ ...currentPost, image: "" });
+            }}
+          >
+            <ClearIcon />
+          </IconButton>
+        </Box>
       )}
       <Box
         style={{
@@ -128,7 +139,7 @@ const CreatePostCard = () => {
                 ...currentPost,
               },
             });
-            setCurrentPost({...emptyPost});
+            setCurrentPost({ ...emptyPost });
           }}
         >
           Đăng tin
