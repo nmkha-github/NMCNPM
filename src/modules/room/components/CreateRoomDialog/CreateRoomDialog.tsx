@@ -7,9 +7,8 @@ import {
   DialogProps,
   DialogTitle,
   FormControlLabel,
-  makeStyles,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
@@ -17,6 +16,7 @@ import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import ROOM_AVATAR_DEFAULT from "../../constants/room-avatar-default";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useStyle = makeStyles((theme) => ({
   container: {

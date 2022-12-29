@@ -4,7 +4,7 @@ import { Box, BoxProps } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RoomItemMenu from "./RoomItemMenu";
 import RoomData from "../../../room/interface/room-data";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 
 interface RoomItemProps {
   roomData: RoomData;

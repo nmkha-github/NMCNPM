@@ -9,7 +9,7 @@ import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import RoomData from "../../../../modules/room/interface/room-data";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
 

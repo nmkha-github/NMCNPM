@@ -12,7 +12,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  makeStyles,
   Menu,
   MenuItem,
   Paper,
@@ -28,7 +27,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import TaskData from "../../interface/task-data";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -56,6 +55,7 @@ import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { Timestamp } from "firebase/firestore";
 import TaskHelper from "../../util/task-helper";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface TaskDetailDialogProps {
   task?: TaskData;

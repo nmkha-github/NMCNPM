@@ -1,4 +1,4 @@
-import { MenuItem } from "@material-ui/core";
+import { MenuItem } from "@mui/material";
 import { Avatar, Box, Menu, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";

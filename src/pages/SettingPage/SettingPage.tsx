@@ -10,12 +10,11 @@ import {
   DialogTitle,
   Divider,
   Fade,
-  makeStyles,
   MenuItem,
   Popover,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useUser } from "../../lib/provider/UserProvider";
 import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
@@ -23,6 +22,7 @@ import LoadingButton from "../../lib/components/LoadingButton/LoadingButton";
 import useAppSnackbar from "../../lib/hook/useAppSnackBar";
 import UserData from "../../modules/user/interface/user-data";
 import UploadFile from "../../lib/components/UploadFile/UploadFile";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useStyle = makeStyles((theme) => ({
   container: {

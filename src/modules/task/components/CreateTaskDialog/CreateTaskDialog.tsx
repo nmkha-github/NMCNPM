@@ -5,9 +5,8 @@ import {
   DialogContentText,
   DialogProps,
   DialogTitle,
-  makeStyles,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { Box, Button, Fade, Tooltip } from "@mui/material";
 import React, { useState } from "react";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
@@ -20,6 +19,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import AssignMemberBox from "../AssignMemberBox/AssignMemberBox";
 import TaskData from "../../interface/task-data";
 import truncate from "../../../../lib/util/truncate";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useStyle = makeStyles((theme) => ({
   container: {

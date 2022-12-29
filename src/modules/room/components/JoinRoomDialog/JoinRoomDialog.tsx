@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Collapse,
   Dialog,
   DialogActions,
@@ -9,16 +8,16 @@ import {
   DialogContentText,
   DialogProps,
   DialogTitle,
-  makeStyles,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import React, { useState } from "react";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import SendIcon from "@mui/icons-material/Send";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import { useUser } from "../../../../lib/provider/UserProvider";
+import makeStyles from "@mui/styles/makeStyles";
 
 const useStyle = makeStyles((theme) => ({
   container: {

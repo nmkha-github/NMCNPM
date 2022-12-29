@@ -1,8 +1,9 @@
-import { Box, Avatar, Typography, makeStyles } from "@material-ui/core";
+import { Box, Avatar, Typography } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate, useParams } from "react-router-dom";
 import MEMBER_AVATAR_DEFAULT from "../../constants/member-avatar-default";
 import MemberData from "../../interface/member-data";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface MemberStatisticItemProps {
   memberData: MemberData;
