@@ -1,8 +1,9 @@
-import { Box, Button, makeStyles, Tooltip } from "@material-ui/core";
+import { Box, Button, Tooltip } from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import APP_LOGO from "../../constants/app-logo";
 import HeaderUserInfo from "../HeaderUserInfo/HeaderUserInfo";
+import makeStyles from "@mui/styles/makeStyles";
 
 interface HeaderProps {
   children?: React.ReactElement;
@@ -61,6 +62,7 @@ const useStyle = makeStyles((theme) => ({
     alignItems: "center",
     padding: "12px 24px",
     width: "100%",
+    margin: "0px 4px",
   },
   selection: {
     "&::before": {

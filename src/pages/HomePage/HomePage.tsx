@@ -18,14 +18,6 @@ const HomePage = () => {
 
   const { logOut } = useAuth();
   const { rooms, getRooms } = useRooms();
-  useEffect(() => {
-    getRooms({ getStart: 0 });
-  }, []);
-
-  useEffect(() => {
-    console.log(rooms);
-  }, [rooms]);
-
   return (
     <div>
       <BarChart
