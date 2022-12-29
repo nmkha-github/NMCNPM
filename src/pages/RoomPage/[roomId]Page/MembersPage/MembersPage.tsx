@@ -6,14 +6,20 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import {
   Box,
+  Button,
   CircularProgress,
   Table,
+  TableBody,
+  TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import BarChart from "../../../../lib/components/BarChart/BarChart";
+import MemberTableRow from "../../../../modules/statistic/components/MemberTableRow/MemberTableRow";
+import UserHelper from "../../../../modules/user/util/user-helper";
 
 const MembersPage = () => {
   const { roomId } = useParams();
@@ -23,9 +29,8 @@ const MembersPage = () => {
     members,
     getMembers,
     loadingMembers,
-    roomStatistic,
-    getRoomStatistic,
-    loadingRoomStatistic,
+    loadingMoreMembers,
+    loadedAllMembers,
   } = useStatistic();
 
   const { showSnackbarError } = useAppSnackbar();
@@ -33,7 +38,6 @@ const MembersPage = () => {
 
   useEffect(() => {
     getCurrentRoom(roomId || "");
-    getRoomStatistic({ room_id: roomId || "" });
   }, []);
 
   useEffect(() => {
@@ -43,23 +47,102 @@ const MembersPage = () => {
         navigate(`/room`);
         return;
       }
-      getMembers({ room_id: currentRoom.id });
-      getRoomStatistic({ room_id: currentRoom.id });
+      getMembers({ room_id: currentRoom.id, getStart: 0 });
     }
   }, [currentRoom]);
 
   return (
     <LeftSideBar>
-      {loadingCurrentRoom ? (
-        <Box style={{ marginTop: 16 }}>
+      {loadingCurrentRoom || loadingMembers ? (
+        <Box
+          style={{ marginTop: 16, display: "flex", justifyContent: "center" }}
+        >
           <CircularProgress />
         </Box>
       ) : (
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow></TableRow>
+              <TableRow>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>STT</Typography>
+                </TableCell>
+                {/* cell for avatar */}
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                />
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Họ và tên</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Email</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Tham gia</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Chưa làm</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Đang làm</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>Chờ duyệt</Typography>
+                </TableCell>
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                >
+                  <Typography style={{ fontWeight: 600 }}>
+                    Hoàn thành
+                  </Typography>
+                </TableCell>
+                {/* empty cell for remove button */}
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                />
+                {/* empty cell for navigate detail member button */}
+                <TableCell
+                  style={{ padding: "4px 8px", backgroundColor: "whitesmoke" }}
+                />
+              </TableRow>
             </TableHead>
+            <TableBody>
+              {members.map((member, index) => (
+                <MemberTableRow
+                  memberData={{ ...member, room_index: index + 1 } as any}
+                />
+              ))}
+              {!loadedAllMembers && !loadingMoreMembers && (
+                <Box style={{ display: "flex", justifyContent: "center" }}>
+                  <Button
+                    onClick={async () =>
+                      await getMembers({ room_id: currentRoom.id })
+                    }
+                  >
+                    Xem thêm
+                  </Button>
+                </Box>
+              )}
+              {loadingMoreMembers && (
+                <Box style={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress />
+                </Box>
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
       )}

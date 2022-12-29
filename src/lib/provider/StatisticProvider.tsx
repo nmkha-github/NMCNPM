@@ -30,7 +30,7 @@ interface StatisticContextProps {
   loadingMoreMembers: boolean;
   loadedAllMembers: boolean;
 
-  member: MemberData | UserData;
+  member: MemberData & UserData;
   getMember: (payload: { room_id: string; member_id: string }) => Promise<void>;
   loadingMember: boolean;
 
@@ -62,6 +62,9 @@ const StatisticContext = createContext<StatisticContextProps>({
     reviewing: 0,
     done: 0,
     joined_at: "",
+    email: "",
+    created_at: "",
+    auth_id: "",
   },
   getMember: async () => {},
   loadingMember: false,
@@ -80,7 +83,7 @@ interface StatisticContextProviderProps {
 
 const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
   const [members, setMembers] = useState<MemberData[]>([]);
-  const [member, setMember] = useState<MemberData | UserData>({
+  const [member, setMember] = useState<MemberData & UserData>({
     id: "",
     name: "",
     avatar: "",
@@ -89,6 +92,9 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
     reviewing: 0,
     done: 0,
     joined_at: "",
+    auth_id: "",
+    email: "",
+    created_at: "",
   });
   const [roomStatistic, setRoomStatistic] = useState<RoomStatistic>({
     id: "",
@@ -240,14 +246,18 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
       try {
         setLoadingMember(true);
 
-        const memberStatisticDoc = await getDoc(
-          doc(db, "room", room_id, "member", member_id)
+        const memberStatisticDocs = await getDocs(
+          query(
+            collection(db, "room", room_id, "member"),
+            where("id", "==", member_id)
+          )
         );
         const memberInfoDoc = await getDoc(doc(db, "user", member_id));
 
-        setMember({ ...memberStatisticDoc.data(), ...memberInfoDoc.data() } as
-          | MemberData
-          | UserData);
+        setMember({
+          ...memberStatisticDocs.docs[0].data(),
+          ...memberInfoDoc.data(),
+        } as MemberData & UserData);
       } catch (error) {
         showSnackbarError(error);
       } finally {

@@ -36,7 +36,9 @@ const StatisticPage = () => {
   return (
     <LeftSideBar>
       {loadingCurrentRoom ? (
-        <Box style={{ marginTop: 16 }}>
+        <Box
+          style={{ marginTop: 16, display: "flex", justifyContent: "center" }}
+        >
           <CircularProgress />
         </Box>
       ) : (
