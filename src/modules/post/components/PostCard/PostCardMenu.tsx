@@ -9,13 +9,12 @@ import { useTasks } from "../../../../lib/provider/TasksProvider";
 import PostData from "../../interface/post-data";
 import { usePosts } from "../../../../lib/provider/PostsProvider";
 
-const PostCardMenu = ({ post }: { post: PostData }) => {
+const PostCardMenu = ({ post }: { post: PostData}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const { roomId } = useParams();
-  const { deletePost, deletingPost} = usePosts();
-
+  const { deletePost, deletingPost,setCurrentPost} = usePosts();
   return (
     <Box >
       <IconButton
@@ -43,7 +42,7 @@ const PostCardMenu = ({ post }: { post: PostData }) => {
         <MenuItem
           style={{ display: "flex", padding: 8 }}
           onClick={() => {
-            
+            setCurrentPost({...post});
           }}
         >
           <ListItemIcon>

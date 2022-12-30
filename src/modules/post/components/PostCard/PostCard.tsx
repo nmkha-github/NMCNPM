@@ -63,7 +63,7 @@ const PostCard = ({ post }: PostCardProps) => {
           padding: 16,
           maxHeight: 83,
           alignItems: "center",
-          justifyContent:"space-between"
+          justifyContent: "space-between",
         }}
       >
         <Box style={{ display: "inline-flex", alignItems: "center" }}>
@@ -83,7 +83,7 @@ const PostCard = ({ post }: PostCardProps) => {
             </Typography>
           </Box>
         </Box>
-        <PostCardMenu post={post}/>
+        <PostCardMenu post={post} />
       </Box>
       <Typography style={{ margin: "4px 0px 4px 16px" }}>
         {post.content}
