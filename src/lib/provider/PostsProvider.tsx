@@ -247,7 +247,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
         setUpdatingPost(false);
       }
     },
-    []
+    [posts]
   );
 
   const deletePost = useCallback(
