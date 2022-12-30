@@ -38,6 +38,16 @@ interface PostsContextProps {
   }) => Promise<void>;
   creatingPost: boolean;
 
+  updatePost: (payload: {
+    room_id: string;
+    id: string;
+    update_data: {
+      content?: string;
+      image?: string;
+    };
+  }) => Promise<void>;
+  updatingPost: boolean;
+
   deletePost: (payload: { room_id: string; id: string }) => Promise<void>;
   deletingPost: boolean;
 }
@@ -52,6 +62,9 @@ const PostsContext = createContext<PostsContextProps>({
 
   createPost: async () => {},
   creatingPost: false,
+
+  updatePost: async () => {},
+  updatingPost: false,
 
   deletePost: async () => {},
   deletingPost: false,
@@ -68,6 +81,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [loadedAllPosts, setLoadedAllPosts] = useState(false);
   const [creatingPost, setCreatingPost] = useState(false);
+  const [updatingPost, setUpdatingPost] = useState(false);
   const [deletingPost, setDeletingPost] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
@@ -193,6 +207,49 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
     [postDocs, posts, showSnackbarError, user]
   );
 
+  const updatePost = useCallback(
+    async ({
+      room_id,
+      id,
+      update_data,
+    }: {
+      room_id: string;
+      id: string;
+      update_data: {
+        content?: string;
+        image?: string;
+      };
+    }) => {
+      try {
+        setUpdatingPost(true);
+
+        await updateDoc(doc(db, "room", room_id, "post", id), {
+          last_edit: Timestamp.now(),
+          ...update_data,
+        });
+
+        setPosts(
+          posts.map((post) => {
+            if (post.id === id) {
+              return {
+                ...post,
+                ...update_data,
+                last_edit: Timestamp.now(),
+              };
+            }
+
+            return post;
+          })
+        );
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setUpdatingPost(false);
+      }
+    },
+    []
+  );
+
   const deletePost = useCallback(
     async ({ room_id, id }: { room_id: string; id: string }) => {
       try {
@@ -223,6 +280,9 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
 
         createPost,
         creatingPost,
+
+        updatePost,
+        updatingPost,
 
         deletePost,
         deletingPost,
