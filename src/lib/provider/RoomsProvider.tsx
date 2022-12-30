@@ -379,6 +379,10 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (!newRoom) {
           throw "Phòng ban không tồn tại";
         }
+        const roomDocsResponse = await getDocs(query(collection(db, "user", user.id, "room"), where("id", "==", id)));
+        if (roomDocsResponse.docs.length > 0) {
+          throw "Bạn đã tham gia phòng này rồi"
+        }
         const time = Timestamp.now();
         await addDoc(collection(db, "user", user.id, "room"), {
           joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
