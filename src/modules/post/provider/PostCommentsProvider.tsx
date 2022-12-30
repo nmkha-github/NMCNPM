@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   onSnapshot,
+  deleteDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -27,6 +28,9 @@ interface PostCommentsContextProps {
     new_post: { content: string; image?: string; attach_files?: FileData[] };
   }) => Promise<void>;
   creatingPostComment: boolean;
+
+  deleteComment: (payload: { room_id: string; post_id: string;id:string }) => Promise<void>;
+  deletingComment: boolean;
 }
 
 const PostCommentsContext = createContext<PostCommentsContextProps>({
@@ -36,6 +40,9 @@ const PostCommentsContext = createContext<PostCommentsContextProps>({
 
   createPostComment: async () => {},
   creatingPostComment: false,
+
+  deleteComment: async ()=>{},
+  deletingComment:false,
 });
 
 interface PostCommentsContextProviderProps {
@@ -48,6 +55,7 @@ const PostCommentsProvider = ({
   const [PostComments, setPostComments] = useState<CommentData[]>([]);
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
+  const [deletingComment, setDeletingComment] = useState(false);
   const { user } = useUser();
 
   //
@@ -133,6 +141,20 @@ const PostCommentsProvider = ({
     [PostComments, showSnackbarError]
   );
 
+  const deleteComment = useCallback(
+    async ({ room_id, post_id,id }: { room_id: string; post_id: string,id:string }) => {
+      try {
+        setDeletingComment(true);
+        await deleteDoc(doc(db, "room", room_id, "post", post_id,"comment",id));
+        setPostComments(PostComments.filter((comment) => comment.id !== id));
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setDeletingComment(false);
+      }
+    },
+    [PostComments, showSnackbarError]
+  );
   return (
     <PostCommentsContext.Provider
       value={{
@@ -143,6 +165,9 @@ const PostCommentsProvider = ({
 
         createPostComment,
         creatingPostComment,
+
+        deleteComment,
+        deletingComment,
       }}
     >
       {children}

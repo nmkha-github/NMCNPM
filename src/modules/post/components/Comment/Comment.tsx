@@ -25,8 +25,15 @@ import UserHelper from "../../../user/util/user-helper";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
+import CommentMenu from "./CommentMenu";
 
-const Comment = ({ comment }: { comment: CommentData }) => {
+const Comment = ({
+  comment,
+  post,
+}: {
+  comment: CommentData;
+  post: PostData;
+}) => {
   const { user } = useUser();
   const [commentUser, setCommentUser] = useState<undefined | UserData>(
     undefined
@@ -102,6 +109,11 @@ const Comment = ({ comment }: { comment: CommentData }) => {
           {comment.content}
         </Typography>
       </Box>
+      {user.id !== comment.creator_id ? (
+        <></>
+      ) : (
+        <CommentMenu comment={comment} post={post} />
+      )}
     </Box>
   );
 };

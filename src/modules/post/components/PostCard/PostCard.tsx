@@ -45,18 +45,18 @@ const PostCard = ({ post }: PostCardProps) => {
       showSnackbarError(error);
     }
   };
-  const getCommentData=async (roomId:string,postId:string)=>{
+  const getCommentData = async (roomId: string, postId: string) => {
     await getPostComments({ room_id: roomId || "", post_id: postId });
   };
   useEffect(() => {
     getUserData(post.creator_id);
   }, [post]);
 
-  useEffect(()=>{
-    if(post.id){
-        getCommentData(roomId||"",post.id);
+  useEffect(() => {
+    if (post.id) {
+      getCommentData(roomId || "", post.id);
     }
-  },[post])
+  }, [post]);
   if (!roomId) return null;
 
   return (
@@ -86,7 +86,7 @@ const PostCard = ({ post }: PostCardProps) => {
           <Avatar
             alt="avatar"
             src={user ? user.avatar : USER_AVATAR_DEFAULT}
-            style={{marginRight: 8 }}
+            style={{ marginRight: 8 }}
           />
           <Box style={{ display: "flex", flexDirection: "column" }}>
             <Typography style={{ fontWeight: 600 }}>
@@ -132,7 +132,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <></>
       ) : (
         PostComments.map((comment) => {
-          return <Comment comment={comment} />;
+          return <Comment comment={comment} post={post} />;
         })
       )}
     </Box>
