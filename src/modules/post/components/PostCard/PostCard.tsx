@@ -41,7 +41,7 @@ const PostCard = ({ post }: PostCardProps) => {
   };
   useEffect(() => {
     getUserData(post.creator_id);
-  }, [getUserData]);
+  }, [post]);
   if (!roomId) return null;
   return (
     <Box
@@ -85,7 +85,7 @@ const PostCard = ({ post }: PostCardProps) => {
         </Box>
         <PostCardMenu post={post} />
       </Box>
-      <Typography style={{ margin: "4px 0px 4px 16px" }}>
+      <Typography style={{ margin: "4px 0px 4px 16px",wordBreak:"break-word",whiteSpace:"pre-wrap" }}>
         {post.content}
       </Typography>
       {post.image === "" ? (

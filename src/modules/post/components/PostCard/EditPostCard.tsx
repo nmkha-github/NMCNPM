@@ -38,18 +38,23 @@ const EditPostCard = ({
   const { updatePost, updatingPost } = usePosts();
   const { roomId } = useParams();
   useEffect(() => {
-    if (post) {
-      setCurrentPost({ ...post });
-    }
-  }, []);
+      post&&setCurrentPost({ ...post });
+  }, [post]);
   if (!user || !roomId) return null;
   return (
     <Dialog
       {...dialogProps}
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "calc(100% - 64px)",
+            maxWidth: "620px",  // Set your width here
+          },
+        },
+      }}
       style={{
-        maxWidth: 620,
-        width:"calc(100% - 64px)",
         padding: 8,
+        maxHeight: "calc(100% - 64px)",
         border: "1px solid #D8DCF0",
         borderRadius: 8,
         marginTop: 16,
