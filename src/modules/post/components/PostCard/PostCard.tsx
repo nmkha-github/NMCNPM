@@ -7,9 +7,9 @@ import {
   TextField,
   InputBase,
   Button,
+  Typography
 } from "@mui/material";
 import TaskData from "../../../task/interface/task-data";
-import { Typography } from "@material-ui/core";
 import UserHelper from "../../../user/util/user-helper";
 import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
