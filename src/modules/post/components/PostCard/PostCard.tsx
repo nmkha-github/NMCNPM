@@ -65,10 +65,11 @@ const PostCard = ({ post }: PostCardProps) => {
     <Box
       style={{
         padding: 8,
+        background:"white",
         border: "1px solid #D8DCF0",
         borderRadius: 8,
-        marginTop: 16,
         display: "flex",
+        marginBottom:28,
         maxWidth: 620,
         flexDirection: "column",
         justifyContent: "flex-end",
