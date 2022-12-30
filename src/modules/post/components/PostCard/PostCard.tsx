@@ -27,6 +27,7 @@ import PostData from "../../interface/post-data";
 import PostCardMenu from "./PostCardMenu";
 import Comment from "../Comment/Comment";
 import { usePostComments } from "../../provider/PostCommentsProvider";
+import CommentIcon from "@mui/icons-material/Comment";
 import CreateComment from "../CreateComment/CreateComment";
 import { async } from "@firebase/util";
 interface PostCardProps {
@@ -35,6 +36,7 @@ interface PostCardProps {
 const PostCard = ({ post }: PostCardProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
   const { showSnackbarError } = useAppSnackbar();
+  const [showing, setShowing] = useState(false);
   const { roomId } = useParams();
   const { getPostComments, PostComments, loadingPostComments } =
     usePostComments();
@@ -127,8 +129,39 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </Box>
       )}
+      <Box
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: 16,
+          paddingRight: 16,
+          marginBottom: 16,
+        }}
+      >
+        <Typography
+          style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
+        >
+          <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
+          {PostComments.length + " bình luận"}
+        </Typography>
+        <Typography
+          sx={{
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            lineHeight: 1.43,
+            "&:hover": {
+              cursor: "pointer",
+            },
+          }}
+          onClick={() => {
+            setShowing(!showing);
+          }}
+        >
+          {showing ? "Ẩn bình luận" : "Hiện bình luận"}
+        </Typography>
+      </Box>
       <CreateComment post={post} />
-      {loadingPostComments ? (
+      {(loadingPostComments||!showing) ? (
         <></>
       ) : (
         PostComments.map((comment) => {
