@@ -57,6 +57,10 @@ const CreatePostCard = () => {
             border: "none",
             outline: "none",
             "& fieldset": { border: "none" },
+            "*:focus": {
+              boxShadow: "none",
+              WebkitBoxShadow: "none",
+            },
           }}
           maxRows={"3"}
           placeholder={"Nhập nội dung thảo luận..."}
