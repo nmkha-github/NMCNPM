@@ -26,11 +26,11 @@ const CreateComment = ({ post }: { post: PostData }) => {
     return null;
   }
   return (
-    <Box style={{ display: "flex", alignItems: "center" }}>
+    <Box style={{ display: "flex", alignItems: "center", marginLeft: 8 }}>
       <Avatar
         alt="avatar"
         src={user.avatar}
-        style={{ marginRight: 8, width: 32, height: 32 }}
+        style={{ marginRight: 8, width: 36, height: 36 }}
       />
       <TextField
         fullWidth
@@ -52,7 +52,7 @@ const CreateComment = ({ post }: { post: PostData }) => {
         placeholder={"Nhập bình luận..."}
         onKeyDown={async (event) => {
           if (event.key === "Enter") {
-            if (!creatingPostComment) {
+            if (!creatingPostComment && comment.length > 0) {
               await createPostComment({
                 room_id: roomId || "",
                 post_id: post.id,

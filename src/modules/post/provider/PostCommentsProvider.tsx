@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   onSnapshot,
+  deleteDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -11,6 +12,7 @@ import { db } from "../../../lib/config/firebase-config";
 import useAppSnackbar from "../../../lib/hook/useAppSnackBar";
 import CommentData from "../../../lib/interface/comment-data";
 import FileData from "../../../lib/interface/file-data";
+import { useUser } from "../../../lib/provider/UserProvider";
 
 interface PostCommentsContextProps {
   PostComments: CommentData[];
@@ -26,6 +28,9 @@ interface PostCommentsContextProps {
     new_post: { content: string; image?: string; attach_files?: FileData[] };
   }) => Promise<void>;
   creatingPostComment: boolean;
+
+  deleteComment: (payload: { room_id: string; post_id: string;id:string }) => Promise<void>;
+  deletingComment: boolean;
 }
 
 const PostCommentsContext = createContext<PostCommentsContextProps>({
@@ -35,6 +40,9 @@ const PostCommentsContext = createContext<PostCommentsContextProps>({
 
   createPostComment: async () => {},
   creatingPostComment: false,
+
+  deleteComment: async ()=>{},
+  deletingComment:false,
 });
 
 interface PostCommentsContextProviderProps {
@@ -47,6 +55,8 @@ const PostCommentsProvider = ({
   const [PostComments, setPostComments] = useState<CommentData[]>([]);
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
+  const [deletingComment, setDeletingComment] = useState(false);
+  const { user } = useUser();
 
   //
   const { showSnackbarError } = useAppSnackbar();
@@ -84,6 +94,7 @@ const PostCommentsProvider = ({
       post_id: string;
       new_post: { content: string; image?: string; attach_files?: FileData[] };
     }) => {
+      if(!user) return;
       try {
         setCreatingPostComment(true);
         const time = Timestamp.now();
@@ -93,6 +104,7 @@ const PostCommentsProvider = ({
           {
             last_edit: time,
             created_at: time,
+            creator_id:user.id,
             ...new_post,
           }
         );
@@ -115,6 +127,7 @@ const PostCommentsProvider = ({
             id: commentDocResponse.id,
             last_edit: time,
             created_at: time,
+            creator_id:user.id,
             ...new_post,
           },
           ...PostComments,
@@ -128,6 +141,20 @@ const PostCommentsProvider = ({
     [PostComments, showSnackbarError]
   );
 
+  const deleteComment = useCallback(
+    async ({ room_id, post_id,id }: { room_id: string; post_id: string,id:string }) => {
+      try {
+        setDeletingComment(true);
+        await deleteDoc(doc(db, "room", room_id, "post", post_id,"comment",id));
+        setPostComments(PostComments.filter((comment) => comment.id !== id));
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setDeletingComment(false);
+      }
+    },
+    [PostComments, showSnackbarError]
+  );
   return (
     <PostCommentsContext.Provider
       value={{
@@ -138,6 +165,9 @@ const PostCommentsProvider = ({
 
         createPostComment,
         creatingPostComment,
+
+        deleteComment,
+        deletingComment,
       }}
     >
       {children}
