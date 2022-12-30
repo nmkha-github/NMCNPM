@@ -10,15 +10,15 @@ import { getFirestore } from "firebase/firestore";
 
 //Main firebase
 const FirebaseConfig = {
-  apiKey: "aizasyasap1ay125tjipgysaeqde4jvxquhfht8",
+  apiKey: "AIzaSyASap1ay125TJIPgYsAEqdE4JvXqUhFhT8",
   authDomain: "nmcnpm-d177c.firebaseapp.com",
-  databaseurl: "https://nmcnpm-d177c-default-rtdb.firebaseio.com",
+  databaseURL: "https://nmcnpm-d177c-default-rtdb.firebaseio.com",
   projectId: "nmcnpm-d177c",
   storageBucket: "nmcnpm-d177c.appspot.com",
-  messagingSenderid: "658397747139",
+  messagingSenderId: "658397747139",
   appId: "1:658397747139:web:38ba98009508d364b0cf76",
-  measurementId: "g-fgc4sp6fc4"
-}
+  measurementId: "G-FGC4SP6FC4",
+};
 
 //Backup firebase
 // const FirebaseConfig = {
