@@ -8,6 +8,7 @@ interface CommentData {
   attach_files?: FileData[];
   created_at: Timestamp | Date | string;
   last_edit: Timestamp | Date | string;
+  creator_id: string;
 }
 
 export default CommentData;

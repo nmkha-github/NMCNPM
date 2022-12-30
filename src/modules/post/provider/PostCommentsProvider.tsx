@@ -11,6 +11,7 @@ import { db } from "../../../lib/config/firebase-config";
 import useAppSnackbar from "../../../lib/hook/useAppSnackBar";
 import CommentData from "../../../lib/interface/comment-data";
 import FileData from "../../../lib/interface/file-data";
+import { useUser } from "../../../lib/provider/UserProvider";
 
 interface PostCommentsContextProps {
   PostComments: CommentData[];
@@ -47,6 +48,7 @@ const PostCommentsProvider = ({
   const [PostComments, setPostComments] = useState<CommentData[]>([]);
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
+  const { user } = useUser();
 
   //
   const { showSnackbarError } = useAppSnackbar();
@@ -84,6 +86,7 @@ const PostCommentsProvider = ({
       post_id: string;
       new_post: { content: string; image?: string; attach_files?: FileData[] };
     }) => {
+      if(!user) return;
       try {
         setCreatingPostComment(true);
         const time = Timestamp.now();
@@ -93,6 +96,7 @@ const PostCommentsProvider = ({
           {
             last_edit: time,
             created_at: time,
+            creator_id:user.id,
             ...new_post,
           }
         );
@@ -115,6 +119,7 @@ const PostCommentsProvider = ({
             id: commentDocResponse.id,
             last_edit: time,
             created_at: time,
+            creator_id:user.id,
             ...new_post,
           },
           ...PostComments,

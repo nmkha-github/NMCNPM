@@ -25,7 +25,10 @@ import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
 import PostCardMenu from "./PostCardMenu";
+import Comment from "../Comment/Comment";
+import { usePostComments } from "../../provider/PostCommentsProvider";
 import CreateComment from "../CreateComment/CreateComment";
+import { async } from "@firebase/util";
 interface PostCardProps {
   post: PostData;
 }
@@ -33,6 +36,8 @@ const PostCard = ({ post }: PostCardProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
   const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
+  const { getPostComments, PostComments, loadingPostComments } =
+    usePostComments();
   const getUserData = async (id?: string) => {
     try {
       setUser(await UserHelper.getUserById(id || ""));
@@ -40,10 +45,20 @@ const PostCard = ({ post }: PostCardProps) => {
       showSnackbarError(error);
     }
   };
+  const getCommentData=async (roomId:string,postId:string)=>{
+    await getPostComments({ room_id: roomId || "", post_id: postId });
+  };
   useEffect(() => {
     getUserData(post.creator_id);
   }, [post]);
+
+  useEffect(()=>{
+    if(post.id){
+        getCommentData(roomId||"",post.id);
+    }
+  },[post])
   if (!roomId) return null;
+
   return (
     <Box
       style={{
@@ -71,7 +86,7 @@ const PostCard = ({ post }: PostCardProps) => {
           <Avatar
             alt="avatar"
             src={user ? user.avatar : USER_AVATAR_DEFAULT}
-            style={{ marginLeft: 8, marginRight: 8 }}
+            style={{marginRight: 8 }}
           />
           <Box style={{ display: "flex", flexDirection: "column" }}>
             <Typography style={{ fontWeight: 600 }}>
@@ -112,8 +127,14 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </Box>
       )}
-      <CreateComment post={post}/>
-      
+      <CreateComment post={post} />
+      {loadingPostComments ? (
+        <></>
+      ) : (
+        PostComments.map((comment) => {
+          return <Comment comment={comment} />;
+        })
+      )}
     </Box>
   );
 };
