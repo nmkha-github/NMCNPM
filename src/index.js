@@ -10,6 +10,7 @@ import AppRoutes from './AppRoutes';
 import StatisticProvider from './lib/provider/StatisticProvider';
 import TasksProvider from './lib/provider/TasksProvider';
 import PostsProvider from './lib/provider/PostsProvider';
+import PostCommentsProvider from './modules/post/provider/PostCommentsProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,9 +24,11 @@ root.render(
                 <StatisticProvider>
                   <TasksProvider>
                     <PostsProvider>
-                      {/* ----------------- */}
-                      <AppRoutes />
-                      {/* add provider here */}
+                      <PostCommentsProvider>
+                        {/* ----------------- */}
+                        <AppRoutes />
+                        {/* add provider here */}
+                      </PostCommentsProvider>
                     </PostsProvider>
                   </TasksProvider>
                 </StatisticProvider>
