@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
 import "./LoginForm.css";
 import InputRow from "../InputRow/InputRow";
@@ -102,7 +103,7 @@ const LoginForm = () => {
           </div>
           <div className="flex items-center justify-center">
             <a
-              href="/register"
+              onClick={() => {navigate("/register")}}
               id="createNewEmailButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
