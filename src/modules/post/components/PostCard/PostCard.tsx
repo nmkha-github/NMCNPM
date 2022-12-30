@@ -7,9 +7,9 @@ import {
   TextField,
   InputBase,
   Button,
+  Typography,
 } from "@mui/material";
 import TaskData from "../../../task/interface/task-data";
-import { Typography } from "@material-ui/core";
 import UserHelper from "../../../user/util/user-helper";
 import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
@@ -25,6 +25,7 @@ import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
 import PostCardMenu from "./PostCardMenu";
+import CreateComment from "../CreateComment/CreateComment";
 interface PostCardProps {
   post: PostData;
 }
@@ -85,7 +86,13 @@ const PostCard = ({ post }: PostCardProps) => {
         </Box>
         <PostCardMenu post={post} />
       </Box>
-      <Typography style={{ margin: "4px 0px 4px 16px",wordBreak:"break-word",whiteSpace:"pre-wrap" }}>
+      <Typography
+        style={{
+          margin: "4px 0px 4px 16px",
+          wordBreak: "break-word",
+          whiteSpace: "pre-wrap",
+        }}
+      >
         {post.content}
       </Typography>
       {post.image === "" ? (
@@ -105,6 +112,8 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </Box>
       )}
+      <CreateComment post={post}/>
+      
     </Box>
   );
 };

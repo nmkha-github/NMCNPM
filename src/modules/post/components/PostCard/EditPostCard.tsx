@@ -38,7 +38,7 @@ const EditPostCard = ({
   const { updatePost, updatingPost } = usePosts();
   const { roomId } = useParams();
   useEffect(() => {
-      post&&setCurrentPost({ ...post });
+    post && setCurrentPost({ ...post });
   }, [post]);
   if (!user || !roomId) return null;
   return (
@@ -48,7 +48,7 @@ const EditPostCard = ({
         "& .MuiDialog-container": {
           "& .MuiPaper-root": {
             width: "calc(100% - 64px)",
-            maxWidth: "620px",  // Set your width here
+            maxWidth: "620px",
           },
         },
       }}
@@ -80,105 +80,109 @@ const EditPostCard = ({
           </IconButton>
         </Box>
       </DialogTitle>
-        <Box
-          style={{
-            display: "flex",
-            maxWidth: "true",
-            padding: 16,
-            maxHeight: 83,
-            alignItems: "center",
-            justifyContent: "center",
+      <Box
+        style={{
+          display: "flex",
+          maxWidth: "true",
+          padding: 16,
+          maxHeight: 83,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Avatar alt="avatar" src={user.avatar} style={{ marginLeft: 8 }} />
+        <TextField
+          fullWidth
+          multiline
+          onChange={(event) => {
+            setCurrentPost({ ...currentPost, content: event.target.value });
           }}
-        >
-          <Avatar alt="avatar" src={user.avatar} style={{ marginLeft: 8 }} />
-          <TextField
-            fullWidth
-            multiline
-            onChange={(event) => {
-              setCurrentPost({ ...currentPost, content: event.target.value });
-            }}
-            value={currentPost.content}
-            InputProps={{ disableUnderline: true }}
-            sx={{
-              border: "none",
-              outline: "none",
-              "& fieldset": { border: "none" },
-            }}
-            maxRows={"3"}
-            placeholder={"Nhập nội dung thảo luận..."}
-          />
-        </Box>
-        {currentPost.image === "" ? (
-          <></>
-        ) : (
-          <Box style={{ padding: 16, position: "relative" }}>
-            <img
-              src={currentPost.image}
-              style={{
-                marginTop: 8,
-                maxHeight: 320,
-                minHeight: 120,
-                width: "100%",
-                objectFit: "cover",
-                height: "auto",
-              }}
-            />
-            <IconButton
-              style={{ top: 32, right: 24, position: "absolute" }}
-              onClick={() => {
-                setCurrentPost({ ...currentPost, image: "" });
-              }}
-            >
-              <ClearIcon />
-            </IconButton>
-          </Box>
-        )}
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            borderTop: "1px solid rgb(216, 220, 240)",
-            alignItems: "center",
-            padding: 16,
+          value={currentPost.content}
+          InputProps={{ disableUnderline: true }}
+          sx={{
+            border: "none",
+            outline: "none",
+            "& fieldset": { border: "none" },
+            "*:focus": {
+              boxShadow: "none",
+              WebkitBoxShadow: "none",
+            },
           }}
-        >
-          <UploadFile
-            onSuccess={async (file) => {
-              setCurrentPost({ ...currentPost, image: file.url });
-            }}
-          >
-            <Button variant="outlined" style={{ padding: 8 }}>
-              <h1>
-                <FileUploadSharpIcon />
-                Thêm ảnh
-              </h1>
-              <input type="file" hidden />
-            </Button>
-          </UploadFile>
-          <LoadingButton
-            loading={updatingPost}
-            disabled={currentPost.content === "" || updatingPost}
-            variant="contained"
+          maxRows={"3"}
+          placeholder={"Nhập nội dung thảo luận..."}
+        />
+      </Box>
+      {currentPost.image === "" ? (
+        <></>
+      ) : (
+        <Box style={{ padding: 16, position: "relative" }}>
+          <img
+            src={currentPost.image}
             style={{
-              padding: 8,
-              marginLeft: 12,
-              paddingRight: 16,
-              paddingLeft: 16,
+              marginTop: 8,
+              maxHeight: 320,
+              minHeight: 120,
+              width: "100%",
+              objectFit: "cover",
+              height: "auto",
             }}
-            onClick={async () => {
-              await updatePost({
-                room_id: roomId,
-                id: currentPost.id,
-                update_data: {
-                  ...currentPost,
-                },
-              });
-              dialogProps.onClose?.({}, "backdropClick");
+          />
+          <IconButton
+            style={{ top: 32, right: 24, position: "absolute" }}
+            onClick={() => {
+              setCurrentPost({ ...currentPost, image: "" });
             }}
           >
-            Chỉnh sửa
-          </LoadingButton>
+            <ClearIcon />
+          </IconButton>
         </Box>
+      )}
+      <Box
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          borderTop: "1px solid rgb(216, 220, 240)",
+          alignItems: "center",
+          padding: 16,
+        }}
+      >
+        <UploadFile
+          onSuccess={async (file) => {
+            setCurrentPost({ ...currentPost, image: file.url });
+          }}
+        >
+          <Button variant="outlined" style={{ padding: 8 }}>
+            <h1>
+              <FileUploadSharpIcon />
+              Thêm ảnh
+            </h1>
+            <input type="file" hidden />
+          </Button>
+        </UploadFile>
+        <LoadingButton
+          loading={updatingPost}
+          disabled={currentPost.content === "" || updatingPost}
+          variant="contained"
+          style={{
+            padding: 8,
+            marginLeft: 12,
+            paddingRight: 16,
+            paddingLeft: 16,
+          }}
+          onClick={async () => {
+            await updatePost({
+              room_id: roomId,
+              id: currentPost.id,
+              update_data: {
+                ...currentPost,
+              },
+            });
+            dialogProps.onClose?.({}, "backdropClick");
+          }}
+        >
+          Chỉnh sửa
+        </LoadingButton>
+      </Box>
     </Dialog>
   );
 };
