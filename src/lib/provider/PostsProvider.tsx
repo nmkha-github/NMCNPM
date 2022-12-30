@@ -29,6 +29,9 @@ interface PostsContextProps {
   loadingMorePosts: boolean;
   loadedAllPosts: boolean;
 
+  currentPost?: PostData;
+  setCurrentPost:(post?: PostData) => void;
+
   createPost: (payload: {
     room_id: string;
     new_post: {
@@ -60,6 +63,15 @@ const PostsContext = createContext<PostsContextProps>({
   loadingMorePosts: false,
   loadedAllPosts: false,
 
+  currentPost: {
+    id: "",
+    creator_id: "",
+    created_at: "",
+    content: "",
+    last_edit: "",
+  },
+  setCurrentPost: () => {},
+
   createPost: async () => {},
   creatingPost: false,
 
@@ -83,7 +95,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
   const [creatingPost, setCreatingPost] = useState(false);
   const [updatingPost, setUpdatingPost] = useState(false);
   const [deletingPost, setDeletingPost] = useState(false);
-
+  const [currentPost, setCurrentPost] = useState<PostData>();
   const { showSnackbarError } = useAppSnackbar();
   const { user } = useUser();
 
@@ -256,7 +268,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
         setDeletingPost(true);
 
         await deleteDoc(doc(db, "room", room_id, "post", id));
-
+        setCurrentPost({} as PostData);
         setPosts(posts.filter((post) => post.id !== id));
         setPostDocs(postDocs.filter((postDoc) => postDoc.data().id !== id));
       } catch (error) {
@@ -277,7 +289,10 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
         loadingPosts,
         loadingMorePosts,
         loadedAllPosts,
-
+        
+        currentPost,
+        setCurrentPost,
+        
         createPost,
         creatingPost,
 
