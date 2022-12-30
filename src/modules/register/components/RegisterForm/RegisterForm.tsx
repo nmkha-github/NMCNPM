@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback, useState } from "react";
 import "./RegisterForm.css";
 import InputRow from "../../../login/components/InputRow/InputRow";
@@ -134,7 +135,7 @@ const RegisterForm = () => {
           </div>
           <div className="flex items-center justify-center">
             <a
-              href="/login"
+              onClick={() => navigate("/login")}
               id="loginButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
