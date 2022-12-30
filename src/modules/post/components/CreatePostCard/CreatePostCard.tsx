@@ -1,39 +1,26 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  BoxProps,
-  IconButton,
-  Avatar,
-  TextField,
-  InputBase,
-  Button,
-} from "@mui/material";
-import TaskData from "../../../task/interface/task-data";
-import { Typography } from "@material-ui/core";
-import UserHelper from "../../../user/util/user-helper";
-import UserData from "../../../user/interface/user-data";
-import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
-import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
+import React, { useState } from "react";
+import { Box, IconButton, Avatar, TextField, Button } from "@mui/material";
 import { usePosts } from "../../../../lib/provider/PostsProvider";
-import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
 import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
+
 const CreatePostCard = () => {
   const emptyPost = {
     content: "",
     image: "",
   };
-  const { user } = useUser();
-  const { showSnackbarError } = useAppSnackbar();
-  const [hasImage, setHasImage] = useState(false);
-  const { createPost, creatingPost } = usePosts();
   const [currentPost, setCurrentPost] = useState({ ...emptyPost });
+
+  const { user } = useUser();
+  const { createPost, creatingPost } = usePosts();
   const { roomId } = useParams();
+
   if (!user || !roomId) return null;
+
   return (
     <Box
       style={{
