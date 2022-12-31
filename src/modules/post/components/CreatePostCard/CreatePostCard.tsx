@@ -25,10 +25,12 @@ const CreatePostCard = () => {
     <Box
       style={{
         maxWidth: 620,
+        background:"white",
         padding: 8,
         border: "1px solid #D8DCF0",
         borderRadius: 8,
-        marginTop: 16,
+        marginTop: 32,
+        marginBottom:28,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",

@@ -11,6 +11,7 @@ import { db } from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
 import CommentData from "../interface/comment-data";
 import FileData from "../interface/file-data";
+import { useUser } from "./UserProvider";
 
 interface PostCommentsContextProps {
   postComments: { [postId: string]: CommentData[] };
@@ -51,6 +52,7 @@ const PostCommentsProvider = ({
   const [creatingPostComment, setCreatingPostComment] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
+  const { user } = useUser();
 
   const getPostComments = useCallback(
     async ({ room_id, post_id }: { room_id: string; post_id: string }) => {
@@ -62,7 +64,7 @@ const PostCommentsProvider = ({
           (postCommentDocs) => {
             setPostComments({
               ...postComments,
-              post_id: postCommentDocs.docs.map(
+              [post_id]: postCommentDocs.docs.map(
                 (postCommentDoc) => postCommentDoc.data() as CommentData
               ),
             });
@@ -95,6 +97,7 @@ const PostCommentsProvider = ({
           {
             last_edit: time,
             created_at: time,
+            creator_id: user?.id,
             ...new_post,
           }
         );
@@ -119,6 +122,7 @@ const PostCommentsProvider = ({
               id: commentDocResponse.id,
               last_edit: time,
               created_at: time,
+              creator_id: user?.id || "",
               ...new_post,
             },
             ...postComments[post_id],
@@ -130,7 +134,7 @@ const PostCommentsProvider = ({
         setCreatingPostComment(false);
       }
     },
-    [postComments, showSnackbarError]
+    [postComments, showSnackbarError, user?.id]
   );
 
   return (

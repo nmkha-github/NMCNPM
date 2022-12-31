@@ -25,14 +25,21 @@ import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
 import PostCardMenu from "./PostCardMenu";
+import Comment from "../Comment/Comment";
+import { usePostComments } from "../../provider/PostCommentsProvider";
+import CommentIcon from "@mui/icons-material/Comment";
 import CreateComment from "../CreateComment/CreateComment";
+import { async } from "@firebase/util";
 interface PostCardProps {
   post: PostData;
 }
 const PostCard = ({ post }: PostCardProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
   const { showSnackbarError } = useAppSnackbar();
+  const [showing, setShowing] = useState(false);
   const { roomId } = useParams();
+  const { getPostComments, PostComments, loadingPostComments } =
+    usePostComments();
   const getUserData = async (id?: string) => {
     try {
       setUser(await UserHelper.getUserById(id || ""));
@@ -40,18 +47,29 @@ const PostCard = ({ post }: PostCardProps) => {
       showSnackbarError(error);
     }
   };
+  const getCommentData = async (roomId: string, postId: string) => {
+    await getPostComments({ room_id: roomId || "", post_id: postId });
+  };
   useEffect(() => {
     getUserData(post.creator_id);
   }, [post]);
+
+  useEffect(() => {
+    if (post.id) {
+      getCommentData(roomId || "", post.id);
+    }
+  }, [post]);
   if (!roomId) return null;
+
   return (
     <Box
       style={{
         padding: 8,
+        background:"white",
         border: "1px solid #D8DCF0",
         borderRadius: 8,
-        marginTop: 16,
         display: "flex",
+        marginBottom:28,
         maxWidth: 620,
         flexDirection: "column",
         justifyContent: "flex-end",
@@ -71,7 +89,7 @@ const PostCard = ({ post }: PostCardProps) => {
           <Avatar
             alt="avatar"
             src={user ? user.avatar : USER_AVATAR_DEFAULT}
-            style={{ marginLeft: 8, marginRight: 8 }}
+            style={{ marginRight: 8 }}
           />
           <Box style={{ display: "flex", flexDirection: "column" }}>
             <Typography style={{ fontWeight: 600 }}>
@@ -112,8 +130,45 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </Box>
       )}
-      <CreateComment post={post}/>
-      
+      <Box
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: 16,
+          paddingRight: 16,
+          marginBottom: 16,
+        }}
+      >
+        <Typography
+          style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
+        >
+          <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
+          {PostComments.length + " bình luận"}
+        </Typography>
+        <Typography
+          sx={{
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            lineHeight: 1.43,
+            "&:hover": {
+              cursor: "pointer",
+            },
+          }}
+          onClick={() => {
+            setShowing(!showing);
+          }}
+        >
+          {showing ? "Ẩn bình luận" : "Hiện bình luận"}
+        </Typography>
+      </Box>
+      <CreateComment post={post} />
+      {(loadingPostComments||!showing) ? (
+        <></>
+      ) : (
+        PostComments.map((comment) => {
+          return <Comment comment={comment} post={post} />;
+        })
+      )}
     </Box>
   );
 };
