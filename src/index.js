@@ -10,7 +10,7 @@ import AppRoutes from './AppRoutes';
 import StatisticProvider from './lib/provider/StatisticProvider';
 import TasksProvider from './lib/provider/TasksProvider';
 import PostsProvider from './lib/provider/PostsProvider';
-import PostCommentsProvider from './modules/post/provider/PostCommentsProvider';
+import PostCommentsProvider from './lib/provider/PostCommentsProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

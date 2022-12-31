@@ -15,7 +15,7 @@ import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
-import { usePostComments } from "../../provider/PostCommentsProvider";
+import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
 import { async } from "@firebase/util";
 const CreateComment = ({ post }: { post: PostData }) => {
   const { user } = useUser();

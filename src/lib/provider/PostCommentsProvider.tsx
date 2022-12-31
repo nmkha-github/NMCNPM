@@ -7,13 +7,13 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { db } from "../../../lib/config/firebase-config";
-import useAppSnackbar from "../../../lib/hook/useAppSnackBar";
-import CommentData from "../../../lib/interface/comment-data";
-import FileData from "../../../lib/interface/file-data";
+import { db } from "../config/firebase-config";
+import useAppSnackbar from "../hook/useAppSnackBar";
+import CommentData from "../interface/comment-data";
+import FileData from "../interface/file-data";
 
 interface PostCommentsContextProps {
-  PostComments: CommentData[];
+  postComments: { [postId: string]: CommentData[] };
   getPostComments: (payload: {
     room_id: string;
     post_id: string;
@@ -29,7 +29,7 @@ interface PostCommentsContextProps {
 }
 
 const PostCommentsContext = createContext<PostCommentsContextProps>({
-  PostComments: [],
+  postComments: {},
   getPostComments: async () => {},
   loadingPostComments: false,
 
@@ -44,13 +44,14 @@ interface PostCommentsContextProviderProps {
 const PostCommentsProvider = ({
   children,
 }: PostCommentsContextProviderProps) => {
-  const [PostComments, setPostComments] = useState<CommentData[]>([]);
+  const [postComments, setPostComments] = useState<{
+    [postId: string]: CommentData[];
+  }>({});
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
 
-  //
   const { showSnackbarError } = useAppSnackbar();
-  //function
+
   const getPostComments = useCallback(
     async ({ room_id, post_id }: { room_id: string; post_id: string }) => {
       try {
@@ -59,11 +60,12 @@ const PostCommentsProvider = ({
         onSnapshot(
           collection(db, "room", room_id, "post", post_id, "comment"),
           (postCommentDocs) => {
-            setPostComments(
-              postCommentDocs.docs.map(
+            setPostComments({
+              ...postComments,
+              post_id: postCommentDocs.docs.map(
                 (postCommentDoc) => postCommentDoc.data() as CommentData
-              )
-            );
+              ),
+            });
             setLoadingPostComments(false);
           }
         );
@@ -71,7 +73,7 @@ const PostCommentsProvider = ({
         showSnackbarError(error);
       }
     },
-    [showSnackbarError]
+    [postComments, showSnackbarError]
   );
 
   const createPostComment = useCallback(
@@ -110,28 +112,31 @@ const PostCommentsProvider = ({
           { id: commentDocResponse.id }
         );
 
-        setPostComments([
-          {
-            id: commentDocResponse.id,
-            last_edit: time,
-            created_at: time,
-            ...new_post,
-          },
-          ...PostComments,
-        ]);
+        setPostComments({
+          ...postComments,
+          [post_id]: [
+            {
+              id: commentDocResponse.id,
+              last_edit: time,
+              created_at: time,
+              ...new_post,
+            },
+            ...postComments[post_id],
+          ],
+        });
       } catch (error) {
         showSnackbarError(error);
       } finally {
         setCreatingPostComment(false);
       }
     },
-    [PostComments, showSnackbarError]
+    [postComments, showSnackbarError]
   );
 
   return (
     <PostCommentsContext.Provider
       value={{
-        PostComments,
+        postComments,
 
         getPostComments,
         loadingPostComments,
