@@ -38,6 +38,7 @@ interface AuthContextProps {
     email: string;
     password: string;
   }) => Promise<void>;
+  logging: boolean;
   logOut: () => Promise<void>;
   loggingOut: boolean;
 }
@@ -48,6 +49,7 @@ const AuthContext = createContext<AuthContextProps>({
   userInfo: null,
   register: async () => {},
   logIn: async () => {},
+  logging: false,
   logOut: async () => {},
   loggingOut: false,
 });
@@ -58,6 +60,7 @@ interface AuthContextProviderProps {
 
 const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [logging, setLogging] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
 
@@ -108,6 +111,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const logIn = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
       try {
+        setLogging(true);
         await signInWithEmailAndPassword(auth, email, password);
       } catch (error) {
         if (String(error).includes("user-not-found")) {
@@ -117,6 +121,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
         } else {
           throw error;
         }
+      } finally {
+        setLogging(false);
       }
     },
     [auth, showSnackbarError]
@@ -165,7 +171,10 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
         userInfo,
         register,
+
         logIn,
+        logging,
+
         logOut,
         loggingOut,
       }}

@@ -17,7 +17,6 @@ import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAlphaAsc, ImSortAlphaDesc } from "react-icons/im";
 import SearchIcon from "@mui/icons-material/Search";
 import RoomData from "../../modules/room/interface/room-data";
-import { useNavigate } from "react-router-dom";
 import { useRooms } from "../../lib/provider/RoomsProvider";
 import RoomItem from "../../modules/room/components/RoomItem/RoomItem";
 import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";

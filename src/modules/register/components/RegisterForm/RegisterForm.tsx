@@ -92,19 +92,21 @@ const RegisterForm = () => {
               onClick={async (event) => {
                 if (!checkRegisterValid()) {
                   if (email === "") {
-                    setEmailError("Email can't be empty.");
+                    setEmailError("Email không được để trống");
                   } else if (!EmailHelper.checkEmailValidate(email)) {
-                    setEmailError("Invalid email format");
+                    setEmailError("Sai định dạng email");
                   }
                   if (password === "") {
-                    setPasswordError("Password can't be empty.");
+                    setPasswordError("Mật khẩu không được để trống");
                   }
                   if (confirmpassword === "") {
-                    setConfirmPasswordError("Confirm password can't be empty.");
+                    setConfirmPasswordError(
+                      "Xác nhận mật khẩu không được để trống"
+                    );
                   }
                   if (password !== confirmpassword) {
                     setConfirmPasswordError(
-                      "Please make sure your password match."
+                      "Xác nhận mật khẩu không trùng khớp với mật khẩu"
                     );
                   }
                   return;
@@ -116,7 +118,7 @@ const RegisterForm = () => {
 
                   showSnackbarSuccess("Tạo tài khoản thành công");
 
-                  navigate("/home");
+                  navigate("/room");
                 } catch (error) {
                   showSnackbarError(error);
                 } finally {
@@ -134,13 +136,13 @@ const RegisterForm = () => {
             <span className="mx-3">hoặc</span>
           </div>
           <div className="flex items-center justify-center">
-            <a
+            <div
               onClick={() => navigate("/login")}
               id="loginButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
               Quay lại đăng nhập
-            </a>
+            </div>
           </div>
         </div>
       </div>

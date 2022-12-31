@@ -2,11 +2,10 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
 import InputRow from "../InputRow/InputRow";
-import { Button, Typography } from "@mui/material";
 import EmailHelper from "../../../../lib/util/email-helper";
-import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -15,8 +14,7 @@ const LoginForm = () => {
   const [passwordError, setPasswordError] = useState("");
 
   const navigate = useNavigate();
-  const { logIn } = useAuth();
-  const { showSnackbarError } = useAppSnackbar();
+  const { logIn, logging } = useAuth();
 
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -48,7 +46,7 @@ const LoginForm = () => {
                 setPassword(event.target.value);
               }}
             />
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -63,9 +61,10 @@ const LoginForm = () => {
                   ghi nhớ đăng nhập
                 </label>
               </div>
-            </div>
+            </div> */}
             <div>
-              <Button
+              <LoadingButton
+                loading={logging}
                 id="submitButton"
                 className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={async () => {
@@ -82,17 +81,13 @@ const LoginForm = () => {
                     setPasswordError("");
                   }
 
-                  try {
-                    await logIn({ email: email, password: password });
+                  await logIn({ email: email, password: password });
 
-                    navigate("/home");
-                  } catch (error) {
-                    showSnackbarError(error);
-                  }
+                  navigate("/home");
                 }}
               >
                 Đăng nhập
-              </Button>
+              </LoadingButton>
             </div>
           </div>
           <div
@@ -102,13 +97,15 @@ const LoginForm = () => {
             <span className="mx-3">or</span>
           </div>
           <div className="flex items-center justify-center">
-            <a
-              onClick={() => {navigate("/register")}}
+            <div
+              onClick={() => {
+                navigate("/register");
+              }}
               id="createNewEmailButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
             >
               Tạo tài khoản mới
-            </a>
+            </div>
           </div>
         </div>
       </div>

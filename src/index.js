@@ -11,32 +11,35 @@ import StatisticProvider from './lib/provider/StatisticProvider';
 import TasksProvider from './lib/provider/TasksProvider';
 import PostsProvider from './lib/provider/PostsProvider';
 import PostCommentsProvider from './lib/provider/PostCommentsProvider';
+import ConfirmDialogProvider from './lib/provider/ConfirmDialogProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <AppSnackbarProvider>
       <HashRouter>
-        <AuthProvider>
-          <UserProvider>
-            <Header>
-              {/* add provider here */}
-              <RoomsProvider>
-                <StatisticProvider>
-                  <TasksProvider>
-                    <PostsProvider>
-                      <PostCommentsProvider>
-                        {/* ----------------- */}
-                        <AppRoutes />
-                        {/* add provider here */}
-                      </PostCommentsProvider>
-                    </PostsProvider>
-                  </TasksProvider>
-                </StatisticProvider>
-              </RoomsProvider>
-              {/* ----------------- */}
-            </Header>
-          </UserProvider>
-        </AuthProvider>
+        <ConfirmDialogProvider>
+          <AuthProvider>
+            <UserProvider>
+              <Header>
+                {/* add provider here */}
+                <RoomsProvider>
+                  <StatisticProvider>
+                    <TasksProvider>
+                      <PostsProvider>
+                        <PostCommentsProvider>
+                          {/* ----------------- */}
+                          <AppRoutes />
+                          {/* add provider here */}
+                        </PostCommentsProvider>
+                      </PostsProvider>
+                    </TasksProvider>
+                  </StatisticProvider>
+                </RoomsProvider>
+                {/* ----------------- */}
+              </Header>
+            </UserProvider>
+          </AuthProvider>
+        </ConfirmDialogProvider>
       </HashRouter>
     </AppSnackbarProvider>
 );
