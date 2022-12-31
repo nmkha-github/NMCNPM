@@ -17,7 +17,7 @@ const FirebaseConfig = {
   storageBucket: "nmcnpm-d177c.appspot.com",
   messagingSenderid: "658397747139",
   appId: "1:658397747139:web:38ba98009508d364b0cf76",
-  measurementId: "G-FGC4SP6FC4"
+  measurementId: "G-FGC4SP6FC4",
 }
 /*
 //Backup firebase
