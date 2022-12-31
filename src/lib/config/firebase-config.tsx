@@ -19,17 +19,17 @@ const FirebaseConfig = {
   appId: "1:658397747139:web:38ba98009508d364b0cf76",
   measurementId: "g-fgc4sp6fc4"
 }
-
+/*
 //Backup firebase
-// const FirebaseConfig = {
-//   apiKey: "AIzaSyDv-o8TSczjA8RiXCpNbuOKS9xgiSKeR9w",
-//   authDomain: "nmcnpm-backup.firebaseapp.com",
-//   projectId: "nmcnpm-backup",
-//   storageBucket: "nmcnpm-backup.appspot.com",
-//   messagingSenderId: "904397447943",
-//   appId: "1:904397447943:web:774d81784b3d4b4c0bdba2",
-//   measurementId: "G-05YQ0V4WBP",
-// };
+const FirebaseConfig = {
+  apiKey: "AIzaSyDv-o8TSczjA8RiXCpNbuOKS9xgiSKeR9w",
+  authDomain: "nmcnpm-backup.firebaseapp.com",
+  projectId: "nmcnpm-backup",
+  storageBucket: "nmcnpm-backup.appspot.com",
+  messagingSenderId: "904397447943",
+  appId: "1:904397447943:web:774d81784b3d4b4c0bdba2",
+  measurementId: "G-05YQ0V4WBP",
+};*/
 
 const app = initializeApp(FirebaseConfig);
 export const db = getFirestore(app);

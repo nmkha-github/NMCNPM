@@ -16,8 +16,7 @@ import StatisticPage from "./pages/RoomPage/[roomId]Page/StatisticPage/Statistic
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* <Route path="login" element={<LoginPage />} /> */}
-      <Route path="login" element={<EmptyPage />} />
+      <Route path="login" element={<LoginPage />} />
       <Route path="register" element={<RegisterPage />} />
       <Route path="forgot-password" element={<ForgotPasswordPage />} />
 
@@ -33,7 +32,7 @@ const AppRoutes = () => {
       <Route path="room/:roomId/member/:memberId" element={<MemberPage />} />
       <Route path="room/:roomId/work" element={<WorkPage />} />
       <Route path="room/:roomId/setting-room" element={<SettingRoomPage />} />
-      
+      <Route path="*" element={<EmptyPage />} />
     </Routes>
   );
 };
