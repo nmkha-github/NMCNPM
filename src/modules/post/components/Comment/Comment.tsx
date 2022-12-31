@@ -17,8 +17,6 @@ import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
-import { usePostComments } from "../../provider/PostCommentsProvider";
-import { async } from "@firebase/util";
 import CommentData from "../../../../lib/interface/comment-data";
 import UserData from "../../../user/interface/user-data";
 import UserHelper from "../../../user/util/user-helper";
@@ -26,6 +24,7 @@ import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import CommentMenu from "./CommentMenu";
+import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
 
 const Comment = ({
   comment,

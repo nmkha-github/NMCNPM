@@ -31,7 +31,7 @@ interface PostCommentsContextProps {
   createPostComment: (payload: {
     room_id: string;
     post_id: string;
-    new_post: { content: string; image?: string; attach_files?: FileData[] };
+    new_comment: { content: string; image?: string; attach_files?: FileData[] };
   }) => Promise<void>;
   creatingPostComment: boolean;
 }
@@ -95,11 +95,15 @@ const PostCommentsProvider = ({
     async ({
       room_id,
       post_id,
-      new_post,
+      new_comment,
     }: {
       room_id: string;
       post_id: string;
-      new_post: { content: string; image?: string; attach_files?: FileData[] };
+      new_comment: {
+        content: string;
+        image?: string;
+        attach_files?: FileData[];
+      };
     }) => {
       try {
         setCreatingPostComment(true);
@@ -111,7 +115,7 @@ const PostCommentsProvider = ({
             last_edit: time,
             created_at: time,
             creator_id: user?.id,
-            ...new_post,
+            ...new_comment,
           }
         );
 
@@ -136,7 +140,7 @@ const PostCommentsProvider = ({
               last_edit: time,
               created_at: time,
               creator_id: user?.id || "",
-              ...new_post,
+              ...new_comment,
             },
             ...postComments[post_id],
           ],

@@ -11,7 +11,7 @@ import { usePosts } from "../../../../lib/provider/PostsProvider";
 import { useState } from "react";
 import CommentData from "../../../../lib/interface/comment-data";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { usePostComments } from "../../provider/PostCommentsProvider";
+import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
 
 const CommentMenu = ({
   comment,
@@ -32,7 +32,7 @@ const CommentMenu = ({
     setIsHovering(false);
   };
   const { roomId } = useParams();
-  const { deleteComment, deletingComment } = usePostComments();
+  const {} = usePostComments();
   return (
     <Box
       onMouseOver={handleMouseOver}
@@ -63,17 +63,18 @@ const CommentMenu = ({
             }}
             anchorOrigin={{ vertical: "center", horizontal: "center" }}
           >
-            {deletingComment ? (
+            {/* {deletingComment ? ( */}
+            {false ? (
               <CircularProgress />
             ) : (
               <MenuItem
                 style={{ display: "flex", padding: 8 }}
                 onClick={async () => {
-                  await deleteComment({
-                    room_id: roomId ? roomId : "",
-                    post_id: post.id,
-                    id: comment.id,
-                  });
+                  // await deleteComment({
+                  //   room_id: roomId ? roomId : "",
+                  //   post_id: post.id,
+                  //   id: comment.id,
+                  // });
                   setAnchorEl(null);
                 }}
               >

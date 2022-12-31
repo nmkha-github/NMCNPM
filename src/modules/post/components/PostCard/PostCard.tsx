@@ -26,10 +26,9 @@ import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
 import PostCardMenu from "./PostCardMenu";
 import Comment from "../Comment/Comment";
-import { usePostComments } from "../../provider/PostCommentsProvider";
 import CommentIcon from "@mui/icons-material/Comment";
 import CreateComment from "../CreateComment/CreateComment";
-import { async } from "@firebase/util";
+import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
 interface PostCardProps {
   post: PostData;
 }
@@ -38,7 +37,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const { showSnackbarError } = useAppSnackbar();
   const [showing, setShowing] = useState(false);
   const { roomId } = useParams();
-  const { getPostComments, PostComments, loadingPostComments } =
+  const { getPostComments, postComments, loadingPostComments } =
     usePostComments();
   const getUserData = async (id?: string) => {
     try {
@@ -65,11 +64,11 @@ const PostCard = ({ post }: PostCardProps) => {
     <Box
       style={{
         padding: 8,
-        background:"white",
+        background: "white",
         border: "1px solid #D8DCF0",
         borderRadius: 8,
         display: "flex",
-        marginBottom:28,
+        marginBottom: 28,
         maxWidth: 620,
         flexDirection: "column",
         justifyContent: "flex-end",
@@ -143,7 +142,7 @@ const PostCard = ({ post }: PostCardProps) => {
           style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
         >
           <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
-          {PostComments.length + " bình luận"}
+          {postComments.length + " bình luận"}
         </Typography>
         <Typography
           sx={{
@@ -162,12 +161,13 @@ const PostCard = ({ post }: PostCardProps) => {
         </Typography>
       </Box>
       <CreateComment post={post} />
-      {(loadingPostComments||!showing) ? (
+      {loadingPostComments || !showing ? (
         <></>
       ) : (
-        PostComments.map((comment) => {
-          return <Comment comment={comment} post={post} />;
-        })
+        <></>
+        // postComments.map((comment) => {
+        //   return <Comment comment={comment} post={post} />;
+        // })
       )}
     </Box>
   );
