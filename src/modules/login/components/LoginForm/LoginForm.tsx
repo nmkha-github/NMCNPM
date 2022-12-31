@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
 import InputRow from "../InputRow/InputRow";
+import { Typography } from "@mui/material";
 import EmailHelper from "../../../../lib/util/email-helper";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,7 @@ const LoginForm = () => {
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
-        <div className="bg-white lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+        <div className="lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
           <div className="mt-8 space-y-6">
             <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
               Đăng nhập vào tài khoản
@@ -61,34 +62,40 @@ const LoginForm = () => {
                   ghi nhớ đăng nhập
                 </label>
               </div>
-            </div> */}
-            <div>
-              <LoadingButton
-                loading={logging}
-                id="submitButton"
-                className="flex w-full justify-center border border-transparent px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                onClick={async () => {
-                  if (email === "") {
-                    setEmailError("Email can't be empty.");
-                  } else if (!EmailHelper.checkEmailValidate(email)) {
-                    setEmailError("Invalid email format");
-                  } else {
-                    setEmailError("");
-                  }
-                  if (password === "") {
-                    setPasswordError("Password can't be empty.");
-                  } else {
-                    setPasswordError("");
-                  }
+            </div>  */}
+            <LoadingButton
+              fullWidth
+              variant="contained"
+              color="primary"
+              loading={logging}
+              onClick={async () => {
+                let hasError = false;
+                if (email === "") {
+                  setEmailError("Email can't be empty.");
+                  hasError = true;
+                } else if (!EmailHelper.checkEmailValidate(email)) {
+                  setEmailError("Invalid email format");
+                  hasError = true;
+                } else {
+                  setEmailError("");
+                }
+                if (password === "") {
+                  setPasswordError("Password can't be empty.");
+                  hasError = true;
+                } else {
+                  setPasswordError("");
+                }
+                if (hasError) return;
 
-                  await logIn({ email: email, password: password });
+                await logIn({ email: email, password: password });
 
-                  navigate("/home");
-                }}
-              >
+                navigate("/home");
+              }}
+            >
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
                 Đăng nhập
-              </LoadingButton>
-            </div>
+              </Typography>
+            </LoadingButton>
           </div>
           <div
             id="seperator_login_register"
@@ -97,15 +104,16 @@ const LoginForm = () => {
             <span className="mx-3">or</span>
           </div>
           <div className="flex items-center justify-center">
-            <div
+            <a
               onClick={() => {
                 navigate("/register");
               }}
               id="createNewEmailButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
+              style={{ cursor: "pointer" }}
             >
               Tạo tài khoản mới
-            </div>
+            </a>
           </div>
         </div>
       </div>

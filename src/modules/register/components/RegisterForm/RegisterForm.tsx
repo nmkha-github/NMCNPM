@@ -7,6 +7,7 @@ import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
+import { Typography } from "@mui/material";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -43,7 +44,7 @@ const RegisterForm = () => {
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
-        <div className="bg-white lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
+        <div className="lg:shadow-2xl rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
           <div className="mt-8 space-y-6">
             <h2 className="mt-6 text-left text-3xl font-medium tracking-tight text-gray-900">
               Đăng ký
@@ -126,7 +127,9 @@ const RegisterForm = () => {
                 }
               }}
             >
-              Đăng ký
+              <Typography variant="h6" style={{ fontWeight: 600 }}>
+                Đăng ký
+              </Typography>
             </LoadingButton>
           </div>
           <div
@@ -140,6 +143,7 @@ const RegisterForm = () => {
               onClick={() => navigate("/login")}
               id="loginButton"
               className="btn flex w-4/5 justify-center rounded-3xl border-4 border-solid py-2 px-4 text-xl font-bold font-normal text-center"
+              style={{ cursor: "pointer" }}
             >
               Quay lại đăng nhập
             </div>
