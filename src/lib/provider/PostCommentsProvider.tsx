@@ -6,7 +6,14 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useParams } from "react-router-dom";
 import { db } from "../config/firebase-config";
 import useAppSnackbar from "../hook/useAppSnackBar";
 import CommentData from "../interface/comment-data";
@@ -48,17 +55,23 @@ const PostCommentsProvider = ({
   const [postComments, setPostComments] = useState<{
     [postId: string]: CommentData[];
   }>({});
+  const [isCommentsGetted, setIsCommentsGetted] = useState<{
+    [postId: string]: boolean;
+  }>({});
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
   const { user } = useUser();
+  const { roomId } = useParams();
 
   const getPostComments = useCallback(
     async ({ room_id, post_id }: { room_id: string; post_id: string }) => {
+      if (isCommentsGetted[post_id]) return;
       try {
         setLoadingPostComments(true);
 
+        setIsCommentsGetted({ ...isCommentsGetted, [post_id]: true });
         onSnapshot(
           collection(db, "room", room_id, "post", post_id, "comment"),
           (postCommentDocs) => {
@@ -75,7 +88,7 @@ const PostCommentsProvider = ({
         showSnackbarError(error);
       }
     },
-    [postComments, showSnackbarError]
+    [isCommentsGetted, postComments, showSnackbarError]
   );
 
   const createPostComment = useCallback(
@@ -136,6 +149,10 @@ const PostCommentsProvider = ({
     },
     [postComments, showSnackbarError, user?.id]
   );
+
+  useEffect(() => {
+    setIsCommentsGetted({});
+  }, [roomId]);
 
   return (
     <PostCommentsContext.Provider
