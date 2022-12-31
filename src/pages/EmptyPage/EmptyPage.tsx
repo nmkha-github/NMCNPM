@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import {
@@ -27,8 +28,8 @@ const EmptyPage = () => {
         alignItems: "center",
         width: "100%",
       }}>
-        <Button variant="contained" onClick={() => navigate("/roompage")}>
-          Return RoomPage
+        <Button variant="contained" onClick={() => navigate("/room")}>
+          Trở về Phòng ban
         </Button>
       </Box>
     </Box>;
