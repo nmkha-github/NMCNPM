@@ -12,12 +12,17 @@ import AssignMemberBox from "../../modules/task/components/AssignMemberBox/Assig
 import MemberData from "../../modules/statistic/interface/member-data";
 import UserData from "../../modules/user/interface/user-data";
 import BarChart from "../../lib/components/BarChart/BarChart";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const dataName = false;
 
-  const { logOut } = useAuth();
-  const { rooms, getRooms } = useRooms();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/room");
+  }, []);
+
   return (
     <div>
       <BarChart
