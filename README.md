@@ -110,7 +110,7 @@ Config in vercel deploy by branch main in this repository when merge branch or a
 - Create a project in vercel
 - Link project with repository in github
 - Config deploy by branch main
-## Authors
+## Contributors
 - [18120447 - Lê Hoàng Long](https://github.com/long060200)
 - [20120391 - Phan Dương Linh](https://github.com/LTCuberik)
 - [20120497 - Nguyễn Quang Huy](https://github.com/QuangHuy54)
