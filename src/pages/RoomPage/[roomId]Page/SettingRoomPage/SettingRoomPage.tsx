@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import "./SettingRoomPage.css";
 import { Container, Switch } from "@mui/material";
@@ -8,12 +8,17 @@ import AddIcon from "@mui/icons-material/Add";
 import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import RoomData from "../../../../modules/room/interface/room-data";
+import { BiTrash } from "react-icons/bi";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { CircularProgress } from "@mui/material";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
 import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
+import { useUser } from "../../../../lib/provider/UserProvider";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 const SettingRoomPage = () => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const navigate = useNavigate();
   const [roomEditData, setRoomEditData] = useState<RoomData>({
     id: "",
@@ -29,6 +34,10 @@ const SettingRoomPage = () => {
   });
   const { roomId } = useParams();
   const { showSnackbarError } = useAppSnackbar();
+  const { user } = useUser();
+  const { deleteRoom, deletingRoom } = useRooms();
+  const { showConfirmDialog } = useConfirmDialog();
+
   const {
     currentRoom,
     getCurrentRoom,
@@ -204,6 +213,7 @@ const SettingRoomPage = () => {
             Giúp dễ dàng quản lý nhân viên tốt hơn, tránh nhân viên tự ý thoát
             khỏi phòng
           </h5>
+
           <UploadFile
             onSuccess={(file) => {
               setRoomEditData({
@@ -223,36 +233,89 @@ const SettingRoomPage = () => {
           </UploadFile>
           <Box
             className="df"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "12px",
+            }}
           >
-            <Button
-              variant="outlined"
-              style={{ margin: "0.625rem" }}
-              onClick={() => {
-                setRoomEditData({ ...currentRoom });
-              }}
-            >
-              Hủy thay đổi
-            </Button>
-            <LoadingButton
-              variant="contained"
-              color="primary"
-              disabled={updatingRoom}
-              loading={updatingRoom}
-              style={{ margin: "0.625rem" }}
-              onClick={async () => {
-                try {
-                  await updateRoom({
-                    id: roomId || "",
-                    updateData: roomEditData,
-                  });
-                } catch (error) {
-                  showSnackbarError(error);
-                }
-              }}
-            >
-              Lưu lại
-            </LoadingButton>
+            <Box>
+              {deletingRoom && <CircularProgress />}
+
+              {currentRoom.manager_id === user?.id && !deletingRoom && (
+                <Button
+                  style={{
+                    display: "flex",
+                    padding: "12px 16px 12px 16px",
+                    marginBottom: 12,
+                    textTransform: "none",
+                  }}
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    setAnchorEl(null);
+                    showConfirmDialog({
+                      title: (
+                        <Typography
+                          variant="h6"
+                          style={{ fontWeight: 600, color: "#FFFFFF" }}
+                        >
+                          Xóa phòng {currentRoom.name}
+                        </Typography>
+                      ),
+                      content: (
+                        <Typography>
+                          Bạn có chắc xóa <strong>{currentRoom.name}</strong>{" "}
+                          khỏi danh sách phòng ban của bạn?
+                        </Typography>
+                      ),
+                      onConfirm: async () =>
+                        await deleteRoom({ id: currentRoom.id }),
+                    });
+                  }}
+                >
+                  <BiTrash fontSize="large" />{" "}
+                  <Typography variant="inherit" noWrap width="12ch">
+                    Xóa phòng
+                  </Typography>
+                </Button>
+              )}
+            </Box>
+
+            <Box>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setRoomEditData({ ...currentRoom });
+                }}
+                style={{
+                  textTransform: "none",
+                  padding: "12px 16px 12px 16px",
+                  marginRight: 12,
+                }}
+              >
+                Hủy thay đổi
+              </Button>
+
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                disabled={updatingRoom}
+                loading={updatingRoom}
+                onClick={async () => {
+                  try {
+                    await updateRoom({
+                      id: roomId || "",
+                      updateData: roomEditData,
+                    });
+                  } catch (error) {
+                    showSnackbarError(error);
+                  }
+                }}
+              >
+                Lưu lại
+              </LoadingButton>
+            </Box>
           </Box>
         </Container>
       )}
