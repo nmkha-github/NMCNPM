@@ -32,7 +32,8 @@ const CommentMenu = ({
     setIsHovering(false);
   };
   const { roomId } = useParams();
-  const {} = usePostComments();
+  const { deletePostComment, deletingPostComment } = usePostComments();
+
   return (
     <Box
       onMouseOver={handleMouseOver}
@@ -68,19 +69,23 @@ const CommentMenu = ({
               <CircularProgress />
             ) : (
               <MenuItem
+                disabled={deletingPostComment}
                 style={{ display: "flex", padding: 8 }}
                 onClick={async () => {
-                  // await deleteComment({
-                  //   room_id: roomId ? roomId : "",
-                  //   post_id: post.id,
-                  //   id: comment.id,
-                  // });
+                  await deletePostComment({
+                    room_id: roomId ? roomId : "",
+                    post_id: post.id,
+                    id: comment.id,
+                  });
                   setAnchorEl(null);
                 }}
               >
                 <ListItemIcon>
-                  {" "}
-                  <BiTrash fontSize="large" />{" "}
+                  {deletingPostComment ? (
+                    <CircularProgress />
+                  ) : (
+                    <BiTrash fontSize="large" />
+                  )}
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap width="18ch">
                   Xóa bình luận

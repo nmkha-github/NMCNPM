@@ -8,23 +8,16 @@ import {
   InputBase,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
-import TaskData from "../../../task/interface/task-data";
 import UserHelper from "../../../user/util/user-helper";
 import UserData from "../../../user/interface/user-data";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
-import { usePosts } from "../../../../lib/provider/PostsProvider";
-import { useRooms } from "../../../../lib/provider/RoomsProvider";
-import { useUser } from "../../../../lib/provider/UserProvider";
-import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
-import UploadFile from "../../../../lib/components/UploadFile/UploadFile";
-import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
-import ClearIcon from "@mui/icons-material/Clear";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
-import PostCardMenu from "./PostCardMenu";
+import PostCardMenu from "../PostCardMenu/PostCardMenu";
 import Comment from "../Comment/Comment";
 import CommentIcon from "@mui/icons-material/Comment";
 import CreateComment from "../CreateComment/CreateComment";
@@ -34,11 +27,14 @@ interface PostCardProps {
 }
 const PostCard = ({ post }: PostCardProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
+  const [showComments, setShowComments] = useState(false);
+
   const { showSnackbarError } = useAppSnackbar();
-  const [showing, setShowing] = useState(false);
   const { roomId } = useParams();
-  const { postComments, loadingPostComments } =
+
+  const { getPostComments, postComments, loadingPostComments } =
     usePostComments();
+
   const getUserData = async (id?: string) => {
     try {
       setUser(await UserHelper.getUserById(id || ""));
@@ -49,6 +45,7 @@ const PostCard = ({ post }: PostCardProps) => {
 
   useEffect(() => {
     getUserData(post.creator_id);
+    getPostComments({ room_id: roomId || "", post_id: post.id });
   }, [post]);
 
   if (!roomId) return null;
@@ -61,8 +58,8 @@ const PostCard = ({ post }: PostCardProps) => {
         border: "1px solid #D8DCF0",
         borderRadius: 8,
         display: "flex",
-        marginBottom: 28,
-        maxWidth: 620,
+        margin: "8px 0px",
+        minWidth: 620,
         flexDirection: "column",
         justifyContent: "flex-end",
       }}
@@ -81,7 +78,12 @@ const PostCard = ({ post }: PostCardProps) => {
           <Avatar
             alt="avatar"
             src={user ? user.avatar : USER_AVATAR_DEFAULT}
-            style={{ marginRight: 8 }}
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 16,
+              border: "0.5px solid blue",
+            }}
           />
           <Box style={{ display: "flex", flexDirection: "column" }}>
             <Typography style={{ fontWeight: 600 }}>
@@ -105,11 +107,13 @@ const PostCard = ({ post }: PostCardProps) => {
       >
         {post.content}
       </Typography>
+
       {post.image === "" ? (
         <></>
       ) : (
         <Box style={{ padding: 16, position: "relative" }}>
           <img
+            alt={"post"}
             src={post.image}
             style={{
               marginTop: 8,
@@ -135,7 +139,8 @@ const PostCard = ({ post }: PostCardProps) => {
           style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
         >
           <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
-          {postComments[post.id].length + " bình luận"}
+          {(postComments[post.id] ? postComments[post.id].length : 0) +
+            " bình luận"}
         </Typography>
         <Typography
           sx={{
@@ -147,20 +152,20 @@ const PostCard = ({ post }: PostCardProps) => {
             },
           }}
           onClick={() => {
-            setShowing(!showing);
+            setShowComments(!showComments);
           }}
         >
-          {showing ? "Ẩn bình luận" : "Hiện bình luận"}
+          {showComments ? "Ẩn bình luận" : "Hiện bình luận"}
         </Typography>
       </Box>
       <CreateComment post={post} />
-      {loadingPostComments || !showing ? (
-        <></>
-      ) : 
+      {showComments && loadingPostComments && <CircularProgress />}
+      {showComments &&
+        !loadingPostComments &&
+        postComments[post.id] &&
         postComments[post.id].map((comment) => {
           return <Comment comment={comment} post={post} />;
-        })
-      }
+        })}
     </Box>
   );
 };

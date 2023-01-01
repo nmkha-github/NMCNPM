@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, IconButton, Avatar, TextField, Button } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Avatar,
+  TextField,
+  Button,
+  BoxProps,
+} from "@mui/material";
 import { usePosts } from "../../../../lib/provider/PostsProvider";
 import { useUser } from "../../../../lib/provider/UserProvider";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
@@ -8,7 +15,7 @@ import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
 
-const CreatePostCard = () => {
+const CreatePostCard = ({ ...boxProps }: BoxProps) => {
   const emptyPost = {
     content: "",
     image: "",
@@ -24,16 +31,15 @@ const CreatePostCard = () => {
   return (
     <Box
       style={{
-        maxWidth: 620,
-        background:"white",
+        minWidth: 620,
+        background: "white",
         padding: 8,
         border: "1px solid #D8DCF0",
         borderRadius: 8,
-        marginTop: 32,
-        marginBottom:28,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",
+        ...boxProps.style,
       }}
     >
       <Box
@@ -73,6 +79,7 @@ const CreatePostCard = () => {
       ) : (
         <Box style={{ padding: 16, position: "relative" }}>
           <img
+            alt={"ảnh"}
             src={currentPost.image}
             style={{
               marginTop: 8,

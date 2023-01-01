@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   Timestamp,
@@ -34,6 +35,13 @@ interface PostCommentsContextProps {
     new_comment: { content: string; image?: string; attach_files?: FileData[] };
   }) => Promise<void>;
   creatingPostComment: boolean;
+
+  deletePostComment: (payload: {
+    room_id: string;
+    post_id: string;
+    id: string;
+  }) => Promise<void>;
+  deletingPostComment: boolean;
 }
 
 const PostCommentsContext = createContext<PostCommentsContextProps>({
@@ -43,6 +51,9 @@ const PostCommentsContext = createContext<PostCommentsContextProps>({
 
   createPostComment: async () => {},
   creatingPostComment: false,
+
+  deletePostComment: async () => {},
+  deletingPostComment: false,
 });
 
 interface PostCommentsContextProviderProps {
@@ -60,6 +71,7 @@ const PostCommentsProvider = ({
   }>({});
   const [loadingPostComments, setLoadingPostComments] = useState(false);
   const [creatingPostComment, setCreatingPostComment] = useState(false);
+  const [deletingPostComment, setDeletingPostComment] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
   const { user } = useUser();
@@ -154,6 +166,38 @@ const PostCommentsProvider = ({
     [postComments, showSnackbarError, user?.id]
   );
 
+  const deletePostComment = useCallback(
+    async ({
+      id,
+      room_id,
+      post_id,
+    }: {
+      id: string;
+      room_id: string;
+      post_id: string;
+    }) => {
+      try {
+        setDeletingPostComment(true);
+
+        await deleteDoc(
+          doc(db, "room", room_id, "post", post_id, "comment", id)
+        );
+
+        setPostComments({
+          ...postComments,
+          [post_id]: postComments[post_id].filter(
+            (comment) => comment.id !== id
+          ),
+        });
+      } catch (error) {
+        showSnackbarError(error);
+      } finally {
+        setDeletingPostComment(false);
+      }
+    },
+    [postComments, showSnackbarError]
+  );
+
   useEffect(() => {
     setIsCommentsGetted({});
   }, [roomId]);
@@ -168,6 +212,9 @@ const PostCommentsProvider = ({
 
         createPostComment,
         creatingPostComment,
+
+        deletePostComment,
+        deletingPostComment,
       }}
     >
       {children}

@@ -17,11 +17,13 @@ import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useParams } from "react-router-dom";
 import PostData from "../../interface/post-data";
-import { DialogProps, DialogContent } from "@mui/material";
+import { DialogProps } from "@mui/material";
+
 interface EditPostCardProps {
   post?: PostData;
 }
-const EditPostCard = ({
+
+const EditPostDialog = ({
   post,
   ...dialogProps
 }: EditPostCardProps & DialogProps) => {
@@ -187,4 +189,4 @@ const EditPostCard = ({
   );
 };
 
-export default EditPostCard;
+export default EditPostDialog;

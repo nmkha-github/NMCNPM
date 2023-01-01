@@ -16,9 +16,16 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import useAppSnackbar from "../hook/useAppSnackBar";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../config/firebase-config";
 import USER_AVATAR_DEFAULT from "../../modules/user/contants/user-avatar-default";
+import UserData from "../../modules/user/interface/user-data";
 
 interface AuthContextProps {
   checkingAuth: boolean;
@@ -41,6 +48,8 @@ interface AuthContextProps {
   logging: boolean;
   logOut: () => Promise<void>;
   loggingOut: boolean;
+
+  userInfoRegister?: UserData;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -52,6 +61,8 @@ const AuthContext = createContext<AuthContextProps>({
   logging: false,
   logOut: async () => {},
   loggingOut: false,
+
+  userInfoRegister: undefined,
 });
 
 interface AuthContextProviderProps {
@@ -63,6 +74,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [logging, setLogging] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [userInfoRegister, setUserInfoRegister] = useState<UserData>();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -81,17 +93,26 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
           email,
           password
         );
+        const time = Timestamp.now();
 
         const response = await addDoc(collection(db, "user"), {
           name: email,
           email: email,
           avatar: USER_AVATAR_DEFAULT,
-          created_at: new Date(),
+          created_at: time,
         });
 
         await updateDoc(doc(db, "user", response.id), {
           id: response.id,
           auth_id: authReponse.user.uid,
+        });
+        setUserInfoRegister({
+          id: response.id,
+          auth_id: authReponse.user.uid,
+          name: email,
+          email: email,
+          avatar: USER_AVATAR_DEFAULT,
+          created_at: time,
         });
       } catch (error) {
         if (String(error).includes("email-already-in-use")) {
@@ -145,7 +166,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
       if (user) {
         setCheckingAuth(false);
         if (!needAuth) {
-          navigate("/home");
+          navigate("/room");
         }
       } else {
         if (needAuth) {
@@ -177,6 +198,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
         logOut,
         loggingOut,
+
+        userInfoRegister,
       }}
     >
       {children}

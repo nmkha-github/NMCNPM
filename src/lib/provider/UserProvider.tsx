@@ -53,7 +53,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
   const [editingUser, setEditingUser] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
-  const { userInfo } = useAuth();
+  const { userInfo, userInfoRegister } = useAuth();
   const location = useLocation();
   const needAuth = !["/login", "/register", "/forgot-password"].includes(
     location.pathname
@@ -75,7 +75,7 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
     } finally {
       setLoadingUser(false);
     }
-  }, [showSnackbarError, userInfo]);
+  }, [showSnackbarError, userInfo, userInfoRegister]);
 
   const editUser = useCallback(
     async ({
@@ -112,6 +112,12 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
       setUser(undefined);
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfoRegister) {
+      setUser({ ...userInfoRegister });
+    }
+  }, [userInfoRegister]);
 
   return (
     <UserContext.Provider
