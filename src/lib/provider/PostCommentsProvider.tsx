@@ -23,6 +23,7 @@ import { useUser } from "./UserProvider";
 
 interface PostCommentsContextProps {
   postComments: { [postId: string]: CommentData[] };
+  setPostComments: () => {};
   getPostComments: (payload: {
     room_id: string;
     post_id: string;
@@ -80,6 +81,7 @@ const PostCommentsProvider = ({
   const getPostComments = useCallback(
     async ({ room_id, post_id }: { room_id: string; post_id: string }) => {
       if (isCommentsGetted[post_id]) return;
+      console.log(isCommentsGetted);
       try {
         setLoadingPostComments(true);
 
@@ -154,7 +156,7 @@ const PostCommentsProvider = ({
               creator_id: user?.id || "",
               ...new_comment,
             },
-            ...postComments[post_id],
+            ...(postComments[post_id] ? postComments[post_id] : []),
           ],
         });
       } catch (error) {

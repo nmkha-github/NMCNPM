@@ -18,6 +18,7 @@ import UserHelper from "../../../user/util/user-helper";
 import { BiArrowFromLeft, BiCrown, BiTrashAlt } from "react-icons/bi";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 interface MemberTableRowProps {
   memberData: MemberData & UserData;
@@ -26,6 +27,7 @@ interface MemberTableRowProps {
 const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
   const [member, setMember] = useState<MemberData & UserData>();
 
+  const { showConfirmDialog } = useConfirmDialog();
   const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
   let navigate = useNavigate();
@@ -77,10 +79,24 @@ const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
       <TableCell style={{ padding: "4px 8px" }}>
         {currentRoom.manager_id !== member?.id ? (
           <IconButton
-            onClick={async () =>
-              await removeMember({
-                room_id: roomId || "",
-                member_id: member?.id || "",
+            onClick={() =>
+              showConfirmDialog({
+                title: (
+                  <Typography variant="h6">
+                    "Xóa thành viên khỏi phòng ban"
+                  </Typography>
+                ),
+                content: (
+                  <Typography>
+                    Bạn có chắc xóa <strong>{member?.name}</strong> ra khỏi
+                    phòng ban?
+                  </Typography>
+                ),
+                onConfirm: async () =>
+                  await removeMember({
+                    room_id: roomId || "",
+                    member_id: member?.id || "",
+                  }),
               })
             }
           >

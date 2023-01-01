@@ -11,12 +11,14 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import copyTextToClipboard from "../../../../lib/util/copy-text-to-clipboard";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 const ITEM_HEIGHT = 48;
 
 const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { deleteRoom, deletingRoom } = useRooms();
+  const { showConfirmDialog } = useConfirmDialog();
   const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
   let navigate = useNavigate();
 
@@ -41,9 +43,11 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
         }}
         anchorOrigin={{ vertical: "center", horizontal: "center" }}
       >
-        <MenuItem id="joinRoomButton"
+        <MenuItem
+          id="joinRoomButton"
           style={{ display: "flex", padding: 8 }}
           onClick={() => {
+            setAnchorEl(null);
             navigate("/room/" + roomData.id + "/newsfeed");
           }}
         >
@@ -55,9 +59,11 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
           </Typography>
         </MenuItem>
 
-        <MenuItem id="editRoomButton"
+        <MenuItem
+          id="editRoomButton"
           style={{ display: "flex", padding: 8 }}
           onClick={() => {
+            setAnchorEl(null);
             navigate("/room/" + roomData.id + "/setting-room");
           }}
         >
@@ -69,13 +75,15 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
           </Typography>
         </MenuItem>
 
-        <MenuItem id="copyIDRoomButton"
+        <MenuItem
+          id="copyIDRoomButton"
           style={{ display: "flex", padding: 8 }}
-          onClick={async ()=> {
-            try{
+          onClick={async () => {
+            try {
               await copyTextToClipboard(roomData.id);
               showSnackbarSuccess("Copy mã phòng thành công");
-            } catch (error){
+              setAnchorEl(null);
+            } catch (error) {
               showSnackbarError(error);
             }
           }}
@@ -88,19 +96,31 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
           </Typography>
         </MenuItem>
 
-
         {deletingRoom ? (
           <CircularProgress />
         ) : (
-          <MenuItem id="deleteRoomButton"
+          <MenuItem
+            id="deleteRoomButton"
             style={{ display: "flex", padding: 8 }}
-            onClick={async () => {
-              await deleteRoom({ id: roomData.id });
+            onClick={() => {
               setAnchorEl(null);
+              showConfirmDialog({
+                title: (
+                  <Typography>
+                    Xóa phòng <strong>{roomData.name}</strong>
+                  </Typography>
+                ),
+                content: (
+                  <Typography>
+                    Bạn có chắc xóa <strong>{roomData.name}</strong> khỏi danh
+                    sách phòng ban của bạn?
+                  </Typography>
+                ),
+                onConfirm: async () => await deleteRoom({ id: roomData.id }),
+              });
             }}
           >
             <ListItemIcon>
-              {" "}
               <BiTrash fontSize="large" />{" "}
             </ListItemIcon>
             <Typography variant="inherit" noWrap width="12ch">

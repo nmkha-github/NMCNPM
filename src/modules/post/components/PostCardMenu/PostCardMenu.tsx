@@ -72,6 +72,7 @@ const PostCardMenu = ({ post }: { post: PostData }) => {
                     id: post.id,
                   });
                   setAnchorEl(null);
+                  setCurrentPost(undefined);
                 },
               })
             }

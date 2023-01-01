@@ -1,43 +1,35 @@
 import React from "react";
 import { Box, IconButton, Typography, ListItemIcon, Menu } from "@mui/material";
 import { MenuItem } from "@mui/material";
-import { BiEdit, BiTrash } from "react-icons/bi";
+import { BiTrash } from "react-icons/bi";
 import { CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useTasks } from "../../../../lib/provider/TasksProvider";
 import PostData from "../../interface/post-data";
-import { usePosts } from "../../../../lib/provider/PostsProvider";
 import { useState } from "react";
 import CommentData from "../../../../lib/interface/comment-data";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../../../lib/config/firebase-config";
 
-const CommentMenu = ({
+const PostCommentMenu = ({
   comment,
   post,
 }: {
   comment: CommentData;
   post: PostData;
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [deletingPostComment, setDeletingPostComment] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleMouseOver = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseOut = () => {
-    setIsHovering(false);
-  };
+  const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
-  const { deletePostComment, deletingPostComment } = usePostComments();
 
   return (
     <Box
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
+      onMouseOver={() => setIsHovering(true)}
+      onMouseOut={() => setIsHovering(false)}
       style={{ width: 36, height: 36 }}
     >
       {isHovering && (
@@ -58,7 +50,7 @@ const CommentMenu = ({
           </IconButton>
           <Menu
             anchorEl={anchorEl}
-            open={open}
+            open={!!anchorEl}
             onClose={() => {
               setAnchorEl(null);
             }}
@@ -72,12 +64,25 @@ const CommentMenu = ({
                 disabled={deletingPostComment}
                 style={{ display: "flex", padding: 8 }}
                 onClick={async () => {
-                  await deletePostComment({
-                    room_id: roomId ? roomId : "",
-                    post_id: post.id,
-                    id: comment.id,
-                  });
-                  setAnchorEl(null);
+                  try {
+                    setDeletingPostComment(true);
+                    await deleteDoc(
+                      doc(
+                        db,
+                        "room",
+                        roomId || "",
+                        "post",
+                        post.id,
+                        "comment",
+                        comment.id
+                      )
+                    );
+                    setAnchorEl(null);
+                  } catch (error) {
+                    showSnackbarError(error);
+                  } finally {
+                    setDeletingPostComment(false);
+                  }
                 }}
               >
                 <ListItemIcon>
@@ -99,4 +104,4 @@ const CommentMenu = ({
   );
 };
 
-export default CommentMenu;
+export default PostCommentMenu;

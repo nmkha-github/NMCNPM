@@ -26,11 +26,9 @@ root.render(
                   <StatisticProvider>
                     <TasksProvider>
                       <PostsProvider>
-                        <PostCommentsProvider>
-                          {/* ----------------- */}
-                          <AppRoutes />
-                          {/* add provider here */}
-                        </PostCommentsProvider>
+                        {/* ----------------- */}
+                        <AppRoutes />
+                        {/* add provider here */}
                       </PostsProvider>
                     </TasksProvider>
                   </StatisticProvider>

@@ -9,13 +9,7 @@ import ConfirmDialog from "../components/ConfirmDialog/ConfirmDialog";
 
 interface ConfirmDialogContextProps {
   showConfirmDialog: (payload: {
-    title:
-      | string
-      | (React.ReactElement<any, string | React.JSXElementConstructor<any>> &
-          string)
-      | (React.ReactFragment & string)
-      | (React.ReactPortal & string)
-      | undefined;
+    title: ReactNode;
     content: ReactNode;
     confirmText?: string;
     cancelText?: string;
@@ -35,13 +29,7 @@ const ConfirmDialogProvider = ({
   children,
 }: ConfirmDialogContextProviderProps) => {
   const [confirmDialogData, setConfirmDialogData] = useState<{
-    title:
-      | string
-      | (React.ReactElement<any, string | React.JSXElementConstructor<any>> &
-          string)
-      | (React.ReactFragment & string)
-      | (React.ReactPortal & string)
-      | undefined;
+    title: ReactNode;
     content: ReactNode;
     confirmText?: string;
     cancelText?: string;
@@ -56,13 +44,7 @@ const ConfirmDialogProvider = ({
       cancelText,
       onConfirm,
     }: {
-      title:
-        | string
-        | (React.ReactElement<any, string | React.JSXElementConstructor<any>> &
-            string)
-        | (React.ReactFragment & string)
-        | (React.ReactPortal & string)
-        | undefined;
+      title: ReactNode;
       content: ReactNode;
       confirmText?: string;
       cancelText?: string;

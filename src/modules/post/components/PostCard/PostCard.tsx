@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   BoxProps,
@@ -20,20 +20,22 @@ import PostData from "../../interface/post-data";
 import PostCardMenu from "../PostCardMenu/PostCardMenu";
 import Comment from "../Comment/Comment";
 import CommentIcon from "@mui/icons-material/Comment";
-import CreateComment from "../CreateComment/CreateComment";
-import { usePostComments } from "../../../../lib/provider/PostCommentsProvider";
+import CreatePostComment from "../CreatePostComment/CreatePostComment";
+import CommentData from "../../../../lib/interface/comment-data";
+import { collection, onSnapshot, Timestamp } from "firebase/firestore";
+import { db } from "../../../../lib/config/firebase-config";
+
 interface PostCardProps {
   post: PostData;
 }
+
 const PostCard = ({ post }: PostCardProps) => {
   const [user, setUser] = useState<undefined | UserData>(undefined);
+  const [postComments, setPostComments] = useState<CommentData[]>([]);
   const [showComments, setShowComments] = useState(false);
 
   const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
-
-  const { getPostComments, postComments, loadingPostComments } =
-    usePostComments();
 
   const getUserData = async (id?: string) => {
     try {
@@ -43,10 +45,31 @@ const PostCard = ({ post }: PostCardProps) => {
     }
   };
 
+  const getPostComments = useCallback(() => {
+    if (!roomId) return;
+
+    try {
+      onSnapshot(
+        collection(db, "room", roomId, "post", post.id, "comment"),
+        (postCommentDocs) => {
+          setPostComments(
+            postCommentDocs.docs.map(
+              (postCommentDoc) => postCommentDoc.data() as CommentData
+            )
+          );
+        }
+      );
+    } catch (error) {
+      showSnackbarError(error);
+    }
+  }, [post.id, roomId, showSnackbarError]);
+
   useEffect(() => {
     getUserData(post.creator_id);
-    getPostComments({ room_id: roomId || "", post_id: post.id });
-  }, [post]);
+    if (roomId) {
+      getPostComments();
+    }
+  }, [roomId, post]);
 
   if (!roomId) return null;
 
@@ -139,8 +162,7 @@ const PostCard = ({ post }: PostCardProps) => {
           style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
         >
           <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
-          {(postComments[post.id] ? postComments[post.id].length : 0) +
-            " bình luận"}
+          {postComments.length + " bình luận"}
         </Typography>
         <Typography
           sx={{
@@ -158,14 +180,35 @@ const PostCard = ({ post }: PostCardProps) => {
           {showComments ? "Ẩn bình luận" : "Hiện bình luận"}
         </Typography>
       </Box>
-      <CreateComment post={post} />
-      {showComments && loadingPostComments && <CircularProgress />}
+      <CreatePostComment post={post} />
+
       {showComments &&
-        !loadingPostComments &&
-        postComments[post.id] &&
-        postComments[post.id].map((comment) => {
-          return <Comment comment={comment} post={post} />;
-        })}
+        postComments
+          .sort((commentA, commentB) => {
+            const createdTimeA = commentA.created_at as Timestamp;
+            const createdTimeB = commentB.created_at as Timestamp;
+            if (createdTimeA.seconds < createdTimeB.seconds) {
+              return 1;
+            }
+            if (createdTimeA.seconds > createdTimeB.seconds) {
+              return -1;
+            }
+
+            if (createdTimeA.seconds === createdTimeB.seconds) {
+              if (createdTimeA.nanoseconds < createdTimeB.nanoseconds) {
+                return 1;
+              }
+
+              if (createdTimeA.nanoseconds > createdTimeB.nanoseconds) {
+                return -1;
+              }
+            }
+
+            return 0;
+          })
+          .map((comment) => {
+            return <Comment comment={comment} post={post} />;
+          })}
     </Box>
   );
 };

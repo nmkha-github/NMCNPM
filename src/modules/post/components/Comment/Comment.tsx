@@ -9,7 +9,7 @@ import UserHelper from "../../../user/util/user-helper";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
-import CommentMenu from "./CommentMenu";
+import CommentMenu from "../PostCommentMenu/PostCommentMenu";
 
 const Comment = ({
   comment,

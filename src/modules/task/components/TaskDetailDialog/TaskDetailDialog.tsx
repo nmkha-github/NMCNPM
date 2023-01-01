@@ -56,6 +56,7 @@ import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { Timestamp } from "firebase/firestore";
 import TaskHelper from "../../util/task-helper";
 import makeStyles from "@mui/styles/makeStyles";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 interface TaskDetailDialogProps {
   task?: TaskData;
@@ -134,6 +135,7 @@ const TaskDetailDialog = ({
 
   const classes = useStyle();
   const navigate = useNavigate();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const { currentRoom, loadingCurrentRoom } = useRooms();
   const { updateTask, deleteTask, setCurrentTask } = useTasks();
@@ -675,10 +677,26 @@ const TaskDetailDialog = ({
         style={{ marginTop: 4 }}
       >
         <MenuItem
-          onClick={async () => {
+          onClick={() => {
             setMoreActionsAnchorEl(null);
-            await deleteTask({ room_id: currentRoom.id, id: task?.id || "" });
-            dialogProps.onClose?.({}, "backdropClick");
+            showConfirmDialog({
+              title: (
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Xóa công việc
+                </Typography>
+              ),
+              content: (
+                <Typography>Bạn có chắc xóa công việc này không?</Typography>
+              ),
+              onConfirm: async () => {
+                await deleteTask({
+                  room_id: currentRoom.id,
+                  id: task?.id || "",
+                });
+                setCurrentTask(undefined);
+                dialogProps.onClose?.({}, "backdropClick");
+              },
+            });
           }}
           style={{ display: "block", padding: "8px 12px" }}
         >

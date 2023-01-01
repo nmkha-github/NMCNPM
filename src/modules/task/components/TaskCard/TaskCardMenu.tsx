@@ -7,11 +7,13 @@ import { useParams } from "react-router-dom";
 import TaskData from "../../interface/task-data";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 const TaskCardMenu = ({ taskData }: { taskData: TaskData }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  const { showConfirmDialog } = useConfirmDialog();
   const { roomId } = useParams();
   const { deleteTask, deletingTask, setCurrentTask } = useTasks();
 
@@ -58,13 +60,29 @@ const TaskCardMenu = ({ taskData }: { taskData: TaskData }) => {
         ) : (
           <MenuItem
             style={{ display: "flex", padding: 8 }}
-            onClick={async () => {
-              await deleteTask({
-                room_id: roomId ? roomId : "",
-                id: taskData.id,
-              });
+            onClick={() => {
               setAnchorEl(null);
-              setCurrentTask(undefined);
+              showConfirmDialog({
+                title: (
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    Xóa công việc
+                  </Typography>
+                ),
+                content: (
+                  <Typography>
+                    Bạn có chắc xóa việc <strong>{taskData.title}</strong>
+                    không?
+                  </Typography>
+                ),
+                onConfirm: async () => {
+                  await deleteTask({
+                    room_id: roomId ? roomId : "",
+                    id: taskData.id,
+                  });
+
+                  setCurrentTask(undefined);
+                },
+              });
             }}
           >
             <ListItemIcon>

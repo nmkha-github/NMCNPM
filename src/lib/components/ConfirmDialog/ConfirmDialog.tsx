@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogProps,
   DialogTitle,
   Typography,
 } from "@mui/material";
@@ -12,11 +11,14 @@ import { ReactNode, useState } from "react";
 import LoadingButton from "../LoadingButton/LoadingButton";
 
 interface ConfirmDialogProps {
+  open: boolean;
   title: ReactNode;
   content: ReactNode;
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => Promise<void>;
+  onClose?: () => void;
+  style?: React.CSSProperties;
 }
 
 const ConfirmDialog = ({
@@ -25,12 +27,14 @@ const ConfirmDialog = ({
   confirmText,
   cancelText,
   onConfirm,
-  ...dialogProps
-}: ConfirmDialogProps & DialogProps) => {
+  onClose,
+  open,
+  style,
+}: ConfirmDialogProps) => {
   const [loading, setLoading] = useState(false);
 
   return (
-    <Dialog {...dialogProps}>
+    <Dialog open={open} style={style} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{content}</DialogContent>
       <DialogActions>
@@ -45,7 +49,7 @@ const ConfirmDialog = ({
               color: "black",
               marginRight: 8,
             }}
-            onClick={() => dialogProps.onClose?.({}, "backdropClick")}
+            onClick={() => onClose?.()}
           >
             <Typography style={{ fontWeight: 600 }}>
               {cancelText || "Hủy"}
@@ -61,6 +65,7 @@ const ConfirmDialog = ({
               setLoading(true);
               await onConfirm?.();
               setLoading(false);
+              onClose?.();
             }}
           >
             <Typography style={{ fontWeight: 600 }}>
