@@ -104,14 +104,13 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
         )}
         {roomData.manager_id !== user?.id && !leavingRoom && (
           <MenuItem
-            id="deleteRoomButton"
             style={{ display: "flex", padding: 8 }}
             onClick={() => {
               setAnchorEl(null);
               showConfirmDialog({
                 title: (
                   <Typography variant="h6" style={{ fontWeight: 600 }}>
-                    Rời phòng <strong>{roomData.name}</strong>
+                    Rời phòng {roomData.name}
                   </Typography>
                 ),
                 content: (
@@ -120,7 +119,13 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
                     hay không?
                   </Typography>
                 ),
-                onConfirm: async () => await leaveRoom({ id: roomData.id }),
+                onConfirm: async () => {
+                  if (roomData.exit_locked) {
+                    showSnackbarError("Quản lí đã chặn tự rời khỏi phòng");
+                    return;
+                  }
+                  await leaveRoom({ id: roomData.id });
+                },
               });
             }}
           >
@@ -138,14 +143,13 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
         )}
         {roomData.manager_id === user?.id && !deletingRoom && (
           <MenuItem
-            id="deleteRoomButton"
             style={{ display: "flex", padding: 8 }}
             onClick={() => {
               setAnchorEl(null);
               showConfirmDialog({
                 title: (
-                  <Typography>
-                    Xóa phòng <strong>{roomData.name}</strong>
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    Xóa phòng {roomData.name}
                   </Typography>
                 ),
                 content: (

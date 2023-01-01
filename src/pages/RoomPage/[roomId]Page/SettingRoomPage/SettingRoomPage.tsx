@@ -119,7 +119,7 @@ const SettingRoomPage = () => {
             fullWidth
             value={roomEditData ? roomEditData.description : ""}
           />
-          <Box className="setting_row">
+          {/* <Box className="setting_row">
             <Box className="setting_name">
               <AddIcon fontSize="medium" />
               <Box className="setting_description">
@@ -135,9 +135,9 @@ const SettingRoomPage = () => {
                 });
               }}
             />
-          </Box>
+          </Box> */}
 
-          <Box className="setting_row">
+          {/* <Box className="setting_row">
             <Box className="setting_name">
               <AddIcon fontSize="medium" className="add_icon" />
               <Box className="setting_description">
@@ -158,7 +158,7 @@ const SettingRoomPage = () => {
           <h5>
             Tránh tình trạng những nhân viên không có quyền vào phòng tham gia
             vào mà không có sự cho phép của quản lý
-          </h5>
+          </h5> */}
 
           <Box className="setting_row">
             <Box className="setting_name">
