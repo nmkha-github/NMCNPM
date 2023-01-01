@@ -15,10 +15,11 @@ import convertTimeToString from "../../../../lib/util/convert-time-to-string";
 import { useEffect, useState } from "react";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import UserHelper from "../../../user/util/user-helper";
-import { BiArrowFromLeft, BiCrown, BiTrashAlt } from "react-icons/bi";
+import { BiArrowFromLeft, BiCrown, BiTrashAlt, BiUser } from "react-icons/bi";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
+import { useUser } from "../../../../lib/provider/UserProvider";
 
 interface MemberTableRowProps {
   memberData: MemberData & UserData;
@@ -34,6 +35,7 @@ const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
 
   const { removeMember } = useStatistic();
   const { currentRoom } = useRooms();
+  const { user } = useUser();
 
   useEffect(() => {
     const getMemberInfo = async () => {
@@ -77,36 +79,45 @@ const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
         <Typography>{member?.done}</Typography>
       </TableCell>
       <TableCell style={{ padding: "4px 8px" }}>
-        {currentRoom.manager_id !== member?.id ? (
-          <IconButton
-            onClick={() =>
-              showConfirmDialog({
-                title: (
-                  <Typography variant="h6">
-                    "Xóa thành viên khỏi phòng ban"
-                  </Typography>
-                ),
-                content: (
-                  <Typography>
-                    Bạn có chắc xóa <strong>{member?.name}</strong> ra khỏi
-                    phòng ban?
-                  </Typography>
-                ),
-                onConfirm: async () =>
-                  await removeMember({
-                    room_id: roomId || "",
-                    member_id: member?.id || "",
-                  }),
-              })
-            }
-          >
-            <BiTrashAlt />
-          </IconButton>
-        ) : (
-          <Tooltip title="Quản lí">
-            <BiCrown size={28} style={{ color: "orange" }} />
-          </Tooltip>
-        )}
+        {currentRoom.manager_id === user?.id &&
+          currentRoom.manager_id !== member?.id && (
+            <IconButton
+              onClick={() =>
+                showConfirmDialog({
+                  title: (
+                    <Typography variant="h6">
+                      "Xóa thành viên khỏi phòng ban"
+                    </Typography>
+                  ),
+                  content: (
+                    <Typography>
+                      Bạn có chắc xóa <strong>{member?.name}</strong> ra khỏi
+                      phòng ban?
+                    </Typography>
+                  ),
+                  onConfirm: async () =>
+                    await removeMember({
+                      room_id: roomId || "",
+                      member_id: member?.id || "",
+                    }),
+                })
+              }
+            >
+              <BiTrashAlt />
+            </IconButton>
+          )}
+        {currentRoom.manager_id !== user?.id &&
+          currentRoom.manager_id !== member?.id && (
+            <Tooltip title="Thành viên">
+              <BiUser size={28} />
+            </Tooltip>
+          )}
+        {currentRoom.manager_id === user?.id &&
+          currentRoom.manager_id === member?.id && (
+            <Tooltip title="Quản lí">
+              <BiCrown size={28} style={{ color: "orange" }} />
+            </Tooltip>
+          )}
       </TableCell>
       <TableCell>
         <IconButton

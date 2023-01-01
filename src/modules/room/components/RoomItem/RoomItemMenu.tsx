@@ -12,15 +12,18 @@ import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import copyTextToClipboard from "../../../../lib/util/copy-text-to-clipboard";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
+import { useUser } from "../../../../lib/provider/UserProvider";
 const ITEM_HEIGHT = 48;
 
 const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const { deleteRoom, deletingRoom } = useRooms();
+
   const { showConfirmDialog } = useConfirmDialog();
   const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
   let navigate = useNavigate();
+
+  const { deleteRoom, deletingRoom, leaveRoom, leavingRoom } = useRooms();
+  const { user } = useUser();
 
   return (
     <Box>
@@ -37,7 +40,7 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
       </IconButton>
       <Menu
         anchorEl={anchorEl}
-        open={open}
+        open={!!anchorEl}
         onClose={() => {
           setAnchorEl(null);
         }}
@@ -89,16 +92,51 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
           }}
         >
           <ListItemIcon>
-            <BiCopy fontSize="large" />{" "}
+            <BiCopy fontSize="large" />
           </ListItemIcon>
           <Typography variant="inherit" noWrap width="12ch">
             Copy ID
           </Typography>
         </MenuItem>
 
-        {deletingRoom ? (
+        {roomData.manager_id !== user?.id && leavingRoom && (
           <CircularProgress />
-        ) : (
+        )}
+        {roomData.manager_id !== user?.id && !leavingRoom && (
+          <MenuItem
+            id="deleteRoomButton"
+            style={{ display: "flex", padding: 8 }}
+            onClick={() => {
+              setAnchorEl(null);
+              showConfirmDialog({
+                title: (
+                  <Typography variant="h6" style={{ fontWeight: 600 }}>
+                    Rời phòng <strong>{roomData.name}</strong>
+                  </Typography>
+                ),
+                content: (
+                  <Typography>
+                    Bạn có chắc muốn rời phòng <strong>{roomData.name}</strong>
+                    hay không?
+                  </Typography>
+                ),
+                onConfirm: async () => await leaveRoom({ id: roomData.id }),
+              });
+            }}
+          >
+            <ListItemIcon>
+              <BiTrash fontSize="large" />{" "}
+            </ListItemIcon>
+            <Typography variant="inherit" noWrap width="12ch">
+              Xóa phòng
+            </Typography>
+          </MenuItem>
+        )}
+
+        {roomData.manager_id === user?.id && deletingRoom && (
+          <CircularProgress />
+        )}
+        {roomData.manager_id === user?.id && !deletingRoom && (
           <MenuItem
             id="deleteRoomButton"
             style={{ display: "flex", padding: 8 }}
