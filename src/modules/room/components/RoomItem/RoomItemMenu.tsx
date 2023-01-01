@@ -3,7 +3,7 @@ import React from "react";
 import { Box, IconButton, Typography, ListItemIcon, Menu } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { useState } from "react";
-import { BiLogIn, BiEdit, BiTrash, BiCopy } from "react-icons/bi";
+import { BiLogIn, BiEdit, BiTrash, BiCopy, BiLogOut } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import RoomData from "../../../room/interface/room-data";
@@ -125,10 +125,10 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
             }}
           >
             <ListItemIcon>
-              <BiTrash fontSize="large" />{" "}
+              <BiLogOut fontSize="large" />{" "}
             </ListItemIcon>
             <Typography variant="inherit" noWrap width="12ch">
-              Xóa phòng
+              Rời phòng
             </Typography>
           </MenuItem>
         )}
