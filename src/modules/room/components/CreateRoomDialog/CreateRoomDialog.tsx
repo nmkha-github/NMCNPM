@@ -40,7 +40,6 @@ const useStyle = makeStyles((theme) => ({
 const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [imageURL, setImageURL] = useState("");
   const [agree, setAgree] = useState(false);
 
   const { createRoom, creatingRoom } = useRooms();
@@ -92,17 +91,6 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           }}
         />
 
-        <TextField
-          label="URL hình ảnh"
-          type="text"
-          variant="standard"
-          fullWidth
-          inputProps={{ maxLength: 12 }}
-          onChange={(event) => {
-            setImageURL(event.target.value);
-          }}
-        />
-
         <FormControlLabel
           control={
             <Checkbox
@@ -123,7 +111,6 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
             dialogProps.onClose?.({}, "backdropClick");
             setName("");
             setDescription("");
-            setImageURL("");
             setAgree(false);
           }}
           style={{ padding: 8 }}
@@ -134,14 +121,13 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
         <LoadingButton
           onClick={async () => {
             await createRoom({
-              avatar: imageURL || ROOM_AVATAR_DEFAULT,
+              avatar: ROOM_AVATAR_DEFAULT,
               name: name,
               description: description,
             });
             dialogProps.onClose?.({}, "backdropClick");
             setName("");
             setDescription("");
-            setImageURL("");
             setAgree(false);
           }}
           variant="contained"

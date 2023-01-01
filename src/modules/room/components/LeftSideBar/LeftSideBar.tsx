@@ -252,41 +252,43 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
             })}
           </MenuList>
 
-          <Box
-            style={{
-              width: "100%",
-              paddingTop: "8px",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              borderTop: "1px solid #E7E8EF",
-            }}
-          >
-            <MenuItem
-              className={classes.menuItem}
-              onClick={() =>
-                navigate("/room/" + currentRoom.id + "/setting-room")
-              }
-              style={{ display: "block" }}
+          {user?.id === currentRoom.manager_id && (
+            <Box
+              style={{
+                width: "100%",
+                paddingTop: "8px",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                borderTop: "1px solid #E7E8EF",
+              }}
             >
-              <Box
-                className={
-                  classes.itemBox +
-                  " " +
-                  (location.pathname.includes("/setting-room")
-                    ? classes.selection
-                    : "")
+              <MenuItem
+                className={classes.menuItem}
+                onClick={() =>
+                  navigate("/room/" + currentRoom.id + "/setting-room")
                 }
+                style={{ display: "block" }}
               >
-                {location.pathname.includes("/setting-room") ? (
-                  <SettingsIcon />
-                ) : (
-                  <SettingsOutlinedIcon />
-                )}
-                <Typography variant="body1">Cài đặt</Typography>
-              </Box>
-            </MenuItem>
-          </Box>
+                <Box
+                  className={
+                    classes.itemBox +
+                    " " +
+                    (location.pathname.includes("/setting-room")
+                      ? classes.selection
+                      : "")
+                  }
+                >
+                  {location.pathname.includes("/setting-room") ? (
+                    <SettingsIcon />
+                  ) : (
+                    <SettingsOutlinedIcon />
+                  )}
+                  <Typography variant="body1">Cài đặt</Typography>
+                </Box>
+              </MenuItem>
+            </Box>
+          )}
         </Box>
       </Box>
 

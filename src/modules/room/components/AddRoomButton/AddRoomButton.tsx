@@ -27,7 +27,7 @@ const AddRoomButton = ({ ...buttonProps }: ButtonProps) => {
         {...buttonProps}
       >
         <AddIcon />
-        <Typography style={{ textTransform: "none" }}>Add</Typography>
+        <Typography style={{ textTransform: "none" }}>Thêm</Typography>
       </Button>
 
       <Menu
