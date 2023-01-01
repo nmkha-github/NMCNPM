@@ -23,13 +23,15 @@ const MemberPage = () => {
   }, [roomId]);
 
   useEffect(() => {
-    if (user?.id !== currentRoom.manager_id && user?.id !== memberId) {
-      showSnackbarError("Bạn không có quyền xem thông tin này");
-      navigate(`/room`);
-      return;
+    if (currentRoom.manager_id && user) {
+      if (user.id !== currentRoom.manager_id && user.id !== memberId) {
+        showSnackbarError("Bạn không có quyền xem thông tin này");
+        navigate(`/room`);
+        return;
+      }
+      getMember({ room_id: roomId || "", member_id: memberId || "" });
     }
-    getMember({ room_id: roomId || "", member_id: memberId || "" });
-  }, [roomId, memberId, currentRoom]);
+  }, [roomId, memberId, currentRoom, user]);
 
   return (
     <LeftSideBar>
