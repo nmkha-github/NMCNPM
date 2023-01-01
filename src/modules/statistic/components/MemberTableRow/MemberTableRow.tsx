@@ -41,7 +41,7 @@ const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
     const getMemberInfo = async () => {
       try {
         const userInfo = await UserHelper.getUserById(memberData.id);
-        setMember({ ...userInfo, ...memberData });
+        setMember({ ...memberData, ...userInfo });
       } catch (error) {
         showSnackbarError(error);
       }

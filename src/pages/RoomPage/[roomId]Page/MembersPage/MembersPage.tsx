@@ -41,15 +41,15 @@ const MembersPage = () => {
   }, []);
 
   useEffect(() => {
-    if (currentRoom) {
-      if (user?.id !== currentRoom.manager_id) {
+    if (currentRoom.manager_id && user) {
+      if (user.id !== currentRoom.manager_id) {
         showSnackbarError("Bạn không có quyền xem thông tin này");
         navigate(`/room`);
         return;
       }
       getMembers({ room_id: currentRoom.id, getStart: 0 });
     }
-  }, [currentRoom]);
+  }, [currentRoom, user]);
 
   return (
     <LeftSideBar>
@@ -124,6 +124,7 @@ const MembersPage = () => {
               {members.map((member, index) => (
                 <MemberTableRow
                   memberData={{ ...member, room_index: index + 1 } as any}
+                  key={member.id}
                 />
               ))}
               {!loadedAllMembers && !loadingMoreMembers && (
