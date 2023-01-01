@@ -379,9 +379,11 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         if (!newRoom) {
           throw "Phòng ban không tồn tại";
         }
-        const roomDocsResponse = await getDocs(query(collection(db, "user", user.id, "room"), where("id", "==", id)));
+        const roomDocsResponse = await getDocs(
+          query(collection(db, "user", user.id, "room"), where("id", "==", id))
+        );
         if (roomDocsResponse.docs.length > 0) {
-          throw "Bạn đã tham gia phòng này rồi"
+          throw "Bạn đã tham gia phòng này rồi";
         }
         const time = Timestamp.now();
         await addDoc(collection(db, "user", user.id, "room"), {
@@ -426,7 +428,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         );
 
         setRooms(rooms.filter((room) => room.id !== id));
-        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data().id !== id));
+        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data.id !== id));
+        navigate("/room");
       } catch (error) {
         showSnackbarError(error);
       } finally {
@@ -460,7 +463,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         );
 
         setRooms(rooms.filter((room) => room.id !== id));
-        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data().id !== id));
+        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data.id !== id));
+        navigate("/room");
       } catch (error) {
         showSnackbarError(error);
       } finally {
