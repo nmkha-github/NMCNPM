@@ -10,7 +10,6 @@ import AppRoutes from './AppRoutes';
 import StatisticProvider from './lib/provider/StatisticProvider';
 import TasksProvider from './lib/provider/TasksProvider';
 import PostsProvider from './lib/provider/PostsProvider';
-import PostCommentsProvider from './lib/provider/PostCommentsProvider';
 import ConfirmDialogProvider from './lib/provider/ConfirmDialogProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
