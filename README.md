@@ -7,6 +7,10 @@ Subject project (Nhập môn công nghệ phần mềm) about building CRUD Appl
 
 ## Project Description
 Task Management provide eviroment to manage tasks of rooms in the company or manage tasks in projects of team, office and so on.
+
+## Production
+Link to Production: [Try this](https://nmcnpm-group24.vercel.app/)
+
 ## Tech Stack
 
 **Client:** React, TailwindCSS
