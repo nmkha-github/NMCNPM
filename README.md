@@ -99,6 +99,9 @@ service firebase.storage {
 ## Future Status
 - Update task detail with more feature
 - Update task status with flexible status 
+- Update feature notify user on email
+- Update feature resource
+- Update feature schedule
 ## Deployment
 
 Config in vercel deploy by branch main in this repository when merge branch or any change in main branch.
