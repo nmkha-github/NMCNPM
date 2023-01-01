@@ -37,7 +37,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const { showSnackbarError } = useAppSnackbar();
   const [showing, setShowing] = useState(false);
   const { roomId } = useParams();
-  const { getPostComments, postComments, loadingPostComments } =
+  const { postComments, loadingPostComments } =
     usePostComments();
   const getUserData = async (id?: string) => {
     try {
@@ -46,18 +46,11 @@ const PostCard = ({ post }: PostCardProps) => {
       showSnackbarError(error);
     }
   };
-  const getCommentData = async (roomId: string, postId: string) => {
-    await getPostComments({ room_id: roomId || "", post_id: postId });
-  };
+
   useEffect(() => {
     getUserData(post.creator_id);
   }, [post]);
 
-  useEffect(() => {
-    if (post.id) {
-      getCommentData(roomId || "", post.id);
-    }
-  }, [post]);
   if (!roomId) return null;
 
   return (
@@ -142,7 +135,7 @@ const PostCard = ({ post }: PostCardProps) => {
           style={{ fontWeight: 400, fontSize: "0.875rem", lineHeight: 1.43 }}
         >
           <CommentIcon style={{ width: 24, height: 24, marginRight: 4 }} />
-          {postComments.length + " bình luận"}
+          {postComments[post.id].length + " bình luận"}
         </Typography>
         <Typography
           sx={{
@@ -163,12 +156,11 @@ const PostCard = ({ post }: PostCardProps) => {
       <CreateComment post={post} />
       {loadingPostComments || !showing ? (
         <></>
-      ) : (
-        <></>
-        // postComments.map((comment) => {
-        //   return <Comment comment={comment} post={post} />;
-        // })
-      )}
+      ) : 
+        postComments[post.id].map((comment) => {
+          return <Comment comment={comment} post={post} />;
+        })
+      }
     </Box>
   );
 };
