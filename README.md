@@ -1,70 +1,111 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Manage Task Web Application
 
-## Available Scripts
+Subject project (Nhập môn công nghệ phần mềm) about building CRUD Application on Web channel.
 
-In the project directory, you can run:
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Description
+Task Management provide eviroment to manage tasks of rooms in the company or manage tasks in projects of team, office and so on.
+## Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Client:** React, TailwindCSS
 
-### `npm test`
+**Server:** Firebase
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## Acknowledgements
+ - HTML, CSS, Javascript, Typescript
+ - [React](https://reactjs.org/docs/getting-started.html)
+ - [React Router Dom](https://www.npmjs.com/package/react-router-dom)
+ - [React Drag and Drop](https://www.npmjs.com/package/react-beautiful-dnd)
+ - [Firebase](https://github.com/matiassingers/awesome-readme)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Related
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Application base on [Trello](https://trello.com)
 
-### `npm run eject`
+## How to run in Local
+- Install [NodeJs](https://nodejs.org/en/download)
+- Clone the project
+```
+git clone https://github.com/nmkha-github/NMCNPM.git
+```
+- Go to the project directory
+```
+cd NMCNPM
+```
+- Install package
+```
+npm install
+```
+- Start the server
+```
+npm start
+```
+## Database manage
+To manage database, following tutorial
+- Create a project in Firebase.
+- Replace SDK in file src/lib/config/firebase-config.tsx
+```
+const FirebaseConfig = {
+  // Replace all in this object
+  apiKey: "AIzaSyASap1ay125TJIPgYsAEqdE4JvXqUhFhT8",
+  authDomain: "nmcnpm-d177c.firebaseapp.com",
+  databaseURL: "https://nmcnpm-d177c-default-rtdb.firebaseio.com",
+  projectId: "nmcnpm-d177c",
+  storageBucket: "nmcnpm-d177c.appspot.com",
+  messagingSenderId: "658397747139",
+  appId: "1:658397747139:web:38ba98009508d364b0cf76",
+  measurementId: "G-FGC4SP6FC4",
+};
+```
+- Config rules for Firestore Database
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if
+          request.time < timestamp.date(2023, 1, 19);
+    }
+  }
+}
+```
+- Config rules for Storage
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow write: if request.auth != null;
+      allow read;
+    }
+  }
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Current Status
+- Authorization (Login, logout, register user account).
+- Module room with create, find, sort by name, join, edit infomation actions.
+- Module task (includes **4 status** ToDo, Doing, Reviewing, Done) with create, edit, assign, statistic actions in **realtime**.
+- Module member in room with delete, statistic actions.
+- Module newsfeed for the notification or usage like a forum.
+## Future Status
+- Update task detail with more feature
+- Update task status with flexible status 
+## Deployment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Config in vercel deploy by branch main in this repository when merge branch or any change in main branch.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Login in [vercel](https://vercel.com)
+- Create a project in vercel
+- Link project with repository in github
+- Config deploy by branch main
+## Authors
+- [18120447 - Lê Hoàng Long](https://github.com/long060200)
+- [20120391 - Phan Dương Linh](https://github.com/LTCuberik)
+- [20120497 - Nguyễn Quang Huy](https://github.com/QuangHuy54)
+- [20120502 - Nguyễn Minh Kha](https://github.com/nmkha-github)
+- [20120545 - Lê Hoài Phong](https://github.com/Phongle1311)
