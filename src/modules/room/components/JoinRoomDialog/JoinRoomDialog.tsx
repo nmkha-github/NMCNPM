@@ -106,8 +106,7 @@ const JoinRoomDialog = ({ ...dialogProps }: DialogProps) => {
 
             <Typography className={classes.helpText}>
               Sau khi bạn điền đầy đủ thông tin và nhấn nút <b>Tham gia</b>, bạn
-              sẽ được đưa vào danh sách chờ và sẽ được vào phòng sau khi trưởng
-              phòng kiểm duyệt và đồng ý.
+              sẽ đưa vào phòng nếu thông tin hợp lệ.
             </Typography>
           </Collapse>
         </DialogContent>

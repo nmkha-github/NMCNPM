@@ -68,7 +68,7 @@ const HeaderUserInfo = () => {
           }
         >
           <Typography style={{ marginLeft: 12 }}>
-            {truncate(user?.name || "Username")}
+            {truncate(user?.name || "Username", 30)}
           </Typography>
           <IconButton
             size="small"
