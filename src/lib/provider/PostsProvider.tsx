@@ -30,7 +30,7 @@ interface PostsContextProps {
   loadedAllPosts: boolean;
 
   currentPost?: PostData;
-  setCurrentPost:(post?: PostData) => void;
+  setCurrentPost: (post?: PostData) => void;
 
   createPost: (payload: {
     room_id: string;
@@ -242,7 +242,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
 
         setPosts(
           posts.map((post) => {
-            if (post.id === id) {
+            if (post?.id === id) {
               return {
                 ...post,
                 ...update_data,
@@ -270,7 +270,7 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
         await deleteDoc(doc(db, "room", room_id, "post", id));
         setCurrentPost({} as PostData);
         setPosts(posts.filter((post) => post.id !== id));
-        setPostDocs(postDocs.filter((postDoc) => postDoc.data().id !== id));
+        setPostDocs(postDocs.filter((postDoc) => postDoc?.data?.id !== id));
       } catch (error) {
         showSnackbarError(error);
       } finally {
@@ -289,10 +289,10 @@ const PostsProvider = ({ children }: PostsContextProviderProps) => {
         loadingPosts,
         loadingMorePosts,
         loadedAllPosts,
-        
+
         currentPost,
         setCurrentPost,
-        
+
         createPost,
         creatingPost,
 

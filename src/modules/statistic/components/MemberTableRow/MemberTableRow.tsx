@@ -50,7 +50,12 @@ const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
   }, [memberData]);
 
   return (
-    <TableRow>
+    <TableRow
+      sx={{
+        transition: "background-color 0.4s ease",
+        "&:hover": { backgroundColor: "#e7e9eb" },
+      }}
+    >
       <TableCell style={{ padding: "4px 8px" }}>
         <Typography>{member?.room_index}</Typography>
       </TableCell>

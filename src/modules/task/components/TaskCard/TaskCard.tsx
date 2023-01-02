@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, Card } from "@mui/material";
 import TaskData from "../../../task/interface/task-data";
 import { Typography } from "@mui/material";
 import UserHelper from "../../../user/util/user-helper";
@@ -8,6 +8,7 @@ import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
 import TaskCardMenu from "./TaskCardMenu";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
+import truncate from "../../../../lib/util/truncate";
 
 interface TaskCardProps {
   task: TaskData;
@@ -44,89 +45,105 @@ const TaskCard = ({
 
   if (mode === "card") {
     return (
-      <Box
-        style={{
-          width: 260,
-          padding: 12,
-          border: "1px solid black",
-          background: `${isDragging === task.id ? "#d8f9ff" : "white"}`,
-        }}
-        {...boxProps}
-        onDoubleClick={() => setCurrentTask(task)}
-        sx={{
-          "&:hover": {
-            cursor: "pointer",
-          },
-        }}
-      >
+      <Card>
         <Box
           style={{
-            display: "flex",
-            position: "relative",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
+            width: 260,
+            padding: 12,
+            background: `${isDragging === task.id ? "#d8f9ff" : "white"}`,
+          }}
+          {...boxProps}
+          onDoubleClick={() => setCurrentTask(task)}
+          sx={{
+            "&:hover": {
+              cursor: "pointer",
+            },
           }}
         >
-          <Typography
-            align="center"
-            style={{ textDecoration: "underline", fontSize: 18 }}
+          <Box
+            style={{
+              display: "flex",
+              position: "relative",
+              gap: 8,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            {task.title}
-          </Typography>
-          <TaskCardMenu taskData={task} />
+            <Typography style={{ fontSize: 18 }}>
+              {truncate(task.title, 40)}
+            </Typography>
+
+            <Box
+              sx={{
+                height: 40,
+                width: 40,
+              }}
+            >
+              <TaskCardMenu taskData={task} />
+            </Box>
+          </Box>
+
+          <Box
+            style={{
+              display: "flex",
+              gap: 8,
+              justifyContent: "space-between",
+              marginTop: 8,
+            }}
+          >
+            <Typography style={{ fontSize: 14, color: "#888888" }}>
+              {truncate(task.content || "", 80)}
+            </Typography>
+
+            <Box
+              component="img"
+              sx={{
+                height: 40,
+                width: 40,
+                borderRadius: "50%",
+              }}
+              src={user ? user.avatar : USER_AVATAR_DEFAULT}
+            />
+          </Box>
         </Box>
-        <Typography style={{ fontSize: 14 }}>
-          {task.content && task.content.length > 60
-            ? task.content.slice(0, 60) + "..."
-            : task.content}
-        </Typography>
-        <Box style={{ display: "flex", justifyContent: "right" }}>
+      </Card>
+    );
+  } else {
+    return (
+      <Card>
+        <Box
+          style={{
+            width: 260,
+            height: 35,
+            padding: 10,
+            border: "0.1px solid black",
+            display: "flex",
+            alignItems: "center",
+          }}
+          {...boxProps}
+          sx={{
+            "&:hover": {
+              cursor: "pointer",
+            },
+          }}
+          onClick={() => setCurrentTask(task)}
+        >
           <Box
             component="img"
             sx={{
-              height: 40,
-              width: 40,
+              height: 24,
+              width: 24,
               borderRadius: "50%",
             }}
             src={user ? user.avatar : USER_AVATAR_DEFAULT}
           />
+          <Typography align="center" style={{ fontSize: 14, marginLeft: 10 }}>
+            {truncate(task.title, 40)}
+          </Typography>
+          <TaskCardMenu taskData={task} />
         </Box>
-      </Box>
-    );
-  } else {
-    return (
-      <Box
-        style={{
-          width: 260,
-          height: 35,
-          padding: 10,
-          border: "0.1px solid black",
-          display: "flex",
-          alignItems: "center",
-        }}
-        {...boxProps}
-        sx={{
-          "&:hover": {
-            cursor: "pointer",
-          },
-        }}
-        onClick={() => setCurrentTask(task)}
-      >
-        <Box
-          component="img"
-          sx={{
-            height: 24,
-            width: 24,
-            borderRadius: "50%",
-          }}
-          src={user ? user.avatar : USER_AVATAR_DEFAULT}
-        />
-        <Typography align="center" style={{ fontSize: 14, marginLeft: 10 }}>
-          {task.title}
-        </Typography>
-        <TaskCardMenu taskData={task} />
-      </Box>
+      </Card>
     );
   }
 };

@@ -86,6 +86,7 @@ const useStyle = makeStyles((theme) => ({
     gap: 48,
   },
   dialog_body_left: {
+    maxWidth: 600,
     flexGrow: 24,
   },
   dialog_body_right: {
@@ -99,6 +100,7 @@ const useStyle = makeStyles((theme) => ({
     margin: "8px 0px 20px",
   },
   body_action: {
+    color: "rgb(23,43,77)",
     textTransform: "none",
     background: "#DDD",
   },
@@ -421,6 +423,7 @@ const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
                   autoFocus
                   variant="outlined"
                   fullWidth
+                  multiline
                   size="small"
                   onChange={(event) => {
                     setEditTask({ ...editTask, content: event.target.value });

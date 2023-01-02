@@ -11,6 +11,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../../../lib/config/firebase-config";
+import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 const PostCommentMenu = ({
   comment,
@@ -22,6 +23,7 @@ const PostCommentMenu = ({
   const [deletingPostComment, setDeletingPostComment] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const { showConfirmDialog } = useConfirmDialog();
 
   const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
@@ -63,27 +65,33 @@ const PostCommentMenu = ({
               <MenuItem
                 disabled={deletingPostComment}
                 style={{ display: "flex", padding: 8 }}
-                onClick={async () => {
-                  try {
-                    setDeletingPostComment(true);
-                    await deleteDoc(
-                      doc(
-                        db,
-                        "room",
-                        roomId || "",
-                        "post",
-                        post.id,
-                        "comment",
-                        comment.id
-                      )
-                    );
-                    setAnchorEl(null);
-                  } catch (error) {
-                    showSnackbarError(error);
-                  } finally {
-                    setDeletingPostComment(false);
-                  }
-                }}
+                onClick={() =>
+                  showConfirmDialog({
+                    title: "Xóa bình luận",
+                    content: "Bạn có thực sự muốn xóa bình luận này không?",
+                    onConfirm: async () => {
+                      try {
+                        setDeletingPostComment(true);
+                        await deleteDoc(
+                          doc(
+                            db,
+                            "room",
+                            roomId || "",
+                            "post",
+                            post.id,
+                            "comment",
+                            comment.id
+                          )
+                        );
+                        setAnchorEl(null);
+                      } catch (error) {
+                        showSnackbarError(error);
+                      } finally {
+                        setDeletingPostComment(false);
+                      }
+                    },
+                  })
+                }
               >
                 <ListItemIcon>
                   {deletingPostComment ? (
