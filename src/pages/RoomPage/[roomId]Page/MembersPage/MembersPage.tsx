@@ -17,9 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
-import BarChart from "../../../../lib/components/BarChart/BarChart";
 import MemberTableRow from "../../../../modules/statistic/components/MemberTableRow/MemberTableRow";
-import UserHelper from "../../../../modules/user/util/user-helper";
 
 const MembersPage = () => {
   const { roomId } = useParams();
@@ -123,7 +121,7 @@ const MembersPage = () => {
             <TableBody>
               {members.map((member, index) => (
                 <MemberTableRow
-                  memberData={{ ...member, room_index: index + 1 } as any}
+                  member={{ ...member, room_index: index + 1 } as any}
                   key={member.id}
                 />
               ))}

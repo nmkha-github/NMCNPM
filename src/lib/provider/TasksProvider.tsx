@@ -176,15 +176,14 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
           });
         }
 
-        setTasks([newTask as TaskData, ...tasks]);
+        // setTasks([newTask as TaskData, ...tasks]);
       } catch (error) {
         showSnackbarError(error);
       } finally {
         setCreatingTask(false);
       }
     },
-
-    [showSnackbarError, tasks, user?.id]
+    [showSnackbarError, user?.id]
   );
 
   const updateTask = useCallback(
@@ -207,19 +206,19 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         const time = Timestamp.now();
         setUpdatingTask(true);
 
-        setTasks(
-          tasks.map((task) => {
-            if (task.id === id) {
-              return {
-                last_edit: time,
-                ...task,
-                ...updateData,
-              };
-            }
+        // setTasks(
+        //   tasks.map((task) => {
+        //     if (task.id === id) {
+        //       return {
+        //         last_edit: time,
+        //         ...task,
+        //         ...updateData,
+        //       };
+        //     }
 
-            return task;
-          })
-        );
+        //     return task;
+        //   })
+        // );
 
         const taskBeforeDoc = await getDoc(
           doc(db, "room", room_id, "task", id)
@@ -232,19 +231,27 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
               where("id", "==", taskBeforeDoc.data()?.assignee_id)
             )
           );
-
-          await runTransaction(db, async (transaction) => {
-            transaction.update(
-              doc(db, "room", room_id, "member", memberHoldTaskDocs.docs[0].id),
-              {
-                [taskBeforeDoc.data()?.status]:
-                  memberHoldTaskDocs.docs[0].data()[
-                    taskBeforeDoc.data()?.status
-                  ] - 1,
-              }
-            );
-          });
+          if (memberHoldTaskDocs.docs.length > 0) {
+            await runTransaction(db, async (transaction) => {
+              transaction.update(
+                doc(
+                  db,
+                  "room",
+                  room_id,
+                  "member",
+                  memberHoldTaskDocs.docs[0].id
+                ),
+                {
+                  [taskBeforeDoc.data()?.status]:
+                    memberHoldTaskDocs.docs[0].data()[
+                      taskBeforeDoc.data()?.status
+                    ] - 1,
+                }
+              );
+            });
+          }
         }
+        // console.log(updateData);
 
         await updateDoc(doc(db, "room", room_id, "task", id), {
           last_edit: time,
@@ -292,7 +299,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         setUpdatingTask(false);
       }
     },
-    [showSnackbarError, tasks]
+    [showSnackbarError]
   );
 
   const deleteTask = useCallback(
@@ -300,7 +307,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       try {
         setDeletingTask(true);
 
-        setTasks(tasks.filter((task) => task.id !== id));
+        // setTasks(tasks.filter((task) => task.id !== id));
 
         const taskDoc = await getDoc(doc(db, "room", room_id, "task", id));
         const memberHoldTaskDocs = await getDocs(
@@ -330,7 +337,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         setDeletingTask(false);
       }
     },
-    [showSnackbarError, tasks]
+    [showSnackbarError]
   );
 
   return (

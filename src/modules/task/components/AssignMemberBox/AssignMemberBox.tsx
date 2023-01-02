@@ -24,15 +24,16 @@ const AssignMemberBox = ({ task, onChoose }: AssignMemberBoxProps) => {
   const { roomId } = useParams();
   const { getMembers, members } = useStatistic();
 
+  const getAssigneeInfo = async () => {
+    const assigneeInfo = await UserHelper.getUserById(task.assignee_id);
+    if (assigneeInfo) {
+      setAssignee(assigneeInfo);
+    }
+  };
+
   useEffect(() => {
-    const getAssigneeInfo = async () => {
-      const assigneeInfo = await UserHelper.getUserById(task.assignee_id);
-      if (assigneeInfo) {
-        setAssignee(assigneeInfo);
-      }
-    };
     getAssigneeInfo();
-  }, [task.assignee_id]);
+  }, [task]);
 
   useEffect(() => {
     const getHintPeople = async () => {

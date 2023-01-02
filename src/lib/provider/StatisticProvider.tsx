@@ -165,11 +165,14 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
               )
             );
             newMembers = [
-              ...memberDocsResponse.docs.map((doc, index) => {
+              ...memberDocsResponse.docs.map((doc) => {
                 return {
                   name: doc.data().name,
                   avatar: doc.data().avatar,
-                  ...membersStatistic[index],
+                  email: doc.data().email,
+                  ...membersStatistic.find(
+                    (member) => member.id === doc.data().id
+                  ),
                 };
               }),
             ];
@@ -206,11 +209,14 @@ const StatisticProvider = ({ children }: StatisticContextProviderProps) => {
               )
             );
             newMembers = [
-              ...memberDocsResponse.docs.map((doc, index) => {
+              ...memberDocsResponse.docs.map((doc) => {
                 return {
                   name: doc.data().name,
                   avatar: doc.data().avatar,
-                  ...membersStatistic[index],
+                  email: doc.data().email,
+                  ...membersStatistic.find(
+                    (member) => member.id === doc.data().id
+                  ),
                 };
               }),
             ];

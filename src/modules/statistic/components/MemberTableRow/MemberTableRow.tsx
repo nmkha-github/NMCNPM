@@ -8,13 +8,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import MEMBER_AVATAR_DEFAULT from "../../constants/member-avatar-default";
 import MemberData from "../../interface/member-data";
 import UserData from "../../../user/interface/user-data";
 import convertTimeToString from "../../../../lib/util/convert-time-to-string";
-import { useEffect, useState } from "react";
-import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
-import UserHelper from "../../../user/util/user-helper";
 import { BiArrowFromLeft, BiCrown, BiTrashAlt, BiUser } from "react-icons/bi";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
@@ -22,32 +18,17 @@ import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider
 import { useUser } from "../../../../lib/provider/UserProvider";
 
 interface MemberTableRowProps {
-  memberData: MemberData & UserData;
+  member: MemberData & UserData;
 }
 
-const MemberTableRow = ({ memberData }: MemberTableRowProps) => {
-  const [member, setMember] = useState<MemberData & UserData>();
-
+const MemberTableRow = ({ member }: MemberTableRowProps) => {
   const { showConfirmDialog } = useConfirmDialog();
-  const { showSnackbarError } = useAppSnackbar();
   const { roomId } = useParams();
   let navigate = useNavigate();
 
   const { removeMember } = useStatistic();
   const { currentRoom } = useRooms();
   const { user } = useUser();
-
-  useEffect(() => {
-    const getMemberInfo = async () => {
-      try {
-        const userInfo = await UserHelper.getUserById(memberData.id);
-        setMember({ ...memberData, ...userInfo });
-      } catch (error) {
-        showSnackbarError(error);
-      }
-    };
-    getMemberInfo();
-  }, [memberData]);
 
   return (
     <TableRow
