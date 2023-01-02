@@ -128,6 +128,7 @@ const EditPostDialog = ({
               objectFit: "cover",
               height: "auto",
             }}
+            alt=""
           />
           <IconButton
             style={{ top: 32, right: 24, position: "absolute" }}
