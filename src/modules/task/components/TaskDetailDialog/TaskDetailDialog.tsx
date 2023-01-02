@@ -60,6 +60,8 @@ import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider
 
 interface TaskDetailDialogProps {
   task?: TaskData;
+  open: boolean;
+  onClose?: () => void;
 }
 
 const useStyle = makeStyles((theme) => ({
@@ -116,10 +118,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const TaskDetailDialog = ({
-  task,
-  ...dialogProps
-}: TaskDetailDialogProps & DialogProps) => {
+const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
   const emptyTask = {
     id: "",
     title: "",
@@ -169,12 +168,7 @@ const TaskDetailDialog = ({
   }, [task]);
 
   return (
-    <Dialog
-      {...dialogProps}
-      fullScreen={fullScreen}
-      fullWidth={true}
-      maxWidth="lg"
-    >
+    <Dialog open={open} fullScreen={fullScreen} fullWidth={true} maxWidth="lg">
       <Box className={classes.dialog}>
         {/* Header of the dialog */}
         <Box className={classes.dialog_header}>
@@ -263,7 +257,7 @@ const TaskDetailDialog = ({
               TransitionComponent={Fade}
               arrow
               onClick={() => {
-                dialogProps.onClose?.({}, "backdropClick");
+                onClose?.();
                 setEditTask({ ...emptyTask });
                 setVoted(false);
                 setWatches(false);
@@ -694,7 +688,7 @@ const TaskDetailDialog = ({
                   id: task?.id || "",
                 });
                 setCurrentTask(undefined);
-                dialogProps.onClose?.({}, "backdropClick");
+                onClose?.();
               },
             });
           }}

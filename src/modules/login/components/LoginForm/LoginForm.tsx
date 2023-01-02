@@ -7,6 +7,7 @@ import EmailHelper from "../../../../lib/util/email-helper";
 import { useAuth } from "../../../../lib/provider/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from "../../../../lib/components/LoadingButton/LoadingButton";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ const LoginForm = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const { showSnackbarError } = useAppSnackbar();
   const navigate = useNavigate();
   const { logIn, logging } = useAuth();
 
@@ -87,9 +89,12 @@ const LoginForm = () => {
                 }
                 if (hasError) return;
 
-                await logIn({ email: email, password: password });
-
-                navigate("/home");
+                try {
+                  await logIn({ email: email, password: password });
+                  navigate("/home");
+                } catch (error) {
+                  showSnackbarError(error);
+                }
               }}
             >
               <Typography variant="h6" style={{ fontWeight: 600 }}>
