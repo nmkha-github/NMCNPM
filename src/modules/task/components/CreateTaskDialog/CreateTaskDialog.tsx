@@ -132,6 +132,7 @@ const CreateTaskDialog = ({ ...dialogProps }: DialogProps) => {
                 style={{
                   textTransform: "none",
                   background: "#DDD",
+                  color: "rgb(23,43,77)",
                 }}
               >
                 Đính kèm
