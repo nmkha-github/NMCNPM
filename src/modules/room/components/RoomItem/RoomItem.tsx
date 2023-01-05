@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
-import { Box, BoxProps } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Avatar, Box, BoxProps } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RoomItemMenu from "./RoomItemMenu";
 import RoomData from "../../../room/interface/room-data";
 import { Typography } from "@mui/material";
+import UserData from "../../../user/interface/user-data";
+import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
+import UserHelper from "../../../user/util/user-helper";
+import USER_AVATAR_DEFAULT from "../../../user/contants/user-avatar-default";
+import truncate from "../../../../lib/util/truncate";
 
 interface RoomItemProps {
   roomData: RoomData;
@@ -12,6 +17,19 @@ interface RoomItemProps {
 
 const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
   let navigate = useNavigate();
+  const [manager, setManager] = useState<UserData>();
+  const { showSnackbarError } = useAppSnackbar();
+  const getUserData = async (id?: string) => {
+    try {
+      setManager(await UserHelper.getUserById(id || ""));
+    } catch (error) {
+      showSnackbarError(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData(roomData.manager_id);
+  }, [roomData]);
 
   return (
     <Box
@@ -28,13 +46,28 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         navigate(`/room/${roomData.id}/work`);
       }}
     >
-      <img
-        src={roomData.avatar}
-        alt=""
+      <Box
         style={{
-          maxWidth: "100%",
+          position: "relative",
+          marginBottom: 30,
         }}
-      />
+      >
+        <img
+          src={roomData.avatar}
+          alt=""
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+          }}
+        />
+
+        <Avatar
+          sx={{ width: 60, height: 60 }}
+          src={manager?.avatar || USER_AVATAR_DEFAULT}
+          alt="Avatar room's manager"
+          style={{ position: "absolute", bottom: "-30px", right: "20px" }}
+        />
+      </Box>
 
       <Box
         style={{
@@ -45,7 +78,13 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         }}
       >
         <Box>
-          <Typography style={{ fontWeight: 700 }}>{roomData.name}</Typography>
+          <Typography style={{ fontWeight: 700, fontSize: 20 }}>
+            {roomData.name}
+          </Typography>
+
+          <Typography>
+            Trưởng phòng: {truncate(manager?.name || "", 16)}
+          </Typography>
 
           <Typography variant="body2">Mã phòng: {roomData.id}</Typography>
         </Box>
