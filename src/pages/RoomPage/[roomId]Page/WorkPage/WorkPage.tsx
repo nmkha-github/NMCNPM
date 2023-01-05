@@ -94,7 +94,7 @@ const WorkPage = () => {
             | "done",
           order_value: TaskHelper.getOrderString(
             tasksToDo[result.destination.index - 1]?.order_value ?? "",
-            tasksToDo[result.destination.index + 1]?.order_value ?? ""
+            tasksToDo[result.destination.index]?.order_value ?? ""
           ),
         },
       });
@@ -110,7 +110,7 @@ const WorkPage = () => {
             | "done",
           order_value: TaskHelper.getOrderString(
             tasksDoing[result.destination.index - 1]?.order_value ?? "",
-            tasksDoing[result.destination.index + 1]?.order_value ?? ""
+            tasksDoing[result.destination.index]?.order_value ?? ""
           ),
         },
       });
@@ -126,7 +126,7 @@ const WorkPage = () => {
             | "done",
           order_value: TaskHelper.getOrderString(
             tasksReviewing[result.destination.index - 1]?.order_value ?? "",
-            tasksReviewing[result.destination.index + 1]?.order_value ?? ""
+            tasksReviewing[result.destination.index]?.order_value ?? ""
           ),
         },
       });
@@ -142,7 +142,7 @@ const WorkPage = () => {
             | "done",
           order_value: TaskHelper.getOrderString(
             tasksDone[result.destination.index - 1]?.order_value ?? "",
-            tasksDone[result.destination.index + 1]?.order_value ?? ""
+            tasksDone[result.destination.index]?.order_value ?? ""
           ),
         },
       });
