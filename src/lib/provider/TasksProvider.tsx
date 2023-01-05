@@ -19,6 +19,7 @@ import useAppSnackbar from "../hook/useAppSnackBar";
 import FileData from "../interface/file-data";
 import CommentData from "../interface/comment-data";
 import { useUser } from "./UserProvider";
+import TaskHelper from "../../modules/task/util/task-helper";
 
 interface TasksContextProps {
   tasks: TaskData[];
@@ -47,6 +48,7 @@ interface TasksContextProps {
     id: string;
     updateData: {
       status: "toDo" | "doing" | "reviewing" | "done";
+      order_value?: string;
       assignee_id?: string;
       deadline?: Timestamp | Date | string;
       content?: string;
@@ -68,6 +70,7 @@ const TasksContext = createContext<TasksContextProps>({
   currentTask: {
     id: "",
     title: "",
+    order_value: "",
     status: "toDo",
     assignee_id: "",
     creator_id: "",
@@ -136,11 +139,20 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       try {
         setCreatingTask(true);
         const time = Timestamp.now();
+        const minOrderTask = tasks
+          .filter((task) => task.status === "toDo")
+          .sort((taskA, taskB) =>
+            taskA.order_value >= taskB.order_value ? 1 : -1
+          )[0];
         const docResponse = await addDoc(
           collection(db, "room", room_id, "task"),
           {
             status: "toDo",
             creator_id: user?.id,
+            order_value: TaskHelper.getOrderString(
+              "",
+              minOrderTask ? minOrderTask.order_value : ""
+            ),
             created_at: time,
             last_edit: time,
             ...new_task,
@@ -152,6 +164,10 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         const newTask = {
           status: "toDo",
           id: docResponse.id,
+          order_value: TaskHelper.getOrderString(
+            "",
+            minOrderTask ? minOrderTask.order_value : ""
+          ),
           creator_id: user?.id,
           created_at: time,
           last_edit: time,
@@ -183,7 +199,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
         setCreatingTask(false);
       }
     },
-    [showSnackbarError, user?.id]
+    [showSnackbarError, tasks, user?.id]
   );
 
   const updateTask = useCallback(
@@ -196,6 +212,7 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
       id: string;
       updateData: {
         status: "toDo" | "doing" | "reviewing" | "done";
+        order_value?: string;
         assignee_id?: string;
         deadline?: Timestamp | Date | string;
         content?: string;
@@ -251,10 +268,19 @@ const TasksProvider = ({ children }: TasksContextProviderProps) => {
             });
           }
         }
-        // console.log(updateData);
 
         await updateDoc(doc(db, "room", room_id, "task", id), {
           last_edit: time,
+          order_value: TaskHelper.getOrderString(
+            "",
+            tasks
+              .filter(
+                (task) => task.status === updateData.status && task.id !== id
+              )
+              .sort((taskA, taskB) =>
+                taskA.order_value > taskB.order_value ? -1 : 1
+              )[0]?.order_value ?? ""
+          ),
           ...updateData,
         });
 

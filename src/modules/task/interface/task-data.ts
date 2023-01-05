@@ -8,6 +8,7 @@ interface TaskData {
   content?: string;
   attach_files?: FileData[];
   status: "toDo" | "doing" | "reviewing" | "done";
+  order_value: string;
   assignee_id: string;
   creator_id: string;
   created_at: Timestamp | Date | string;

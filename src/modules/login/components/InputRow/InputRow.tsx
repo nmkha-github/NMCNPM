@@ -43,7 +43,7 @@ const InputRow = ({
       />
       {name === "password" && (
         <ShowHideButton
-          title={typeHandler === "password" ? "show" : "hide"}
+          title={typeHandler === "password" ? "Hiện" : "Ẩn"}
           onClick={changeShowHideStatus}
         />
       )}

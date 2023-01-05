@@ -35,6 +35,7 @@ const HomePage = () => {
       <AssignMemberBox
         task={{
           id: "WttA7CdT5Qvbg5XG0xei",
+          order_value: "",
           title: "",
           assignee_id: "ujl8YpvL4ogSzkkroLsH",
           created_at: "",

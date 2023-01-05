@@ -125,6 +125,7 @@ const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
     id: "",
     title: "",
     content: "",
+    order_value: "",
     attach_files: [],
     status: "toDo" as "toDo" | "doing" | "reviewing" | "done",
     assignee_id: "",

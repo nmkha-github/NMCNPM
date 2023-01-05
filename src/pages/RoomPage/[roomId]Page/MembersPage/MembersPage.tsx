@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import LeftSideBar from "../../../../modules/room/components/LeftSideBar/LeftSideBar";
 import { useStatistic } from "../../../../lib/provider/StatisticProvider";
-import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "../../../../lib/provider/UserProvider";
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import {
   Box,
@@ -16,12 +14,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import useAppSnackbar from "../../../../lib/hook/useAppSnackBar";
 import MemberTableRow from "../../../../modules/statistic/components/MemberTableRow/MemberTableRow";
+import { useParams } from "react-router-dom";
 
 const MembersPage = () => {
   const { roomId } = useParams();
-  const { user } = useUser();
   const { currentRoom, getCurrentRoom, loadingCurrentRoom } = useRooms();
   const {
     members,
@@ -31,23 +28,15 @@ const MembersPage = () => {
     loadedAllMembers,
   } = useStatistic();
 
-  const { showSnackbarError } = useAppSnackbar();
-  const navigate = useNavigate();
-
   useEffect(() => {
     getCurrentRoom(roomId || "");
   }, []);
 
   useEffect(() => {
-    if (currentRoom.manager_id && user) {
-      if (user.id !== currentRoom.manager_id) {
-        showSnackbarError("Bạn không có quyền xem thông tin này");
-        navigate(`/room`);
-        return;
-      }
+    if (currentRoom.manager_id) {
       getMembers({ room_id: currentRoom.id, getStart: 0 });
     }
-  }, [currentRoom, user]);
+  }, [currentRoom]);
 
   return (
     <LeftSideBar>

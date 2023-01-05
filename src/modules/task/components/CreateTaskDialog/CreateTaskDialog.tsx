@@ -49,6 +49,7 @@ const CreateTaskDialog = ({ ...dialogProps }: DialogProps) => {
   const emptyTask = {
     id: "",
     title: "",
+    order_value: "",
     content: "",
     attach_files: [],
     status: "toDo" as "toDo" | "doing" | "reviewing" | "done",

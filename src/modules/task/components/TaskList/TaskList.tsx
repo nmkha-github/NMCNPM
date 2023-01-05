@@ -12,6 +12,7 @@ interface TaskListProps {
 }
 
 const TaskList = ({ type, status, curTaskList, isDragging }: TaskListProps) => {
+  console.log(curTaskList);
   return (
     <Box style={{ height: "auto" }}>
       <Droppable droppableId={status ? status : "tasks"}>

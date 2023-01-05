@@ -58,7 +58,6 @@ const RoomPage = () => {
         <AddRoomButton size="large" style={{ marginRight: 8 }} />
 
         <TextField
-          margin="dense"
           fullWidth
           placeholder="Tìm kiếm..."
           size="small"
@@ -70,7 +69,7 @@ const RoomPage = () => {
           }}
         />
 
-        <Divider sx={{ height: "100%", m: 0.5 }} orientation="vertical" />
+        <Divider sx={{ height: "100%" }} orientation="vertical" />
 
         <Box>
           <IconButton

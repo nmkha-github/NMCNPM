@@ -63,8 +63,8 @@ const RegisterForm = () => {
             <InputRow
               name="password"
               id="password"
-              type="Nhập mật khẩu..."
-              placeholder="Password"
+              type="password"
+              placeholder="Nhập mật khẩu..."
               haveError={passwordError === "" ? false : true}
               errorText={passwordError}
               onChange={(event) => {

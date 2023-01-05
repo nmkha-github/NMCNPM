@@ -98,12 +98,11 @@ const MemberTableRow = ({ member }: MemberTableRowProps) => {
               <BiUser size={28} />
             </Tooltip>
           )}
-        {currentRoom.manager_id === user?.id &&
-          currentRoom.manager_id === member?.id && (
-            <Tooltip title="Quản lí">
-              <BiCrown size={28} style={{ color: "orange" }} />
-            </Tooltip>
-          )}
+        {currentRoom.manager_id === member?.id && (
+          <Tooltip title="Quản lí">
+            <BiCrown size={28} style={{ color: "orange" }} />
+          </Tooltip>
+        )}
       </TableCell>
       <TableCell>
         <IconButton

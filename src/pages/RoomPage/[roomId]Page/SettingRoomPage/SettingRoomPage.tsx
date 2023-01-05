@@ -58,11 +58,11 @@ const SettingRoomPage = () => {
     <Box>
       <button
         onClick={() => {
-          navigate("/room/" + roomId + "/newsfeed");
+          navigate("/room/" + roomId + "/work");
         }}
         className="back_to_workspace"
       >
-        <ArrowBackSharpIcon /> Back to workspace
+        <ArrowBackSharpIcon /> Trở về nơi làm việc
       </button>
       {loadingCurrentRoom && (
         <CircularProgress

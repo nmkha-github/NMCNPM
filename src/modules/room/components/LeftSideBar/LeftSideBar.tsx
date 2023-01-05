@@ -117,40 +117,40 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
   const items = useMemo(
     () => [
       {
-        label: "Nơi làm việc",
-        icon: <HomeRepairServiceOutlinedIcon />,
-        filledIcon: <HomeRepairServiceIcon />,
-        href: `/room/${currentRoom.id}/work`,
-      },
-      {
         label: "Bản tin",
         icon: <FeedOutlinedIcon />,
         filledIcon: <FeedIcon />,
         href: `/room/${currentRoom.id}/newsfeed`,
       },
+      {
+        label: "Nơi làm việc",
+        icon: <HomeRepairServiceOutlinedIcon />,
+        filledIcon: <HomeRepairServiceIcon />,
+        href: `/room/${currentRoom.id}/work`,
+      },
       ...(user?.id === currentRoom.manager_id
         ? [
             {
-              label: "Thống kê",
+              label: "Thống kê phòng",
               icon: <AssessmentOutlinedIcon />,
               filledIcon: <AssessmentIcon />,
               href: `/room/${currentRoom.id}/statistic`,
             },
-            {
-              label: "Thành viên",
-              icon: <PeopleAltOutlinedIcon />,
-              filledIcon: <PeopleAltIcon />,
-              href: `/room/${currentRoom.id}/member`,
-            },
           ]
         : [
             {
-              label: "Thống kê",
+              label: "Thống kê cá nhân",
               icon: <AssessmentOutlinedIcon />,
               filledIcon: <AssessmentIcon />,
               href: `/room/${currentRoom.id}/member/${user?.id || ""}`,
             },
           ]),
+      {
+        label: "Thành viên",
+        icon: <PeopleAltOutlinedIcon />,
+        filledIcon: <PeopleAltIcon />,
+        href: `/room/${currentRoom.id}/member`,
+      },
     ],
     [currentRoom, user?.id]
   );
