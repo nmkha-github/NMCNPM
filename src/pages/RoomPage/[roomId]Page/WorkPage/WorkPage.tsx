@@ -49,7 +49,6 @@ const WorkPage = () => {
   };
 
   useEffect(() => {
-    console.log(TaskHelper.getOrderString("a", ""));
     setTasksDoing(
       tasks.filter((task) => task.status === "doing").sort(compareTasks)
     );
