@@ -427,8 +427,8 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           doc(db, "user", user.id, "room", docsResponse.docs[0].id)
         );
 
-        setRooms(rooms.filter((room) => room.id !== id));
-        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data.id !== id));
+        setRooms(rooms.filter((room) => room?.id !== id));
+        setRoomIdDocs(roomIdDocs.filter((doc: any) => doc.data?.id !== id));
         navigate("/room");
       } catch (error) {
         showSnackbarError(error);
