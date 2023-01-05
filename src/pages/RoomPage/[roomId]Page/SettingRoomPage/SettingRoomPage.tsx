@@ -17,8 +17,6 @@ import { useUser } from "../../../../lib/provider/UserProvider";
 import { useConfirmDialog } from "../../../../lib/provider/ConfirmDialogProvider";
 
 const SettingRoomPage = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const navigate = useNavigate();
   const [roomEditData, setRoomEditData] = useState<RoomData>({
     id: "",
@@ -253,7 +251,6 @@ const SettingRoomPage = () => {
                   color="error"
                   variant="contained"
                   onClick={() => {
-                    setAnchorEl(null);
                     showConfirmDialog({
                       title: (
                         <Typography

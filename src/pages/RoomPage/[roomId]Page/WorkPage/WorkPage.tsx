@@ -3,10 +3,8 @@ import LeftSideBar from "../../../../modules/room/components/LeftSideBar/LeftSid
 import { useRooms } from "../../../../lib/provider/RoomsProvider";
 import { useParams } from "react-router-dom";
 import TaskData from "../../../../modules/task/interface/task-data";
-import TaskCard from "../../../../modules/task/components/TaskCard/TaskCard";
 import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
-import AuthProvider from "../../../../lib/provider/AuthProvider";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
 import { Box, Button, TextField, Typography } from "@mui/material";
@@ -15,7 +13,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
 import CreateTaskDialog from "../../../../modules/task/components/CreateTaskDialog/CreateTaskDialog";
 const WorkPage = () => {
-  const { currentRoom, getCurrentRoom } = useRooms();
+  const { getCurrentRoom } = useRooms();
   const { roomId } = useParams();
   const [tasksToDo, setTasksToDo] = useState<TaskData[]>([]);
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
@@ -28,7 +26,6 @@ const WorkPage = () => {
     updatingTask,
     currentTask,
     setCurrentTask,
-    createTask,
   } = useTasks();
   const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
   const [isDraggingId, setIsDraggingId] = useState("-1");

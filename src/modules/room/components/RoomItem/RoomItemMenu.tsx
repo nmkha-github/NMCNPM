@@ -62,22 +62,23 @@ const RoomItemMenu = ({ roomData }: { roomData: RoomData }) => {
           </Typography>
         </MenuItem>
 
-        <MenuItem
-          id="editRoomButton"
-          style={{ display: "flex", padding: 8 }}
-          onClick={() => {
-            setAnchorEl(null);
-            navigate("/room/" + roomData.id + "/setting-room");
-          }}
-        >
-          <ListItemIcon>
-            <BiEdit fontSize="large" />{" "}
-          </ListItemIcon>
-          <Typography variant="inherit" noWrap width="12ch">
-            Chỉnh sửa
-          </Typography>
-        </MenuItem>
-
+        {roomData.manager_id === user?.id && (
+          <MenuItem
+            id="editRoomButton"
+            style={{ display: "flex", padding: 8 }}
+            onClick={() => {
+              setAnchorEl(null);
+              navigate("/room/" + roomData.id + "/setting-room");
+            }}
+          >
+            <ListItemIcon>
+              <BiEdit fontSize="large" />{" "}
+            </ListItemIcon>
+            <Typography variant="inherit" noWrap width="12ch">
+              Chỉnh sửa
+            </Typography>
+          </MenuItem>
+        )}
         <MenuItem
           id="copyIDRoomButton"
           style={{ display: "flex", padding: 8 }}
