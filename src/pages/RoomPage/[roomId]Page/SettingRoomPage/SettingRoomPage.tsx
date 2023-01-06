@@ -297,7 +297,7 @@ const SettingRoomPage = () => {
               <LoadingButton
                 variant="contained"
                 color="primary"
-                disabled={updatingRoom}
+                disabled={updatingRoom||roomEditData.name===""}
                 loading={updatingRoom}
                 onClick={async () => {
                   try {
