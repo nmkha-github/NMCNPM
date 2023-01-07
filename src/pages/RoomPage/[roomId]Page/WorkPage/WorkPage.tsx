@@ -61,7 +61,7 @@ const WorkPage = () => {
     setTasksReviewing(
       tasks.filter((task) => task.status === "reviewing").sort(compareTasks)
     );
-  }, [tasks.length]);
+  }, [tasks]);
 
   function handleOnDragStart(result: DragStart) {
     if (result.source.droppableId === "doing") {
@@ -76,67 +76,102 @@ const WorkPage = () => {
   }
 
   const handleOnDragEnd = async (result: DropResult) => {
-    console.log(result);
+    console.log(result.source.index + " " + result.destination?.index);
     setIsDraggingId("-1");
     if (updatingTask) {
       return;
     }
     if (!result.destination) return;
+
+    let dragTask;
+    if (result.source.droppableId === "toDo") {
+      dragTask = tasksToDo.at(result.source.index);
+      tasksToDo.splice(result.source.index, 1);
+      setTasksToDo(tasksToDo);
+    } else if (result.source.droppableId === "doing") {
+      dragTask = tasksDoing.at(result.source.index);
+      tasksDoing.splice(result.source.index, 1);
+      setTasksDoing(tasksDoing);
+    } else if (result.source.droppableId === "reviewing") {
+      dragTask = tasksReviewing.at(result.source.index);
+      tasksReviewing.splice(result.source.index, 1);
+      setTasksReviewing(tasksReviewing);
+    } else {
+      dragTask = tasksDone.at(result.source.index);
+      tasksDone.splice(result.source.index, 1);
+      setTasksDone(tasksDone);
+    }
     let loss =
-      result.destination.droppableId === result.source.droppableId
-        ? result.destination.index < result.source.index
-          ? -1
-          : 1
+      result.destination.droppableId === result.source.droppableId &&
+      result.destination.index > result.source.index
+        ? -1
         : 0;
     if (result.destination.droppableId === "toDo") {
-      await updateTask({
-        room_id: roomId ? roomId : "",
-        id: result.draggableId,
-        updateData: {
-          status: "toDo",
-          order_value: TaskHelper.getOrderString(
-            tasksToDo[result.destination.index - 1 + loss]?.order_value ?? "",
-            tasksToDo[result.destination.index + loss]?.order_value ?? ""
-          ),
-        },
-      });
+      if (dragTask) {
+        tasksToDo.splice(result.destination.index, 0, dragTask);
+        setTasksToDo(tasksToDo);
+        await updateTask({
+          room_id: roomId ? roomId : "",
+          id: result.draggableId,
+          updateData: {
+            status: "toDo",
+            order_value: TaskHelper.getOrderString(
+              tasksToDo[tasksToDo.indexOf(dragTask) - 1]?.order_value ?? "",
+              tasksToDo[tasksToDo.indexOf(dragTask) + 1]?.order_value ?? ""
+            ),
+          },
+        });
+      }
     } else if (result.destination.droppableId === "doing") {
-      await updateTask({
-        room_id: roomId ? roomId : "",
-        id: result.draggableId,
-        updateData: {
-          status: "doing",
-          order_value: TaskHelper.getOrderString(
-            tasksDoing[result.destination.index - 1 + loss]?.order_value ?? "",
-            tasksDoing[result.destination.index + loss]?.order_value ?? ""
-          ),
-        },
-      });
+      if (dragTask) {
+        tasksDoing.splice(result.destination.index, 0, dragTask);
+        setTasksDoing(tasksDoing);
+        await updateTask({
+          room_id: roomId ? roomId : "",
+          id: result.draggableId,
+          updateData: {
+            status: "doing",
+            order_value: TaskHelper.getOrderString(
+              tasksDoing[tasksDoing.indexOf(dragTask) - 1]?.order_value ?? "",
+              tasksDoing[tasksDoing.indexOf(dragTask) + 1]?.order_value ?? ""
+            ),
+          },
+        });
+      }
     } else if (result.destination.droppableId === "reviewing") {
-      await updateTask({
-        room_id: roomId ? roomId : "",
-        id: result.draggableId,
-        updateData: {
-          status: "reviewing",
-          order_value: TaskHelper.getOrderString(
-            tasksReviewing[result.destination.index - 1 + loss]?.order_value ??
-              "",
-            tasksReviewing[result.destination.index + loss]?.order_value ?? ""
-          ),
-        },
-      });
+      if (dragTask) {
+        tasksReviewing.splice(result.destination.index, 0, dragTask);
+        setTasksReviewing(tasksReviewing);
+        await updateTask({
+          room_id: roomId ? roomId : "",
+          id: result.draggableId,
+          updateData: {
+            status: "reviewing",
+            order_value: TaskHelper.getOrderString(
+              tasksReviewing[tasksReviewing.indexOf(dragTask) - 1]
+                ?.order_value ?? "",
+              tasksReviewing[tasksReviewing.indexOf(dragTask) + 1]
+                ?.order_value ?? ""
+            ),
+          },
+        });
+      }
     } else if (result.destination.droppableId === "done") {
-      await updateTask({
-        room_id: roomId ? roomId : "",
-        id: result.draggableId,
-        updateData: {
-          status: "done",
-          order_value: TaskHelper.getOrderString(
-            tasksDone[result.destination.index - 1 + loss]?.order_value ?? "",
-            tasksDone[result.destination.index + loss]?.order_value ?? ""
-          ),
-        },
-      });
+      if (dragTask) {
+        tasksDone.splice(result.destination.index, 0, dragTask);
+        setTasksDone(tasksDone);
+        await updateTask({
+          room_id: roomId ? roomId : "",
+          id: result.draggableId,
+          updateData: {
+            status: "done",
+            order_value: TaskHelper.getOrderString(
+              tasksDone[tasksDone.indexOf(dragTask) - 1]?.order_value ?? "",
+              tasksDone[tasksDone.indexOf(dragTask) + 1]?.order_value ?? ""
+            ),
+          },
+        });
+      }
     }
   };
 
