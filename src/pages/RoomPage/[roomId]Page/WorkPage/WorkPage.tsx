@@ -7,12 +7,12 @@ import TaskDetailDialog from "../../../../modules/task/components/TaskDetailDial
 import TaskList from "../../../../modules/task/components/TaskList/TaskList";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { useTasks } from "../../../../lib/provider/TasksProvider";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import PerfectScrollbar from "react-perfect-scrollbar";
-
 import { DragDropContext, DragStart, DropResult } from "react-beautiful-dnd";
 import CreateTaskDialog from "../../../../modules/task/components/CreateTaskDialog/CreateTaskDialog";
 import TaskHelper from "../../../../modules/task/util/task-helper";
+
 const WorkPage = () => {
   const [tasksToDo, setTasksToDo] = useState<TaskData[]>([]);
   const [tasksDoing, setTasksDoing] = useState<TaskData[]>([]);
@@ -61,7 +61,7 @@ const WorkPage = () => {
     setTasksReviewing(
       tasks.filter((task) => task.status === "reviewing").sort(compareTasks)
     );
-  }, [tasks]);
+  }, [tasks.length]);
 
   function handleOnDragStart(result: DragStart) {
     if (result.source.droppableId === "doing") {
@@ -76,72 +76,64 @@ const WorkPage = () => {
   }
 
   const handleOnDragEnd = async (result: DropResult) => {
+    console.log(result);
     setIsDraggingId("-1");
     if (updatingTask) {
       return;
     }
     if (!result.destination) return;
-    if (result.source.droppableId === "toDo") {
+    let loss =
+      result.destination.droppableId === result.source.droppableId
+        ? result.destination.index < result.source.index
+          ? -1
+          : 1
+        : 0;
+    if (result.destination.droppableId === "toDo") {
       await updateTask({
         room_id: roomId ? roomId : "",
-        id: tasksToDo[result.source.index].id,
+        id: result.draggableId,
         updateData: {
-          status: result.destination.droppableId as
-            | "toDo"
-            | "doing"
-            | "reviewing"
-            | "done",
+          status: "toDo",
           order_value: TaskHelper.getOrderString(
-            tasksToDo[result.destination.index - 1]?.order_value ?? "",
-            tasksToDo[result.destination.index]?.order_value ?? ""
+            tasksToDo[result.destination.index - 1 + loss]?.order_value ?? "",
+            tasksToDo[result.destination.index + loss]?.order_value ?? ""
           ),
         },
       });
-    } else if (result.source.droppableId === "doing") {
+    } else if (result.destination.droppableId === "doing") {
       await updateTask({
         room_id: roomId ? roomId : "",
-        id: tasksDoing[result.source.index].id,
+        id: result.draggableId,
         updateData: {
-          status: result.destination.droppableId as
-            | "toDo"
-            | "doing"
-            | "reviewing"
-            | "done",
+          status: "doing",
           order_value: TaskHelper.getOrderString(
-            tasksDoing[result.destination.index - 1]?.order_value ?? "",
-            tasksDoing[result.destination.index]?.order_value ?? ""
+            tasksDoing[result.destination.index - 1 + loss]?.order_value ?? "",
+            tasksDoing[result.destination.index + loss]?.order_value ?? ""
           ),
         },
       });
-    } else if (result.source.droppableId === "reviewing") {
+    } else if (result.destination.droppableId === "reviewing") {
       await updateTask({
         room_id: roomId ? roomId : "",
-        id: tasksReviewing[result.source.index].id,
+        id: result.draggableId,
         updateData: {
-          status: result.destination.droppableId as
-            | "toDo"
-            | "doing"
-            | "reviewing"
-            | "done",
+          status: "reviewing",
           order_value: TaskHelper.getOrderString(
-            tasksReviewing[result.destination.index - 1]?.order_value ?? "",
-            tasksReviewing[result.destination.index]?.order_value ?? ""
+            tasksReviewing[result.destination.index - 1 + loss]?.order_value ??
+              "",
+            tasksReviewing[result.destination.index + loss]?.order_value ?? ""
           ),
         },
       });
-    } else if (result.source.droppableId === "done") {
+    } else if (result.destination.droppableId === "done") {
       await updateTask({
         room_id: roomId ? roomId : "",
-        id: tasksDone[result.source.index].id,
+        id: result.draggableId,
         updateData: {
-          status: result.destination.droppableId as
-            | "toDo"
-            | "doing"
-            | "reviewing"
-            | "done",
+          status: "done",
           order_value: TaskHelper.getOrderString(
-            tasksDone[result.destination.index - 1]?.order_value ?? "",
-            tasksDone[result.destination.index]?.order_value ?? ""
+            tasksDone[result.destination.index - 1 + loss]?.order_value ?? "",
+            tasksDone[result.destination.index + loss]?.order_value ?? ""
           ),
         },
       });
