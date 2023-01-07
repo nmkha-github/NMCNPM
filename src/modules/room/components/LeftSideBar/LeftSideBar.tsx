@@ -167,8 +167,15 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
             <CircularProgress />
           ) : (
             <>
-              <Typography variant="h6">
-                {currentRoom.name ? currentRoom.name : "N/A"}
+              <Typography variant="h6" style={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                
+              }}
+              title={currentRoom.name}
+              >
+                 {currentRoom.name ? currentRoom.name : "N/A"}
               </Typography>
 
               <Typography

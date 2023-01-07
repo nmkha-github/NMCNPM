@@ -89,6 +89,9 @@ const CreateTaskDialog = ({ ...dialogProps }: DialogProps) => {
           label="Tên công việc:"
           required
           fullWidth
+          error={newTask.title.length > 100}
+          helperText={!newTask.title.length ? 'Không hợp lệ' : ''}
+          value={newTask.title}
           onChange={(event) =>
             setNewTask({ ...newTask, title: event.target.value })
           }
@@ -179,7 +182,7 @@ const CreateTaskDialog = ({ ...dialogProps }: DialogProps) => {
           color="primary"
           loading={creatingTask}
           style={{ padding: 8 }}
-          disabled={newTask.title === "" || creatingTask}
+          disabled={newTask.title === "" || creatingTask || newTask.title.length >= 100 }
         >
           TẠO
         </LoadingButton>

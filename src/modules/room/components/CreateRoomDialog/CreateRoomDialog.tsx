@@ -74,6 +74,9 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           label="Tên phòng:"
           required
           fullWidth
+          error={name.length > 100}
+          helperText={!name.length ? 'Tên không hợp lệ' : ''}
+          value={name}
           onChange={(event) => {
             setName(event.target.value);
           }}
@@ -134,7 +137,7 @@ const CreateRoomDialog = ({ ...dialogProps }: DialogProps) => {
           color="primary"
           loading={creatingRoom}
           style={{ padding: 8 }}
-          disabled={name === "" || !agree || creatingRoom}
+          disabled={name === "" || !agree || creatingRoom || name.length >= 100}
         >
           TẠO
         </LoadingButton>
