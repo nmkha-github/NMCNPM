@@ -180,8 +180,8 @@ const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
             {loadingCurrentRoom ? (
               <CircularProgress />
             ) : (
-              <Typography onClick={() => {}}>
-                {"Phòng: " + currentRoom.name}
+              <Typography onClick={() => {}} title={currentRoom.name}>
+                {"Phòng: " + truncate(currentRoom.name, 40)}
               </Typography>
             )}
           </Box>
@@ -285,7 +285,7 @@ const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
           <Box className={classes.dialog_body_left}>
             <ClickAwayListener
               onClickAway={async () => {
-                if (isEditingTitle) {
+                if (isEditingTitle && editTask.title.length <= 100) {
                   setIsEditingTitle(false);
                   await updateTask({
                     room_id: currentRoom.id,
@@ -308,6 +308,8 @@ const TaskDetailDialog = ({ task, open, onClose }: TaskDetailDialogProps) => {
                   fullWidth
                   size="small"
                   variant="outlined"
+                  error={editTask.title.length > 100}
+                  helperText={!editTask.title.length ? 'Không hợp lệ' : ''}
                   onChange={(event) => {
                     setEditTask({ ...editTask, title: event.target.value });
                   }}

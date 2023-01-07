@@ -96,6 +96,8 @@ const SettingRoomPage = () => {
           <TextField
             className="room_name"
             type="text"
+            error={roomEditData.name.length > 100}
+            helperText={!roomEditData.name.length ? 'Không hợp lệ' : ''}
             onChange={(event) => {
               setRoomEditData({
                 ...roomEditData,
@@ -297,7 +299,7 @@ const SettingRoomPage = () => {
               <LoadingButton
                 variant="contained"
                 color="primary"
-                disabled={updatingRoom||roomEditData.name===""}
+                disabled={updatingRoom||roomEditData.name===""||roomEditData.name.length > 100}
                 loading={updatingRoom}
                 onClick={async () => {
                   try {
