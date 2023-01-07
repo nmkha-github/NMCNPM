@@ -104,7 +104,8 @@ const Header = ({ children }: HeaderProps) => {
     >
       {!location.pathname.includes("/login") &&
         !location.pathname.includes("/register") &&
-        !location.pathname.includes("/forgot-password") && (
+        !location.pathname.includes("/forgot-password") &&
+        !location.pathname.includes("/home") && (
           <Box className={classes.header}>
             <Tooltip title="Taskment.com">
               <img

@@ -11,7 +11,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import PortraitIcon from "@mui/icons-material/Portrait";
 import Settings from "@mui/icons-material/Settings";
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
 import Logout from "@mui/icons-material/Logout";
@@ -104,16 +103,6 @@ const HeaderUserInfo = () => {
         </Box>
 
         <Divider />
-
-        <MenuItem
-          onClick={() => setAnchorEl(null)}
-          style={{ display: "block", padding: 8 }}
-        >
-          <ListItemIcon>
-            <PortraitIcon fontSize="small" />
-          </ListItemIcon>
-          Hồ sơ của bạn
-        </MenuItem>
 
         <MenuItem
           onClick={() => setAnchorEl(null)}

@@ -152,24 +152,20 @@ const RoomPage = () => {
             </Grid>
 
             {!loadedAllRooms && !loadingMoreRooms && (
-              <Button
-                onClick={async () => await getRooms({})}
-                sx={{
-                  p: "2px 4px",
-                  display: "block",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid",
-                  m: "1%",
-                }}
+              <Box
                 style={{
-                  width: "100%",
                   display: "flex",
                   justifyContent: "center",
+                  margin: "16px 0px",
                 }}
               >
-                Xem thêm
-              </Button>
+                <Button
+                  style={{ textTransform: "none" }}
+                  onClick={async () => await getRooms({})}
+                >
+                  <Typography>Xem thêm</Typography>
+                </Button>
+              </Box>
             )}
 
             {loadingMoreRooms && (
@@ -178,7 +174,6 @@ const RoomPage = () => {
                   width: "100%",
                   display: "flex",
                   justifyContent: "center",
-                  marginTop: 16,
                 }}
               >
                 <CircularProgress />

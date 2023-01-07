@@ -237,12 +237,10 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
                     className={
                       classes.itemBox +
                       " " +
-                      (location.pathname.includes(item.href)
-                        ? classes.selection
-                        : "")
+                      (location.pathname === item.href ? classes.selection : "")
                     }
                   >
-                    {location.pathname.includes(item.href)
+                    {location.pathname === item.href
                       ? item.filledIcon
                       : item.icon}
                     <Typography variant="body1">{item.label}</Typography>
