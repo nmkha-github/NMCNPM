@@ -78,8 +78,8 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         }}
       >
         <Box>
-          <Typography style={{ fontWeight: 700, fontSize: 20 }}>
-            {roomData.name}
+          <Typography style={{ fontWeight: 700, fontSize: 20, overflow: "hidden" }}>
+          {truncate(roomData?.name || "", 30)}
           </Typography>
 
           <Typography>
