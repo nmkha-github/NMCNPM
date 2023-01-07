@@ -94,116 +94,121 @@ const Header = ({ children }: HeaderProps) => {
   let location = useLocation();
   let navigate = useNavigate();
 
+  const needAuth = ![
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/home",
+    "/",
+  ].some((route) => route === location.pathname);
+
   return (
     <Box
       style={{
         display: "flex",
         flexDirection: "column",
-        marginTop: 66,
+        marginTop: needAuth ? 66 : 0,
       }}
     >
-      {!location.pathname.includes("/login") &&
-        !location.pathname.includes("/register") &&
-        !location.pathname.includes("/forgot-password") &&
-        !location.pathname.includes("/home") && (
-          <Box className={classes.header}>
-            <Tooltip title="Taskment.com">
-              <img
-                className={classes.logo}
-                src={APP_LOGO}
-                alt="web logo Taskment.com"
+      {needAuth && (
+        <Box className={classes.header}>
+          <Tooltip title="nmcnpm-group24.vercel.app">
+            <img
+              className={classes.logo}
+              src={APP_LOGO}
+              alt="web logo"
+              onClick={() =>
+                !location.pathname.includes("/home") && navigate("/home")
+              }
+            />
+          </Tooltip>
+
+          <Box className={classes.nav}>
+            <Box
+              className={`${classes.item} ${
+                location.pathname.includes("/resource") && classes.selection
+              }`}
+            >
+              <Button
+                className={`${classes.navItem} ${
+                  location.pathname.includes("/resource") &&
+                  classes.textSelection
+                }`}
                 onClick={() =>
-                  !location.pathname.includes("/home") && navigate("/home")
+                  !location.pathname.endsWith("/resource") &&
+                  navigate("/resource")
                 }
-              />
-            </Tooltip>
-
-            <Box className={classes.nav}>
-              <Box
-                className={`${classes.item} ${
-                  location.pathname.includes("/resource") && classes.selection
-                }`}
               >
-                <Button
-                  className={`${classes.navItem} ${
-                    location.pathname.includes("/resource") &&
-                    classes.textSelection
-                  }`}
-                  onClick={() =>
-                    !location.pathname.endsWith("/resource") &&
-                    navigate("/resource")
-                  }
+                <Typography
+                  style={{
+                    color: location.pathname.includes("/resource")
+                      ? "#1E88E5"
+                      : "black",
+                  }}
                 >
-                  <Typography
-                    style={{
-                      color: location.pathname.includes("/resource")
-                        ? "#1E88E5"
-                        : "black",
-                    }}
-                  >
-                    Tài nguyên
-                  </Typography>
-                </Button>
-              </Box>
-
-              <Box
-                className={`${classes.item} ${
-                  location.pathname.includes("/room") && classes.selection
-                }`}
-              >
-                <Button
-                  className={`${classes.navItem} ${
-                    location.pathname.includes("/room") && classes.textSelection
-                  }`}
-                  onClick={() =>
-                    !location.pathname.endsWith("/room") && navigate("/room")
-                  }
-                >
-                  <Typography
-                    style={{
-                      color: location.pathname.includes("/room")
-                        ? "#1E88E5"
-                        : "black",
-                    }}
-                  >
-                    Phòng ban
-                  </Typography>
-                </Button>
-              </Box>
-
-              <Box
-                className={`${classes.item} ${
-                  location.pathname.includes("/schedule") && classes.selection
-                }`}
-              >
-                <Button
-                  className={`${classes.navItem} ${
-                    location.pathname.includes("/schedule") &&
-                    classes.textSelection
-                  }`}
-                  onClick={() =>
-                    !location.pathname.endsWith("/schedule") &&
-                    navigate("/schedule")
-                  }
-                >
-                  <Typography
-                    style={{
-                      color: location.pathname.includes("/schedule")
-                        ? "#1E88E5"
-                        : "black",
-                    }}
-                  >
-                    Lịch
-                  </Typography>
-                </Button>
-              </Box>
+                  Tài nguyên
+                </Typography>
+              </Button>
             </Box>
 
-            <Box className={classes.rightContainer}>
-              <HeaderUserInfo />
+            <Box
+              className={`${classes.item} ${
+                location.pathname.includes("/room") && classes.selection
+              }`}
+            >
+              <Button
+                className={`${classes.navItem} ${
+                  location.pathname.includes("/room") && classes.textSelection
+                }`}
+                onClick={() =>
+                  !location.pathname.endsWith("/room") && navigate("/room")
+                }
+              >
+                <Typography
+                  style={{
+                    color: location.pathname.includes("/room")
+                      ? "#1E88E5"
+                      : "black",
+                  }}
+                >
+                  Phòng ban
+                </Typography>
+              </Button>
+            </Box>
+
+            <Box
+              className={`${classes.item} ${
+                location.pathname.includes("/schedule") && classes.selection
+              }`}
+            >
+              <Button
+                className={`${classes.navItem} ${
+                  location.pathname.includes("/schedule") &&
+                  classes.textSelection
+                }`}
+                onClick={() =>
+                  !location.pathname.endsWith("/schedule") &&
+                  navigate("/schedule")
+                }
+              >
+                <Typography
+                  style={{
+                    color: location.pathname.includes("/schedule")
+                      ? "#1E88E5"
+                      : "black",
+                  }}
+                >
+                  Lịch
+                </Typography>
+              </Button>
             </Box>
           </Box>
-        )}
+
+          <Box className={classes.rightContainer}>
+            <HeaderUserInfo />
+          </Box>
+        </Box>
+      )}
 
       <Box className={classes.children}>{children}</Box>
     </Box>

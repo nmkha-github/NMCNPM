@@ -86,7 +86,8 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
     "/register",
     "/forgot-password",
     "/home",
-  ].includes(location.pathname);
+    "/",
+  ].some((route) => route === location.pathname);
 
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {

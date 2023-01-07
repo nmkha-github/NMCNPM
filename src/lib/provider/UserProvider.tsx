@@ -55,9 +55,13 @@ const UserProvider = ({ children }: UserContextProviderProps) => {
   const { showSnackbarError } = useAppSnackbar();
   const { userInfo, userInfoRegister } = useAuth();
   const location = useLocation();
-  const needAuth = !["/login", "/register", "/forgot-password"].includes(
-    location.pathname
-  );
+  const needAuth = ![
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/home",
+    "/",
+  ].some((route) => route === location.pathname);
 
   const getUser = useCallback(async () => {
     try {
