@@ -85,7 +85,7 @@ const RegisterForm = () => {
 
             <LoadingButton
               fullWidth
-              disabled={!checkRegisterValid() || registering}
+              disabled={registering}
               loading={registering}
               variant="contained"
               color="primary"
