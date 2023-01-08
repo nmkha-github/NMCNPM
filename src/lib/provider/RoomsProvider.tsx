@@ -288,14 +288,14 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
           id: docResponse.id,
         });
         await addDoc(collection(db, "user", user.id, "room"), {
-          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at_value: time.toMillis(),
           joined_at: time,
           id: docResponse.id,
         });
         await addDoc(collection(db, "room", docResponse.id, "member"), {
           id: user.id,
           joined_at: time,
-          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at_value: time.toMillis(),
           toDo: 0,
           doing: 0,
           reviewing: 0,
@@ -387,14 +387,14 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         }
         const time = Timestamp.now();
         await addDoc(collection(db, "user", user.id, "room"), {
-          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at_value: time.toMillis(),
           joined_at: time,
           id: newRoom.id,
         });
         await addDoc(collection(db, "room", id, "member"), {
           id: user.id,
           joined_at: time,
-          joined_at_value: time.seconds + 0.000000001 * time.nanoseconds,
+          joined_at_value: time.toMillis(),
           toDo: 0,
           doing: 0,
           reviewing: 0,
