@@ -73,16 +73,16 @@ const LoginForm = () => {
               onClick={async () => {
                 let hasError = false;
                 if (email === "") {
-                  setEmailError("Email can't be empty.");
+                  setEmailError("Email không được để trống.");
                   hasError = true;
                 } else if (!EmailHelper.checkEmailValidate(email)) {
-                  setEmailError("Invalid email format");
+                  setEmailError("Sai định dạng email.");
                   hasError = true;
                 } else {
                   setEmailError("");
                 }
                 if (password === "") {
-                  setPasswordError("Password can't be empty.");
+                  setPasswordError("Password không được để trống.");
                   hasError = true;
                 } else {
                   setPasswordError("");
@@ -91,7 +91,7 @@ const LoginForm = () => {
 
                 try {
                   await logIn({ email: email, password: password });
-                  navigate("/home");
+                  navigate("/room");
                 } catch (error) {
                   showSnackbarError(error);
                 }

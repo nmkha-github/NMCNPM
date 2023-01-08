@@ -31,9 +31,10 @@ const WorkPage = () => {
   } = useTasks();
   const [openCreateTaskDialog, setOpenCreateTaskDialog] = useState(false);
   const [isDraggingId, setIsDraggingId] = useState("-1");
+
   useEffect(() => {
     getCurrentRoom(roomId || "");
-  }, []);
+  }, [roomId]);
 
   useEffect(() => {
     if (currentRoom) {
@@ -76,7 +77,6 @@ const WorkPage = () => {
   }
 
   const handleOnDragEnd = async (result: DropResult) => {
-    console.log(result.source.index + " " + result.destination?.index);
     setIsDraggingId("-1");
     if (updatingTask) {
       return;
@@ -101,11 +101,7 @@ const WorkPage = () => {
       tasksDone.splice(result.source.index, 1);
       setTasksDone(tasksDone);
     }
-    let loss =
-      result.destination.droppableId === result.source.droppableId &&
-      result.destination.index > result.source.index
-        ? -1
-        : 0;
+
     if (result.destination.droppableId === "toDo") {
       if (dragTask) {
         tasksToDo.splice(result.destination.index, 0, dragTask);
@@ -199,6 +195,7 @@ const WorkPage = () => {
               setOpenCreateTaskDialog(false);
             }}
           />
+
           <Box
             style={{
               marginTop: 16,
@@ -210,127 +207,126 @@ const WorkPage = () => {
               onDragEnd={handleOnDragEnd}
               onDragStart={handleOnDragStart}
             >
-              <Box style={{ display: "inline-block" }}>
-                <PerfectScrollbar
-                  style={{
-                    background: "#f1f3f9",
-                    marginRight: 12,
-                    width: 300,
-                    maxHeight: 700,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
+              <PerfectScrollbar>
+                <Box style={{ display: "flex" }}>
+                  <PerfectScrollbar
                     style={{
-                      marginTop: 8,
-                      fontSize: 18,
-                      textDecoration: "underline",
-                      marginBottom: 12,
+                      background: "#f1f3f9",
+                      marginRight: 12,
+                      width: 300,
+                      maxHeight: 700,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
-                    Chưa làm
-                  </Typography>
-                  <TaskList
-                    curTaskList={tasksToDo}
-                    status={"toDo"}
-                    type={"card"}
-                    isDragging={isDraggingId}
-                  />
-                </PerfectScrollbar>
-              </Box>
-              <Box style={{ display: "inline-block" }}>
-                <PerfectScrollbar
-                  style={{
-                    background: "#f1f3f9",
-                    width: 300,
-                    maxHeight: 700,
-                    display: "flex",
-                    marginRight: 12,
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
+                    <Typography
+                      style={{
+                        marginTop: 8,
+                        fontSize: 18,
+                        textDecoration: "underline",
+                        marginBottom: 12,
+                      }}
+                    >
+                      Chưa làm
+                    </Typography>
+                    <TaskList
+                      curTaskList={tasksToDo}
+                      status={"toDo"}
+                      type={"card"}
+                      isDragging={isDraggingId}
+                    />
+                  </PerfectScrollbar>
+
+                  <PerfectScrollbar
                     style={{
-                      marginTop: 8,
-                      fontSize: 18,
-                      textDecoration: "underline",
-                      marginBottom: 12,
+                      background: "#f1f3f9",
+                      width: 300,
+                      maxHeight: 700,
+                      display: "flex",
+                      marginRight: 12,
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
-                    Đang làm
-                  </Typography>
-                  <TaskList
-                    curTaskList={tasksDoing}
-                    status={"doing"}
-                    type={"card"}
-                    isDragging={isDraggingId}
-                  />
-                </PerfectScrollbar>
-              </Box>
-              <Box style={{ display: "inline-block" }}>
-                <PerfectScrollbar
-                  style={{
-                    width: 300,
-                    background: "#f1f3f9",
-                    maxHeight: 700,
-                    marginRight: 12,
-                    display: "flex",
-                    overflowY: "scroll",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
+                    <Typography
+                      style={{
+                        marginTop: 8,
+                        fontSize: 18,
+                        textDecoration: "underline",
+                        marginBottom: 12,
+                      }}
+                    >
+                      Đang làm
+                    </Typography>
+                    <TaskList
+                      curTaskList={tasksDoing}
+                      status={"doing"}
+                      type={"card"}
+                      isDragging={isDraggingId}
+                    />
+                  </PerfectScrollbar>
+
+                  <PerfectScrollbar
                     style={{
-                      marginTop: 8,
-                      fontSize: 18,
-                      textDecoration: "underline",
-                      marginBottom: 12,
+                      width: 300,
+                      background: "#f1f3f9",
+                      maxHeight: 700,
+                      marginRight: 12,
+                      display: "flex",
+                      overflowY: "scroll",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
-                    Chờ duyệt
-                  </Typography>
-                  <TaskList
-                    curTaskList={tasksReviewing}
-                    status={"reviewing"}
-                    type={"card"}
-                    isDragging={isDraggingId}
-                  />
-                </PerfectScrollbar>
-              </Box>
-              <Box style={{ display: "inline-block" }}>
-                <PerfectScrollbar
-                  style={{
-                    width: 300,
-                    background: "#f1f3f9",
-                    maxHeight: 700,
-                    display: "flex",
-                    overflowY: "scroll",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
+                    <Typography
+                      style={{
+                        marginTop: 8,
+                        fontSize: 18,
+                        textDecoration: "underline",
+                        marginBottom: 12,
+                      }}
+                    >
+                      Chờ duyệt
+                    </Typography>
+                    <TaskList
+                      curTaskList={tasksReviewing}
+                      status={"reviewing"}
+                      type={"card"}
+                      isDragging={isDraggingId}
+                    />
+                  </PerfectScrollbar>
+
+                  <PerfectScrollbar
                     style={{
-                      marginTop: 8,
-                      fontSize: 18,
-                      textDecoration: "underline",
-                      marginBottom: 12,
+                      width: 300,
+                      background: "#f1f3f9",
+                      maxHeight: 700,
+                      display: "flex",
+                      overflowY: "scroll",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
-                    Hoàn thành
-                  </Typography>
-                  <TaskList
-                    curTaskList={tasksDone}
-                    status={"done"}
-                    type={"card"}
-                    isDragging={isDraggingId}
-                  />
-                </PerfectScrollbar>
-              </Box>
+                    <Typography
+                      style={{
+                        marginTop: 8,
+                        fontSize: 18,
+                        textDecoration: "underline",
+                        marginBottom: 12,
+                      }}
+                    >
+                      Hoàn thành
+                    </Typography>
+                    <TaskList
+                      curTaskList={tasksDone}
+                      status={"done"}
+                      type={"card"}
+                      isDragging={isDraggingId}
+                    />
+                  </PerfectScrollbar>
+                </Box>
+              </PerfectScrollbar>
             </DragDropContext>
           </Box>
         </Box>

@@ -1,59 +1,100 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../../lib/provider/AuthProvider";
-import { useRooms } from "../../lib/provider/RoomsProvider";
-import AddRoomButton from "../../modules/room/components/AddRoomButton/AddRoomButton";
-import UploadFile from "../../lib/components/UploadFile/UploadFile";
-import TaskCard from "../../modules/task/components/TaskCard/TaskCard";
-import TaskData from "../../modules/task/interface/task-data";
-import TaskDetailDialog from "../../modules/task/components/TaskDetailDialog/TaskDetailDialog";
-import AssignMemberBox from "../../modules/task/components/AssignMemberBox/AssignMemberBox";
-import MemberData from "../../modules/statistic/interface/member-data";
-import UserData from "../../modules/user/interface/user-data";
-import BarChart from "../../lib/components/BarChart/BarChart";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
+import APP_LOGO from "../../modules/layout/constants/app-logo";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const dataName = false;
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate("/room");
-  }, []);
+  const location = useLocation();
 
   return (
-    <div>
-      <BarChart
-        data={[
-          { value: 10, title: "abc" },
-          { value: 20, title: "cd" },
-          { value: 17, title: "nưu asdfnkjasd ádfsad" },
-        ]}
-      />
-      <AssignMemberBox
-        task={{
-          id: "WttA7CdT5Qvbg5XG0xei",
-          order_value: "",
-          title: "",
-          assignee_id: "ujl8YpvL4ogSzkkroLsH",
-          created_at: "",
-          status: "toDo",
-          creator_id: "",
-        }}
-        onChoose={(member) => {}}
-      />
-      <UploadFile
-        onSuccess={(file) => {
-          console.log(file.url);
-          console.log(file.name);
-        }}
-      >
-        <Button>ABC</Button>
-      </UploadFile>
-      <AddRoomButton />
-    </div>
+    <Box
+      style={{
+        width: "100%",
+        height: "100vh",
+        background:
+          "linear-gradient(90deg, rgba(0,212,255,1) 49%, rgba(7,255,255,1) 100%, rgba(2,0,36,1) 100%)",
+      }}
+    >
+      <Tooltip title="nmcnpm-group24.vercel.app">
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: 260,
+            paddingTop: 4,
+            paddingLeft: 16,
+            position: "absolute",
+          }}
+          onClick={() =>
+            !location.pathname.includes("/home") && navigate("/home")
+          }
+        >
+          <img
+            style={{ width: 60, height: 60 }}
+            src={APP_LOGO}
+            alt="web logo"
+          />
+
+          <Typography
+            style={{
+              fontFamily: "cursive",
+              color: "white",
+              fontStyle: "italic",
+              fontSize: 40,
+            }}
+          >
+            Taskment
+          </Typography>
+        </Box>
+      </Tooltip>
+
+      <Box style={{ display: "flex", flexDirection: "row-reverse" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ textTransform: "none", margin: "16px 4px" }}
+          onClick={() => navigate("/register")}
+        >
+          <Typography style={{ fontWeight: 600 }}>Đăng ký</Typography>
+        </Button>
+
+        <Button
+          variant="text"
+          color="inherit"
+          style={{ textTransform: "none", margin: "16px 4px" }}
+          onClick={() => navigate("/login")}
+        >
+          <Typography style={{ fontWeight: 600, color: "white" }}>
+            Đăng nhập
+          </Typography>
+        </Button>
+      </Box>
+
+      <Box style={{ display: "flex", height: "calc(100vh - 68px)" }}>
+        <Box
+          style={{
+            flex: 1,
+            position: "relative",
+            top: "28%",
+          }}
+        >
+          <Typography variant="h2" align="center" style={{ color: "white" }}>
+            Taskment
+          </Typography>
+          <Typography align="center" style={{ color: "white" }}>
+            Ứng dụng giúp quản lý công việc hiệu quả
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            flex: 2,
+          }}
+        >
+          {/*  */}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

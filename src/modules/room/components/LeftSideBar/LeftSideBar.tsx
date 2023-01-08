@@ -167,8 +167,15 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
             <CircularProgress />
           ) : (
             <>
-              <Typography variant="h6">
-                {currentRoom.name ? currentRoom.name : "N/A"}
+              <Typography variant="h6" style={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                
+              }}
+              title={currentRoom.name}
+              >
+                 {currentRoom.name ? currentRoom.name : "N/A"}
               </Typography>
 
               <Typography
@@ -237,12 +244,10 @@ const LeftSideBar = ({ children }: LeftSideBarProps) => {
                     className={
                       classes.itemBox +
                       " " +
-                      (location.pathname.includes(item.href)
-                        ? classes.selection
-                        : "")
+                      (location.pathname === item.href ? classes.selection : "")
                     }
                   >
-                    {location.pathname.includes(item.href)
+                    {location.pathname === item.href
                       ? item.filledIcon
                       : item.icon}
                     <Typography variant="body1">{item.label}</Typography>

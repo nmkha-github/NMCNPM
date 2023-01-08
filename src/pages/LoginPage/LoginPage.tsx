@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import LoginForm from "../../modules/login/components/LoginForm/LoginForm";
+
 const LoginPage = () => {
   return (
     <Box style={{

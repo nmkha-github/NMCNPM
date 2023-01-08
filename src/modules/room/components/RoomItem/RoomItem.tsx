@@ -43,7 +43,7 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         ...boxProps.style,
       }}
       onDoubleClick={() => {
-        navigate(`/room/${roomData.id}/work`);
+        navigate(`/room/${roomData.id}/newsfeed`);
       }}
     >
       <Box
@@ -78,8 +78,10 @@ const RoomItem = ({ roomData, ...boxProps }: RoomItemProps & BoxProps) => {
         }}
       >
         <Box>
-          <Typography style={{ fontWeight: 700, fontSize: 20 }}>
-            {roomData.name}
+          <Typography
+            style={{ fontWeight: 700, fontSize: 20, overflow: "hidden" }}
+          >
+            {truncate(roomData?.name || "", 30)}
           </Typography>
 
           <Typography>

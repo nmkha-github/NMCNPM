@@ -22,13 +22,16 @@ const TaskCard = ({
   isDragging,
   ...boxProps
 }: TaskCardProps & BoxProps) => {
-  const [user, setUser] = useState<undefined | UserData>(undefined);
+  const [user, setUser] = useState<UserData>();
   const { showSnackbarError } = useAppSnackbar();
   const { setCurrentTask, currentTask } = useTasks();
 
   const getUserData = async (id?: string) => {
     try {
-      setUser(await UserHelper.getUserById(id || ""));
+      const userInfo = await UserHelper.getUserById(id || "");
+      if (JSON.stringify(userInfo) !== JSON.stringify(user)) {
+        setUser(userInfo);
+      }
     } catch (error) {
       showSnackbarError(error);
     }

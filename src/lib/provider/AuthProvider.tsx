@@ -81,9 +81,13 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const auth = getAuth();
   const { showSnackbarError } = useAppSnackbar();
 
-  const needAuth = !["/login", "/register", "/forgot-password"].includes(
-    location.pathname
-  );
+  const needAuth = ![
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/home",
+    "/",
+  ].some((route) => route === location.pathname);
 
   const register = useCallback(
     async ({ email, password }: { email: string; password: string }) => {
