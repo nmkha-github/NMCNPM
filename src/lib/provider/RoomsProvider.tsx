@@ -205,7 +205,7 @@ const RoomsProvider = ({ children }: RoomsContextProviderProps) => {
         }
 
         if (_skip > 0) {
-          setRooms([...newRooms, ...rooms]);
+          setRooms([...rooms, ...newRooms]);
         } else {
           setRooms([...newRooms]);
         }
