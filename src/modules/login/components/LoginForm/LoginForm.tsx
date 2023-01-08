@@ -91,7 +91,7 @@ const LoginForm = () => {
 
                 try {
                   await logIn({ email: email, password: password });
-                  navigate("/home");
+                  navigate("/room");
                 } catch (error) {
                   showSnackbarError(error);
                 }
