@@ -128,7 +128,10 @@ const HeaderUserInfo = () => {
         </MenuItem>
 
         <MenuItem
-          onClick={async () => await logOut()}
+          onClick={async () => {
+            await logOut();
+            navigate("/login");
+          }}
           disabled={loggingOut}
           style={{ display: "block", padding: 8 }}
         >
