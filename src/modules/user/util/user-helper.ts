@@ -4,7 +4,7 @@ import { db } from "../../../lib/config/firebase-config";
 
 const UserHelper = {
   getUserById: async (id: string): Promise<undefined | UserData> => {
-    let result = undefined;
+    let result;
     const usersResponse = await getDocs(
       query(collection(db, "user"), where("id", "==", id))
     );
